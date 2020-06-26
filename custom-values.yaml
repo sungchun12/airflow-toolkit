@@ -87,7 +87,7 @@ dags:
   git:
     ## url of the git repository
     ##
-    url: "ssh://git@repo.example.com/my-airflow-dags.git"
+    url: "https://github.com/sungchun12/airflow-toolkit.git"
 
     ## the branch/tag/sha1 which we clone
     ##
