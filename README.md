@@ -89,3 +89,4 @@ kubectl exec \
 ### Resources
 
 [Helm Quickstart](https://helm.sh/docs/intro/quickstart/)
+[Helm Chart Source Code](https://github.com/helm/charts/tree/master/stable/airflow)
