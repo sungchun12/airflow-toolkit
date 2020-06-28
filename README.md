@@ -47,6 +47,8 @@ helm install airflow stable/airflow \
     --version 7.1.5 \
     --values ./custom-values.yaml # this will override all the values in the default values yaml and cause errors, these are just example placeholders to copy and paste into the larger file
 
+# start a remote shell in the airflow worker
+kubectl exec -it airflow-worker-0 -- /bin/bash
 
 
 # expected output
