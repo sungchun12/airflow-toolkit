@@ -45,7 +45,7 @@ helm repo update
 # https://helm.sh/docs/helm/helm_install/
 helm install airflow stable/airflow \
     --version 7.1.5 \
-    --values ./custom-values.yaml
+    --values ./custom-values.yaml # this will override all the values in the default values yaml and cause errors, these are just example placeholders to copy and paste into the larger file
 
 
 
