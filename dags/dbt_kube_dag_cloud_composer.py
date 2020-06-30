@@ -7,6 +7,18 @@ import os
 from airflow.utils.helpers import chain
 from airflow.contrib.kubernetes.secret import Secret
 from airflow.operators.dummy_operator import DummyOperator
+from airflow import configuration as conf
+
+namespace = conf.get('kubernetes', 'NAMESPACE')
+
+# This will detect the default namespace locally and read the 
+# environment namespace when deployed to Astronomer.
+if namespace =='airflow':
+    config_file = '/home/airflow/.kube/config'
+    in_cluster=False
+else:
+    in_cluster=True
+    config_file=None
 
 """
 Runs a set of dbt commands with the KubernetesPodOperator on Cloud Composer.
@@ -189,8 +201,8 @@ class dynamic_task_generator_utility:
                 image_pull_policy="Always",
                 is_delete_operator_pod=True,
                 get_logs=True,
-                config_file="/usr/local/airflow/.kube/config",
-                in_cluster=False
+                config_file=config_file,
+                in_cluster=in_cluster
             )
             for task_id, dbt_command in dbt_commands_to_run.items()
         ]
