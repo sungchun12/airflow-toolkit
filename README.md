@@ -55,6 +55,10 @@ source setup.sh
 # start a remote shell in the airflow worker for ad hoc operations or to run pytests
 kubectl exec -it airflow-worker-0 -- /bin/bash
 
+# run pod process in background
+kubectl exec -it airflow-worker-0 -- 'pytest'
+kubectl exec -it airflow-worker-0 -- "ls"
+
 # teardown the cluster
 source teardown.sh
 
