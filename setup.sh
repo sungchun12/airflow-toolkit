@@ -86,6 +86,7 @@ helm ls
 # view airflow UI
 export POD_NAME=$(kubectl get pods --namespace airflow -l "component=web,app=airflow" -o jsonpath="{.items[0].metadata.name}")
 
+echo "airflow UI webserver --> http://127.0.0.1:8080"
+
 kubectl port-forward --namespace airflow $POD_NAME 8080:8080
 
-echo "airflow UI webserver --> http://127.0.0.1:8080"
