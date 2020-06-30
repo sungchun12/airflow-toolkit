@@ -15,7 +15,7 @@ namespace = conf.get('kubernetes', 'NAMESPACE')
 # environment namespace when deployed to Astronomer.
 if namespace =='airflow':
     config_file = '/home/airflow/.kube/config'
-    in_cluster=False
+    in_cluster=True
 else:
     in_cluster=True
     config_file=None
