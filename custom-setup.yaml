@@ -138,6 +138,7 @@ airflow:
   ##
   extraPipPackages: []
 
+  # https://stackoverflow.com/questions/58299948/helm-stable-airflow-custom-values-for-airflow-deployment-with-shared-persisten
   ## extra volumeMounts for the web/scheduler/worker Pods
   ##
   ## EXAMPLE:
@@ -145,7 +146,9 @@ airflow:
   ##     - name: synchronised-dags
   ##       mountPath: /opt/airflow/dags
   ##
-  extraVolumeMounts: []
+  extraVolumeMounts: # this will get the volume and mount it to that path in the container
+    - name: dags
+      mountPath: /opt/airflow/dags # location in the container it will put the directory mentioned below.
 
   ## extra volumes for the web/scheduler/worker Pods
   ##
@@ -154,8 +157,10 @@ airflow:
   ##     - name: synchronised-dags
   ##       emptyDir: {}
   ##
-  extraVolumes: []
-
+  extraVolumes: # this will create the volume from the directory
+    - name: dags
+      hostPath:
+        path: /Users/sung/Desktop/airflow-toolkit/dags # For you this is something like /home/*user*/github/airflowDAGs/dags
 
 ###################################
 # Airflow - Scheduler Configs
@@ -169,7 +174,10 @@ scheduler:
   ##       cpu: "1000m"
   ##       memory: "1Gi"
   ##
-  resources: {}
+  # resources:
+  #   requests:
+  #     cpu: "1000m"
+  #     memory: "1Gi"
 
   ## the nodeSelector configs for the scheduler Pods
   ##
@@ -509,7 +517,7 @@ workers:
   ##           averageUtilization: 80
   ##
   autoscaling:
-    enabled: false
+    enabled: true
     maxReplicas: 2
     metrics: []
 
@@ -1239,7 +1247,7 @@ redis:
       ## the access mode of the PVC
       ##
       accessModes:
-      - ReadWriteOnce
+        - ReadWriteOnce
 
       ## the size of PVC to request
       ##
