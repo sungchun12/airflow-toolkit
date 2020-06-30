@@ -1,0 +1,24 @@
+{
+  "dbt_kube_dag_default_args": {
+    "depends_on_past": false,
+    "email": ["airflow@example.com"],
+    "email_on_failure": false,
+    "email_on_retry": false,
+    "email_on_success": false,
+    "owner": "Airflow",
+    "retries": 0,
+    "start_date": "2020-01-16 00:00:00"
+  },
+  "dbt_kube_dag_runtime_parameters": {
+    "dbt_project": "wam-bam-258119",
+    "image": "gcr.io/wam-bam-258119/dbt_docker:dev-sung-latest"
+  },
+  "dbt_kube_dag_dbt_commands": {
+    "dbt-run": "dbt run --target service_account_runs",
+    "dbt-test": "dbt test --target service_account_runs"
+  },
+  "test_configs": {
+    "bucked_id": "us-east4-dacipoccomposer-659ea9dd-bucket",
+    "cloud_composer_id": "dacipoccomposer"
+  }
+}
