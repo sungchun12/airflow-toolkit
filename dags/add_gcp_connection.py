@@ -18,7 +18,7 @@ default_args = {
 
 default_params = {
     "gcp_project": "wam-bam-258119",
-    "key_file_path": "../service_account.json",
+    "key_file_path": "/account.json",
     "gcp_conn_id": "my_gcp_connection",
     "gcr_conn_id": "gcr_docker_connection",
 }
