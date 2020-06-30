@@ -22,8 +22,13 @@ Success Criteria:
 # install homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
+# install docker desktop
+https://www.docker.com/products/docker-desktop
+
+#enable kubernetes through docker for desktop UI
+
 # install minikube
-brew install minikube
+# brew install minikube
 
 # install helm
 brew install helm
@@ -33,7 +38,7 @@ brew install helm
 
 ```bash
 # start minikube
-minikube start
+# minikube start
 
 # add helm chart repo
 helm repo add stable https://kubernetes-charts.storage.googleapis.com/
@@ -41,54 +46,59 @@ helm repo add stable https://kubernetes-charts.storage.googleapis.com/
 # get latest list of changes
 helm repo update
 
+# export PARENT_DIR="$(dirname `pwd`)"
+kubectl create namespace airflow
+
+# check if it's created
+kubectl get namespaces
+
+# swtich to airflow namespace
+kubectl config set-context $(kubectl config current-context) --namespace="airflow"
+kubectl config view | grep namespace
+kubectl get pods
+
+# using bitnami chart
+
 # install airflow helm chart
 # https://helm.sh/docs/helm/helm_install/
 helm install airflow stable/airflow \
-    --version 7.1.5 \
-    --values ./custom-values.yaml # this will override all the values in the default values yaml and cause errors, these are just example placeholders to copy and paste into the larger file
+    --version 7.1.6 \
+    --namespace "airflow" \
+    --values ./custom-setup.yaml # this will override all the values in the default values yaml and cause errors, these are just example placeholders to copy and paste into the larger file
 
-# start a remote shell in the airflow worker
-kubectl exec -it airflow-worker-0 -- /bin/bash
+# check pods status and deployments
+kubectl get deployments
+kubectl get pods
+
+# scale the scheduler
+# kubectl scale deployments/airflow-scheduler --replicas=2
 
 
-# expected output
-#####################
-# NAME: airflow
-# LAST DEPLOYED: Thu Jun 25 21:18:40 2020
-# NAMESPACE: default
-# STATUS: deployed
-# REVISION: 1
-# TEST SUITE: None
-# NOTES:
-# Congratulations. You have just deployed Apache Airflow!
+# view airflow UI
+export POD_NAME=$(kubectl get pods --namespace airflow -l "component=web,app=airflow" -o jsonpath="{.items[0].metadata.name}")
 
-# 1. Get the Airflow Service URL by running these commands:
-#    export POD_NAME=$(kubectl get pods --namespace default -l "component=web,app=airflow" -o jsonpath="{.items[0].metadata.name}")
-#    echo http://127.0.0.1:8080
-#    kubectl port-forward --namespace default $POD_NAME 8080:8080
+echo http://127.0.0.1:8080
 
-# 2. Open Airflow in your web browser
-#####################
+kubectl port-forward --namespace airflow $POD_NAME 8080:8080
 
 # check status
 helm ls
 
-# expected output
-#####################
-# NAME    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
-# airflow default         1               2020-06-25 21:18:40.822324 -0500 CDT    deployed        airflow-7.1.5   1.10.10
-#####################
 
-# run bash commands directly in the pod
-kubectl exec \
-  -it \
-  --name airflow \
-  --container airflow-scheduler \
-  Deployment/airflow-scheduler \
-  /bin/bash
+# start a remote shell in the airflow worker
+kubectl exec -it airflow-worker-0 -- /bin/bash
+
+# upgrade helm with custom values
+# helm upgrade -f custom-setup.yaml airflow ./airflow
+
+# delete helm deployment
+helm delete airflow
+
 ```
 
 ### Resources
 
 [Helm Quickstart](https://helm.sh/docs/intro/quickstart/)
 [Helm Chart Source Code](https://github.com/helm/charts/tree/master/stable/airflow)
+[SQLite issue](https://github.com/helm/charts/issues/22477)
+[kubectl commands](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands)
