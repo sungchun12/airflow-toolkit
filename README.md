@@ -1,18 +1,18 @@
 # airflow-toolkit
 
-End Goal: Any airflow project day 1, can spin up and get something working locally AND cloud composer with simple setup
+**End Goal**: Any airflow project day 1, can spin up and get something working locally AND transferrable to a Cloud Cluster
 
 [Airflow Helm Chart](https://hub.helm.sh/charts/stable/airflow)
 
-Success Criteria:
+**Success Criteria**:
 
-- Setup on any macbook pro
-- Run a 2 meaningful example DAGs
-- Idempotent(rerun the setup scripts as many times)
-- NOT meant for CICD pipeline runs
-- May have to write different configs for
-- Can run pytests
-- Same DAGs work in both local and GCP
+- Works on local computer with docker desktop installed
+- Run meaningful example DAGs with passing tests
+- Easily setup and teardown
+- Sync DAGs real-time with local git repo directory
+- Can be reusable in another kubernetes cluster
+- Can run pytests for component-level and end to end tests
+- Same DAGs work in both local computer and Google Cloud Composer
 
 ## One Time Installs
 
