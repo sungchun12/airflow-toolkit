@@ -39,8 +39,10 @@ brew install helm
 curl https://sdk.cloud.google.com > install.sh
 bash install.sh --disable-prompts
 
+# close the shell and start a new one for the changes to take effect
+
 # Authenticate with service-account key file
-gcloud beta auth activate-service-account --key-file account.json
+gcloud auth activate-service-account --key-file account.json
 
 gcloud components install kubectl
 
