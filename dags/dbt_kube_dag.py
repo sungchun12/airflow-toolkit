@@ -212,7 +212,7 @@ class dynamic_task_generator_utility:
 dynamic_task_generator = dynamic_task_generator_utility()
 default_args = dynamic_task_generator.default_args
 
-with DAG("dbt_kube_dag_cloud_composer", default_args=default_args, schedule_interval=None) as dag:
+with DAG("dbt_kube_dag", default_args=default_args, schedule_interval=None) as dag:
     dummy_task_1 = DummyOperator(task_id="dbt_dummy_task_1")
 
     dbt_dynamic_tasks = dynamic_task_generator.dbt_dynamic_tasks()
