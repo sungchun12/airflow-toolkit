@@ -187,7 +187,7 @@ class dynamic_task_generator_utility:
             KubernetesPodOperator(
                 task_id=task_id,
                 name=task_id,
-                namespace="default",
+                namespace="airflow", # should be "airflow" for local development
                 image=self.runtime_parameters.get("image"),
                 cmds=["/bin/bash", "-cx"],
                 arguments=[
