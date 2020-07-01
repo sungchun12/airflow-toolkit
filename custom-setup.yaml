@@ -157,6 +157,8 @@ airflow:
       mountPath: /home/airflow/.kube/
     - name: service-account
       mountPath: /account.json
+    - name: tests
+      mountPath: opt/airflow/tests
   ## extra volumes for the web/scheduler/worker Pods
   ##
   ## EXAMPLE:
@@ -177,6 +179,9 @@ airflow:
     - name: service-account
       hostPath:
         path: /Users/sung/Desktop/airflow-toolkit/account.json
+    - name: tests
+      hostPath:
+        path: /Users/sung/Desktop/airflow-toolkit/tests
 
 ###################################
 # Airflow - Scheduler Configs
