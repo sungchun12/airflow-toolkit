@@ -29,6 +29,7 @@ https://www.docker.com/products/docker-desktop
 
 # install minikube
 # brew install minikube
+#TODO: include section about downloading kubectl and other little tools as needed
 
 # install helm
 brew install helm
@@ -40,6 +41,8 @@ bash install.sh --disable-prompts
 
 # Authenticate with service-account key file
 gcloud beta auth activate-service-account --key-file account.json
+
+gcloud components install kubectl
 
 # Configure Docker
 gcloud auth configure-docker
@@ -54,6 +57,10 @@ source setup.sh
 
 # start a remote shell in the airflow worker for ad hoc operations or to run pytests
 kubectl exec -it airflow-worker-0 -- /bin/bash
+
+# import variables after you're in the airflow worker remote shell
+airflow variables --import /opt/airflow/dag_environment_configs/dev/reset_dag_configs_dev_pytest.json
+airflow variables --import /opt/airflow/dag_environment_configs/dev/dbt_kube_config_pytest_dev.json
 
 # run pod process in background
 kubectl exec -it airflow-worker-0 -- 'pytest'
