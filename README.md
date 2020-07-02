@@ -73,9 +73,37 @@ source teardown.sh
 
 ```
 
+## General Kubernetes Concepts
+
+- The airflow kubernetes cluster will use the service account within the `airflow` namespace to pull the image from Google Container Registry based on the manually created secret: `gcr-key`
+
+```bash
+kubectl get serviceaccounts
+
+NAME      SECRETS   AGE
+airflow   1         43m
+default   1         43m
+```
+
+- The `KubernetesPodOperator` will pull the image based on the permissions above BUT will run `dbt` operations based on the manually created secret: `dbt-secret`
+
+```bash
+kubectl get secrets
+
+NAME                            TYPE                                  DATA   AGE
+airflow-postgresql              Opaque                                1      50m
+airflow-redis                   Opaque                                1      50m
+airflow-token-zfpz8             kubernetes.io/service-account-token   3      50m
+dbt-secret                      Opaque                                1      50m
+default-token-pz55g             kubernetes.io/service-account-token   3      50m
+gcr-key                         kubernetes.io/dockerconfigjson        1      50m
+sh.helm.release.v1.airflow.v1   helm.sh/release.v1                    1      50m
+```
+
 ### Resources
 
 [Helm Quickstart](https://helm.sh/docs/intro/quickstart/)
 [Helm Chart Source Code](https://github.com/helm/charts/tree/master/stable/airflow)
 [SQLite issue](https://github.com/helm/charts/issues/22477)
 [kubectl commands](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands)
+[What is a pod?](https://kubernetes.io/docs/concepts/workloads/pods/pod/)
