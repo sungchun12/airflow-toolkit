@@ -102,9 +102,9 @@ sh.helm.release.v1.airflow.v1   helm.sh/release.v1                    1      50m
 
 ### Resources
 
-[Helm Quickstart](https://helm.sh/docs/intro/quickstart/)
-[Helm Chart Official Release](https://hub.helm.sh/charts/stable/airflow)
-[Helm Chart Source Code](https://github.com/helm/charts/tree/master/stable/airflow)
-[SQLite issue](https://github.com/helm/charts/issues/22477)
-[kubectl commands](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands)
-[What is a pod?](https://kubernetes.io/docs/concepts/workloads/pods/pod/)
+- [Helm Quickstart](https://helm.sh/docs/intro/quickstart/)
+- [Helm Chart Official Release](https://hub.helm.sh/charts/stable/airflow)
+- [Helm Chart Source Code](https://github.com/helm/charts/tree/master/stable/airflow)
+- [SQLite issue](https://github.com/helm/charts/issues/22477)
+- [kubectl commands](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands)
+- [What is a pod?](https://kubernetes.io/docs/concepts/workloads/pods/pod/)
