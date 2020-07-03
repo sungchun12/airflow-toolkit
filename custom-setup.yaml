@@ -158,7 +158,9 @@ airflow:
     - name: service-account
       mountPath: /account.json
     - name: tests
-      mountPath: opt/airflow/tests
+      mountPath: /opt/airflow/tests
+    - name: post-deploy
+      mountPath: /home/airflow/post_deploy/
   ## extra volumes for the web/scheduler/worker Pods
   ##
   ## EXAMPLE:
@@ -182,6 +184,9 @@ airflow:
     - name: tests
       hostPath:
         path: /Users/sung/Desktop/airflow-toolkit/tests
+    - name: post-deploy
+      hostPath:
+        path: /Users/Sung/Desktop/airflow-toolkit/scripts/
 
 ###################################
 # Airflow - Scheduler Configs
