@@ -150,15 +150,15 @@ airflow:
   ##
   extraVolumeMounts: # this will get the volume and mount it to that path in the container
     - name: dags
-      mountPath: /opt/airflow/dags # location in the container it will put the directory mentioned below.
+      mountPath: /opt/airflow/dags/ # location in the container it will put the directory mentioned below.
     - name: dag-environment-configs
-      mountPath: /opt/airflow/dag_environment_configs
+      mountPath: /opt/airflow/dag_environment_configs/
     - name: kube-config
       mountPath: /home/airflow/.kube/
     - name: service-account
       mountPath: /account.json
     - name: tests
-      mountPath: /opt/airflow/tests
+      mountPath: /opt/airflow/tests/
     - name: post-deploy
       mountPath: /home/airflow/post_deploy/
   ## extra volumes for the web/scheduler/worker Pods
@@ -171,19 +171,19 @@ airflow:
   extraVolumes: # this will create the volume from the directory
     - name: dags
       hostPath:
-        path: /Users/sung/Desktop/airflow-toolkit/dags # For you this is something like /home/*user*/github/airflowDAGs/dags
+        path: /Users/sung/Desktop/airflow-toolkit/dags/ # For you this is something like /home/*user*/github/airflowDAGs/dags
     - name: dag-environment-configs
       hostPath:
-        path: /Users/sung/Desktop/airflow-toolkit/dag_environment_configs
+        path: /Users/sung/Desktop/airflow-toolkit/dag_environment_configs/
     - name: kube-config
       hostPath:
-        path: /Users/sung/Desktop/airflow-toolkit/.kube
+        path: /Users/sung/Desktop/airflow-toolkit/.kube/
     - name: service-account
       hostPath:
         path: /Users/sung/Desktop/airflow-toolkit/account.json
     - name: tests
       hostPath:
-        path: /Users/sung/Desktop/airflow-toolkit/tests
+        path: /Users/sung/Desktop/airflow-toolkit/tests/
     - name: post-deploy
       hostPath:
         path: /Users/Sung/Desktop/airflow-toolkit/scripts/
