@@ -54,6 +54,12 @@ gcloud auth configure-docker
 ## Setup Airflow
 
 ```bash
+# optional: create a matching local venv for IDE syntax highlighting
+python3 -m venv py37_venv
+source py37_venv/bin/activate
+pip3 install --upgrade pip
+pip3 install -r requirements.txt
+
 # run the full setup script
 source setup.sh
 
