@@ -79,6 +79,23 @@ source teardown.sh
 
 ```
 
+## View Kubernetes Dashboard
+
+```bash
+# install kubernetes dashboard
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-rc3/aio/deploy/recommended.yaml
+
+# start the web server
+kubectl proxy
+
+# view the dashboard
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy#/login
+
+# copy and paste the token output into dashboard UI
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk '/^deployment-controller-token-/{print $1}') | awk '$1=="token:"{print $2}'
+
+```
+
 ## General Kubernetes Concepts
 
 - The airflow kubernetes cluster will use the service account within the `airflow` namespace to pull the image from Google Container Registry based on the manually created secret: `gcr-key`
@@ -114,3 +131,4 @@ sh.helm.release.v1.airflow.v1   helm.sh/release.v1                    1      50m
 - [SQLite issue](https://github.com/helm/charts/issues/22477)
 - [kubectl commands](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands)
 - [What is a pod?](https://kubernetes.io/docs/concepts/workloads/pods/pod/)
+- [Kubernetes Dashboard for Docker Desktop](https://medium.com/backbase/kubernetes-in-local-the-easy-way-f8ef2b98be68)
