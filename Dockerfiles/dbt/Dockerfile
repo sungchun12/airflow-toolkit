@@ -31,15 +31,11 @@ RUN groupadd dbtgroup \
 
 # Make entrypoint.sh executable and install dbt dependencies
 # && dbt deps \
-# && touch /dbt/id_rsa \
-# && chown dbtuser: /dbt/id_rsa \
-# 
 RUN touch /dbt/account.json \
     && chown dbtuser: /dbt/account.json \
     && chown dbtuser: /entrypoint.sh \
     && chmod +x /entrypoint.sh \
-    && chmod 700 /dbt \
-    && chown -R dbtuser:dbtgroup /dbt 
+    && chown -R dbtuser:dbtgroup /dbt
 
 USER dbtuser
 
