@@ -16,6 +16,15 @@ RUN pip install dbt==0.17.0
 ENV DBT_DIR /dbt
 ENV DBT_PROFILES_DIR /dbt/
 
+# Make ssh dir with blank files
+RUN mkdir /root/.ssh/
+RUN touch /root/.ssh/known_hosts
+RUN touch /root/.ssh/id_rsa
+RUN touch /root/.ssh/id_rsa.pub
+RUN chmod 600 /root/.ssh/
+# RUN chown -R root:root /root/.ssh/
+
+
 # Set working directory
 WORKDIR $DBT_DIR
 
@@ -24,24 +33,23 @@ WORKDIR $DBT_DIR
 
 # ADD $DBT_FILES $DBT_DIR
 ADD entrypoint.sh /entrypoint.sh
+RUN touch /dbt/account.json
 
 # Add dbt user
-RUN groupadd dbtgroup \
-    && useradd -ms /bin/bash dbtuser -G dbtgroup
+# RUN groupadd dbtgroup \
+#     && useradd -ms /bin/bash dbtuser -G dbtgroup
 
 # Make entrypoint.sh executable and install dbt dependencies
 # && dbt deps \
-# && touch /dbt/id_rsa \
-# && chown dbtuser: /dbt/id_rsa \
-# 
-RUN touch /dbt/account.json \
-    && chown dbtuser: /dbt/account.json \
-    && chown dbtuser: /entrypoint.sh \
-    && chmod +x /entrypoint.sh \
-    && chmod 700 /dbt \
-    && chown -R dbtuser:dbtgroup /dbt 
+# RUN touch /dbt/account.json \
+#     && chown dbtuser: /dbt/account.json \
+#     && chown dbtuser: /entrypoint.sh \
+#     && chmod +x /entrypoint.sh \
+#     && chown -R dbtuser:dbtgroup /dbt
 
-USER dbtuser
+# USER dbtuser
+
+# USER admin
 
 # Run dbt
 ENTRYPOINT ["/entrypoint.sh"]
