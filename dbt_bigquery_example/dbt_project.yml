@@ -1,0 +1,52 @@
+name: "jaffle_shop"
+# Specify a requirement on an _exact_ version of dbt
+require-dbt-version: 0.17.0
+version: 1.0.0
+config-version: 2
+profile: "jaffle_shop"
+source-paths: ["models"]
+analysis-paths: ["analysis"]
+test-paths: ["tests"]
+data-paths: ["data"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"] # https://docs.getdbt.com/docs/snapshots#section-what-are-snapshots-
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_modules"
+  - "logs"
+
+# Use hooks to grant permissions to SQL table readers
+# https://docs.getdbt.com/docs/hooks
+
+# example hook for audit tables before and after model runs
+# models:
+#   project-name:
+#     pre-hook: "insert into _dbt.audit (event_name, event_timestamp, event_schema, event_model) values ( 'starting model deployment', getdate(), '{{this.schema}}', '{{this.name}}')"
+#     post-hook: "insert into _dbt.audit (event_name, event_timestamp, event_schema, event_model) values ( 'completed model deployment', getdate(), '{{this.schema}}', '{{this.name}}')"
+
+quoting:
+  database: true # translates to gcp project
+  identifier: true
+  schema: true # translates to gcp dataset
+
+seeds:
+  jaffle_shop: # you must include the project name
+    raw_orders:
+      +column_types:
+        order_date: timestamp
+
+# https://docs.getdbt.com/docs/configuring-incremental-models
+models:
+  +persist_docs: #allows for docs to flow through to BigQuery console tables/views
+    relation: true
+    columns: true
+  jaffle_shop:
+    core:
+      materialized: table #https://docs.getdbt.com/docs/materializations
+      # schema: core # (uncomment if you create table names based on model sub directory.
+      # ex: this will append "_core" to the sql tables in the "core" subdirectory )
+    staging:
+      materialized: view
+      tags: ["staging", "hourly"]

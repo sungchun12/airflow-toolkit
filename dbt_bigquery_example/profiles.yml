@@ -1,0 +1,30 @@
+# Note that only one of these targets is required
+# setup IAM roles: https://docs.getdbt.com/docs/profile-bigquery#section-required-permissions
+
+jaffle_shop:
+  # use the below for oauth authenticated dbt runs
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth # for production runs: https://docs.getdbt.com/docs/profile-bigquery#section-service-account-file-authentication
+      project: "{{ env_var('PROJECT_ID', 'wam-bam-258119') }}" # parameterize project for dbt runs based on environment variable with default project
+      dataset: dbt_bq_example # You can also use "schema" here, can add env_var here if desired
+      threads: 8 # https://docs.getdbt.com/docs/configure-your-profile#section-understanding-threads
+      timeout_seconds: 300
+      location: US # Optional, one of US or EU
+      priority: interactive # interactive or batch
+
+    # use the below for service account authenticated dbt runs
+    service_account_runs:
+      type: bigquery
+      method: service-account # for production runs: https://docs.getdbt.com/docs/profile-bigquery#section-service-account-file-authentication
+      project: "{{ env_var('PROJECT_ID', 'wam-bam-258119') }}" # parameterize project for dbt runs based on environment variable with default project
+      dataset: dbt_bq_example # You can also use "schema" here
+      threads: 8 # https://docs.getdbt.com/docs/configure-your-profile#section-understanding-threads
+      keyfile: "{{ env_var('DBT_GOOGLE_BIGQUERY_KEYFILE', 'service_account.json') }}"
+      timeout_seconds: 300
+      location: US # Optional, one of US or EU
+      priority: interactive # interactive or batch
+  config:
+    send_anonymous_usage_stats: False

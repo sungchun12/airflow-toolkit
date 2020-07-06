@@ -60,6 +60,8 @@ source py37_venv/bin/activate
 pip3 install --upgrade pip
 pip3 install -r requirements.txt
 
+minikube start --cpus 4 --memory 8192
+
 # run the full setup script
 source setup.sh
 
@@ -67,12 +69,17 @@ source setup.sh
 kubectl exec -it airflow-worker-0 -- /bin/bash
 
 # import variables after you're in the airflow worker remote shell
+source /opt/airflow/dag_environment_configs/post_deploy.sh
 airflow variables --import /opt/airflow/dag_environment_configs/dev/reset_dag_configs_dev_pytest.json
 airflow variables --import /opt/airflow/dag_environment_configs/dev/dbt_kube_config_pytest_dev.json
 
 # run pod process in background
-kubectl exec -it airflow-worker-0 -- 'pytest'
-kubectl exec -it airflow-worker-0 -- "ls"
+kubectl exec -it airflow-worker-0 -- /bin/bash -c 'source /home/airflow/post_deploy/post_deploy.sh'
+kubectl exec -it airflow-worker-0 -- "ls /home/airflow/post_deploy/"
+
+find /opt/airflow/ -type d -exec chmod 775 {} \;
+find /opt/airflow/ -type f -exec chmod 664 {} \;
+exit
 
 # teardown the cluster
 source teardown.sh
