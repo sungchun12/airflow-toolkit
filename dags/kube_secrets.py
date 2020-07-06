@@ -13,3 +13,10 @@ DBT_SERVICE_ACCOUNT = Secret(
     # Key of a secret stored in this Secret object
     key="account.json",
 )
+
+GIT_SECRET_ID_RSA_PRIVATE = Secret(
+    deploy_type="volume",
+    deploy_target="/dbt/secrets/",
+    secret="ssh-key-secret",
+    key="id_rsa",
+)

@@ -48,6 +48,11 @@ gcloud components install kubectl
 
 # Configure Docker
 gcloud auth configure-docker
+# Create SSH key pair for secure git clones
+ssh-keygen
+
+# copy and paste contents to your git repo SSH keys section
+cat ~/.ssh/id_rsa.pub
 
 ```
 
@@ -64,6 +69,12 @@ minikube start --cpus 4 --memory 8192
 
 # run the full setup script
 source setup.sh
+
+# create ssh key directly into the cluster
+# example:
+# kubectl create secret generic ssh-key-secret --from-file=id_rsa=$HOME/.ssh/id_rsa --from-file=id_rsa.pub=$HOME/.ssh/id_rsa.pub
+
+kubectl create secret generic ssh-key-secret --from-file=id_rsa=/path/to/.ssh/id_rsa --from-file=id_rsa.pub=/path/to/.ssh/id_rsa.pub
 
 # start a remote shell in the airflow worker for ad hoc operations or to run pytests
 kubectl exec -it airflow-worker-0 -- /bin/bash

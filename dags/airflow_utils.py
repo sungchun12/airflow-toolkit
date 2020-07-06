@@ -1,13 +1,19 @@
 """ This file contains common operators/functions to be used across multiple DAGs """
+import os
 from airflow import configuration as conf
 
-GIT_REPO = "https://github.com/sungchun12/dbt_bigquery_example.git"
+
+GIT_REPO = "git@github.com:sungchun12/airflow-toolkit.git"
 PROJECT_ID = "wam-bam-258119"
-DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:latest"
+DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-sung-latest"
 
 # TODO: fix kubernetes namespace context
 # namespace = conf.get("kubernetes", "NAMESPACE")
 namespace = "airflow"
+
+# env = os.environ.copy()
+# GIT_BRANCH = env["GIT_BRANCH"]
+GIT_BRANCH = "feature-helm-local-deploy"
 
 # GitLab default settings for all DAGs
 def set_kube_pod_defaults(namespace):
@@ -37,13 +43,13 @@ def set_kube_pod_defaults(namespace):
 kube_pod_defaults = set_kube_pod_defaults(namespace)
 pod_env_vars = {"PROJECT_ID": PROJECT_ID}
 
-# commands to pass to dbt task list
 git_clone_cmds = f"""
-    git clone {GIT_REPO}"""
+    ls -ltr &&
+    GIT_SSH_COMMAND='ssh -i /dbt/secrets/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' git clone -b {GIT_BRANCH} {GIT_REPO}"""
 
 dbt_setup_cmds = f"""
     {git_clone_cmds} &&
-    cd dbt_bigquery_example &&
+    cd airflow-toolkit/dbt_bigquery_example &&
     /entrypoint.sh &&
     ls -ltr &&
     echo $PROJECT_ID &&
