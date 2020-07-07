@@ -48,6 +48,7 @@ gcloud components install kubectl
 
 # Configure Docker
 gcloud auth configure-docker
+
 # Create SSH key pair for secure git clones
 ssh-keygen
 
@@ -70,27 +71,17 @@ minikube start --cpus 4 --memory 8192
 # run the full setup script
 source setup.sh
 
-# create ssh key directly into the cluster
-# example:
-# kubectl create secret generic ssh-key-secret --from-file=id_rsa=$HOME/.ssh/id_rsa --from-file=id_rsa.pub=$HOME/.ssh/id_rsa.pub
-
-kubectl create secret generic ssh-key-secret --from-file=id_rsa=/path/to/.ssh/id_rsa --from-file=id_rsa.pub=/path/to/.ssh/id_rsa.pub
-
 # start a remote shell in the airflow worker for ad hoc operations or to run pytests
 kubectl exec -it airflow-worker-0 -- /bin/bash
 
-# import variables after you're in the airflow worker remote shell
+# import variables after you're in the airflow worker interactive shell
 source /opt/airflow/dag_environment_configs/post_deploy.sh
 airflow variables --import /opt/airflow/dag_environment_configs/dev/reset_dag_configs_dev_pytest.json
 airflow variables --import /opt/airflow/dag_environment_configs/dev/dbt_kube_config_pytest_dev.json
 
-# run pod process in background
-kubectl exec -it airflow-worker-0 -- /bin/bash -c 'source /home/airflow/post_deploy/post_deploy.sh'
-kubectl exec -it airflow-worker-0 -- "ls /home/airflow/post_deploy/"
-
-find /opt/airflow/ -type d -exec chmod 775 {} \;
-find /opt/airflow/ -type f -exec chmod 664 {} \;
-exit
+# run pod process in remote shell
+kubectl exec -it airflow-worker-0 -- 'pytest'
+kubectl exec -it airflow-worker-0 -- "ls"
 
 # teardown the cluster
 source teardown.sh
