@@ -13,7 +13,7 @@ namespace = "airflow"
 
 # env = os.environ.copy()
 # GIT_BRANCH = env["GIT_BRANCH"]
-GIT_BRANCH = "feature-helm-local-deploy"
+GIT_BRANCH = "feature-work"
 
 # GitLab default settings for all DAGs
 def set_kube_pod_defaults(namespace):
