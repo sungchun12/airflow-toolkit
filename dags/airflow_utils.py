@@ -43,15 +43,13 @@ def set_kube_pod_defaults(namespace):
 kube_pod_defaults = set_kube_pod_defaults(namespace)
 pod_env_vars = {"PROJECT_ID": PROJECT_ID}
 
+# TODO: clean up these commands
 git_clone_cmds = f"""
-    ls -ltr &&
-    GIT_SSH_COMMAND='ssh -i /dbt/secrets/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' git clone -b {GIT_BRANCH} {GIT_REPO}"""
+    GIT_SSH_COMMAND='ssh -i .ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' git clone -b {GIT_BRANCH} {GIT_REPO}"""
 
 dbt_setup_cmds = f"""
     {git_clone_cmds} &&
     cd airflow-toolkit/dbt_bigquery_example &&
     /entrypoint.sh &&
-    ls -ltr &&
-    echo $PROJECT_ID &&
     export DBT_PROFILES_DIR=$(pwd) &&
     export DBT_GOOGLE_BIGQUERY_KEYFILE=/dbt/account.json"""
