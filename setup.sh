@@ -47,17 +47,21 @@ kubectl get pods
 echo "***********************"
 echo "Create Kubernetes Secrets for the local cluster to download docker images from Google Container Registry based on Service Account"
 echo "***********************"
-# Create docker-registry key for k3d
+# Create docker-registry key for Kubernetes
+# https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-secret-by-providing-credentials-on-the-command-line
 kubectl create secret docker-registry gcr-key --docker-server=gcr.io --docker-username=_json_key --docker-password="$(cat account.json)" --docker-email=example@example.com
 
-# Set default k3d serviceaccount to use our created gcr-key for pulling images
+# Set default kubernetes serviceaccount to use our created gcr-key for pulling images
 kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "gcr-key"}]}'
 
 echo "***********************"
-echo "Create Kubernetes Secrets for dbt operations based on Service Account, to be used later in KubernetesPodOperator"
+echo "Create Kubernetes Secrets for dbt operations based on Service Account ssh-keygen, to be used later in KubernetesPodOperator"
 echo "***********************"
 # create dbt-secret with SERVICE_ACCOUNT
 kubectl create secret generic dbt-secret --from-file=account.json
+
+# create the ssh key secret
+kubectl create secret generic ssh-key-secret --from-file=id_rsa=$HOME/.ssh/id_rsa --from-file=id_rsa.pub=$HOME/.ssh/id_rsa.pub
 
 # list all the secrets
 kubectl get secrets
