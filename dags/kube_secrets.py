@@ -2,6 +2,7 @@ from airflow.contrib.kubernetes.secret import Secret
 
 
 # GCP service account for dbt operations with BigQuery
+# TODO: make this a volume deploy type?
 DBT_SERVICE_ACCOUNT = Secret(
     # Expose the secret as environment variable.
     deploy_type="env",

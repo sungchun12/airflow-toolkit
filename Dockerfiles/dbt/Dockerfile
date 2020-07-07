@@ -40,4 +40,5 @@ RUN touch /dbt/account.json \
 USER dbtuser
 
 # Run dbt
+#TODO: do I need this script?
 ENTRYPOINT ["/entrypoint.sh"]

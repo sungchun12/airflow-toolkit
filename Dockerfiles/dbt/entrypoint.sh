@@ -9,8 +9,6 @@
 
 # Create account file and change permissions
 echo $SERVICE_ACCOUNT > /dbt/account.json
-chmod 644 /dbt/account.json
-chmod 644 /dbt/secrets/id_rsa
 
 # Accept commands passed to the container from shell.
 $*
