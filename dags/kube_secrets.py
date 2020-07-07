@@ -16,7 +16,7 @@ DBT_SERVICE_ACCOUNT = Secret(
 
 GIT_SECRET_ID_RSA_PRIVATE = Secret(
     deploy_type="volume",
-    deploy_target="/dbt/secrets/",
+    deploy_target="/dbt/.ssh/",
     secret="ssh-key-secret",
     key="id_rsa",
 )
