@@ -55,10 +55,13 @@ kubectl create secret docker-registry gcr-key --docker-server=gcr.io --docker-us
 kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "gcr-key"}]}'
 
 echo "***********************"
-echo "Create Kubernetes Secrets for dbt operations based on Service Account, to be used later in KubernetesPodOperator"
+echo "Create Kubernetes Secrets for dbt operations based on Service Account ssh-keygen, to be used later in KubernetesPodOperator"
 echo "***********************"
 # create dbt-secret with SERVICE_ACCOUNT
 kubectl create secret generic dbt-secret --from-file=account.json
+
+# create the ssh key secret
+kubectl create secret generic ssh-key-secret --from-file=id_rsa=$HOME/.ssh/id_rsa --from-file=id_rsa.pub=$HOME/.ssh/id_rsa.pub
 
 # list all the secrets
 kubectl get secrets

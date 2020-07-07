@@ -14,3 +14,4 @@ lsof -i:8080 -i:8001 -Fp | sed 's/^p//' | xargs kill -9
 # delete secrets for smoother setup if someone needs to change the service account
 kubectl delete secret dbt-secret
 kubectl delete secret gcr-key
+kubectl delete secret ssh-key-secret
