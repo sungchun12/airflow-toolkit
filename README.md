@@ -151,3 +151,4 @@ sh.helm.release.v1.airflow.v1   helm.sh/release.v1                    1      50m
 - [kubectl commands](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands)
 - [What is a pod?](https://kubernetes.io/docs/concepts/workloads/pods/pod/)
 - [Kubernetes Dashboard for Docker Desktop](https://medium.com/backbase/kubernetes-in-local-the-easy-way-f8ef2b98be68)
+- [Cost effective way to scale the airflow scheduler](https://medium.com/@royzipuff/the-smarter-way-of-scaling-with-composers-airflow-scheduler-on-gke-88619238c77b)
