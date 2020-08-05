@@ -72,7 +72,7 @@ echo "***********************"
 # install airflow helm chart
 # https://helm.sh/docs/helm/helm_install/
 helm install airflow stable/airflow \
---version 7.1.6 \
+--version 7.3.0 \
 --namespace "airflow" \
 --values ./custom-setup.yaml
 
