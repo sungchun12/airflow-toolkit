@@ -59,6 +59,7 @@ gcloud auth configure-docker
 ssh-keygen
 
 # copy and paste contents to your git repo SSH keys section
+# https://github.com/settings/keys
 cat ~/.ssh/id_rsa.pub
 
 # clone with SSH tunnel into desktop
