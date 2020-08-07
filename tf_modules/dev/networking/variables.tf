@@ -3,8 +3,8 @@
 # These variables are expected to be passed in by the operator
 # ---------------------------------------------------------------------------------------------------------------------
 variable "project" {
-  type    = string
-  default = ""
+  description = "project where terraform will setup these services"
+  type        = string
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

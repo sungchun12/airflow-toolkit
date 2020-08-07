@@ -13,6 +13,7 @@ module "api-enable-services" {
 
 module "compute_engine" {
   source             = "./dev/compute_engine"
+  project            = var.project
   subnetwork_id      = module.networking.subnetwork
   bastion_host_email = module.service_accounts.service-account-bastion-host-email
   # depends_on         = [module.api-enable-services] #TODO(developer): uncomment once version v0.13.0 is in GA, terragrunt handles module dependencies for now
@@ -20,6 +21,7 @@ module "compute_engine" {
 
 module "cloud_composer" {
   source                        = "./dev/cloud_composer"
+  project                       = var.project
   network                       = module.networking.network
   subnetwork                    = module.networking.subnetwork
   service_account               = module.service_accounts.composer-worker-service-account
@@ -29,10 +31,12 @@ module "cloud_composer" {
 }
 
 module "networking" {
-  source = "./dev/networking"
+  project = var.project
+  source  = "./dev/networking"
 }
 
 module "service_accounts" {
-  source = "./dev/service_accounts"
+  source  = "./dev/service_accounts"
+  project = var.project
 }
 

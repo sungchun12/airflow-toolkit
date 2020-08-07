@@ -1,5 +1,6 @@
 ########## VM SETUP BEGINS ###############
 resource "google_compute_instance" "bastion-host-to-composer" {
+  project      = var.project
   name         = var.name
   machine_type = var.machine_type
   zone         = var.zone

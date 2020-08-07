@@ -2,6 +2,11 @@
 # REQUIRED PARAMETERS
 # These variables are expected to be passed in by the operator
 # ---------------------------------------------------------------------------------------------------------------------
+variable "project" {
+  description = "project where terraform will setup these services"
+  type        = string
+}
+
 variable "network" {
   description = "A reference (self link) to the subnetwork to host the cluster in"
   type        = string
@@ -31,7 +36,6 @@ variable "services_secondary_range_name" {
 # OPTIONAL MODULE PARAMETERS
 # These variables have defaults, but may be overridden by the operator
 # ---------------------------------------------------------------------------------------------------------------------
-
 variable "name" {
   description = "Name of the cloud composer instance"
   type        = string

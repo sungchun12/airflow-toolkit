@@ -3,6 +3,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "google_composer_environment" "cloud-composer-env" {
+  project  = var.project
   provider = google-beta
   name     = var.name
   region   = var.region
