@@ -1,19 +1,12 @@
-# https://www.terraform.io/docs/providers/google/r/google_service_account_iam.html
-# add composer specific permissions
-# these are roles are too granular to add
-# composer.environments.get
-# container.clusters.get
-# container.clusters.list
-# container.clusters.getCredentials
-
 ##### setup bastion host service account to be attached to compute engine VM #####
 resource "google_service_account" "service-account-bastion-host" {
   project      = var.project
-  account_id   = "bastion-host-dev-account"
-  display_name = "Dev Service Account for accessing Composer Environment through bastion host"
-  description  = "Service account for dev purposes to access a private Composer Environment and run airflow/kubectl cli commands"
+  account_id   = var.account_id_bastion_host
+  display_name = var.display_name_bastion_host
+  description  = var.description_bastion_host
 }
 
+# hard-coded as this is specific to cloud composer enablement
 locals {
   bastion_service_account_roles = concat(var.bastion_service_account_roles_to_add, [
     "roles/composer.user",
@@ -36,11 +29,12 @@ resource "google_project_iam_binding" "bastion-host-entry" {
 # download private key after terraform creates
 resource "google_service_account" "service-account-iap-ssh" {
   project      = var.project
-  account_id   = "service-account-iap-ssh"
-  display_name = "A service account that can only ssh tunnel into the VM that then can access private IP composer"
-  description  = "look at display name"
+  account_id   = var.account_id_iap_ssh
+  display_name = var.display_name_iap_ssh
+  description  = var.description_iap_ssh
 }
 
+# hard-coded as this is specific to identity aware proxy ssh enablement
 locals {
   ssh_service_account_roles = concat(var.ssh_service_account_roles_to_add, [
     "roles/iap.tunnelResourceAccessor",
@@ -61,13 +55,13 @@ resource "google_project_iam_binding" "ssh-iap-compute-policy" {
 ##### setup service account to ensure composer environment is setup correctly #####
 resource "google_service_account" "service-account-composer" {
   project      = var.project
-  account_id   = "composer-dev-account"
-  display_name = "Dev Service Account for Composer Environment"
-  description  = "Service account for dev purposes to get a private Composer Environment running successfully"
+  account_id   = var.account_id_composer
+  display_name = var.display_name_composer
+  description  = var.description_composer
 }
 
 resource "google_project_iam_member" "composer-worker" {
   project = var.project
-  role    = "roles/composer.worker"
+  role    = "roles/composer.worker" # hard-coded as this is specific to cloud composer enablement
   member  = "serviceAccount:${google_service_account.service-account-composer.email}"
 }
