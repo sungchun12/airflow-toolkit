@@ -50,6 +50,7 @@ resource "google_composer_environment" "dev-composer" {
           description = s.description
           value       = s.value
         }]
+
         content {
           description = allowed_ip_range.value.description
           value       = allowed_ip_range.value.value
