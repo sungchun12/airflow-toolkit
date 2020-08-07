@@ -1,24 +1,22 @@
 ########## VM SETUP BEGINS ###############
 resource "google_compute_instance" "bastion-host-to-composer" {
-  name         = "bastion-host-to-composer"
-  machine_type = "n1-standard-1"
-  zone         = "us-central1-a"
+  name         = var.name
+  machine_type = var.machine_type
+  zone         = var.zone
 
-  tags = ["dev"]
+  tags = var.tags
 
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-9"
+      image = var.image
     }
   }
 
-  // Local SSD disk
   scratch_disk {
-    interface = "SCSI"
+    interface = var.interface
   }
 
   network_interface {
-    # subnetwork = google_compute_subnetwork.subnetwork-composer.id
     subnetwork = var.subnetwork_id
 
     access_config {
@@ -26,15 +24,12 @@ resource "google_compute_instance" "bastion-host-to-composer" {
     }
   }
 
-  metadata = {
-    block-project-ssh-keys = false
-  }
+  metadata = var.metadata
 
-  metadata_startup_script = "echo hi > /test.txt"
+  metadata_startup_script = var.metadata_startup_script
 
   service_account {
-    # email  = google_service_account.service-account-bastion-host.email
-    email = var.bastion_host_email
-    scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+    email  = var.bastion_host_email
+    scopes = var.scopes
   }
 }
