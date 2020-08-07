@@ -1,9 +1,19 @@
+# ---------------------------------------------------------------------------------------------------------------------
+# REQUIRED PARAMETERS
+# These variables are expected to be passed in by the operator
+# ---------------------------------------------------------------------------------------------------------------------
 variable "project" {
+  type    = string
+  default = ""
 }
 
+# ---------------------------------------------------------------------------------------------------------------------
+# OPTIONAL MODULE PARAMETERS
+# These variables have defaults, but may be overridden by the operator
+# ---------------------------------------------------------------------------------------------------------------------
 variable "api_services" {
   description = "list of Google Cloud apis to enable when launching terraform"
-  type        = list
+  type        = list(string)
   default     = ["datafusion.googleapis.com", "composer.googleapis.com"]
 }
 
