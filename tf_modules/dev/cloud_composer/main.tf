@@ -2,7 +2,7 @@
 # SETUP PRIVATE IP CLOUD COMPOSER
 # ---------------------------------------------------------------------------------------------------------------------
 
-resource "google_composer_environment" "dev-composer" {
+resource "google_composer_environment" "cloud-composer-env" {
   provider = google-beta
   name     = var.name
   region   = var.region
