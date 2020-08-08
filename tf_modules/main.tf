@@ -31,8 +31,8 @@ module "cloud_composer" {
 }
 
 module "networking" {
-  project = var.project
   source  = "./dev/networking"
+  project = var.project
 }
 
 module "service_accounts" {
