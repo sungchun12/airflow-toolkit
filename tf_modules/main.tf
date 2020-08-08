@@ -2,6 +2,12 @@
 # DEPLOY A COMPREHENSIVE CLOUD COMPOSER ENVIRONMENT WITH SUPPORTING INFRASTRUCTURE AND NETWORKING
 # This module serves as the main interface for all the supporting modules
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ---------------------------------------------------------------------------------------------------------------------
+# IMPORT MODULES
+# This root module imports and passes through project wide variables
+# Detailed default variables contained within respective module directory
+# -------------------------------------------------------------------------------------------------------------------
 module "api-enable-services" {
   source  = "./dev/enable_apis"
   project = var.project
