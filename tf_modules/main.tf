@@ -1,11 +1,7 @@
-# ---------------------------------------------------------------------------------------------------------------------
-# ENABLE APIS
-# These are expected to be passed in by the operator as a list
-# This module is most useful when it depends on a brand new project deployed by terraform too
-# Note: https://github.com/terraform-google-modules/terraform-google-project-factory/tree/master/modules/project_services
-# Hope and pray this comes soon: https://github.com/hashicorp/terraform/issues/10462#issuecomment-527651371
-# ---------------------------------------------------------------------------------------------------------------------
-
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# DEPLOY A COMPREHENSIVE CLOUD COMPOSER ENVIRONMENT WITH SUPPORTING INFRASTRUCTURE AND NETWORKING
+# This module serves as the main interface for all the supporting modules
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 module "api-enable-services" {
   source  = "./dev/enable_apis"
   project = var.project
