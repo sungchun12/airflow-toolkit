@@ -9,12 +9,12 @@
 # Detailed default variables contained within respective module directory
 # -------------------------------------------------------------------------------------------------------------------
 module "api-enable-services" {
-  source  = "./dev/enable_apis"
+  source  = "./enable_apis"
   project = var.project
 }
 
 module "compute_engine" {
-  source             = "./dev/compute_engine"
+  source             = "./compute_engine"
   project            = var.project
   subnetwork_id      = module.networking.subnetwork
   bastion_host_email = module.service_accounts.service-account-bastion-host-email
@@ -22,7 +22,7 @@ module "compute_engine" {
 }
 
 module "cloud_composer" {
-  source                        = "./dev/cloud_composer"
+  source                        = "./cloud_composer"
   project                       = var.project
   network                       = module.networking.network
   subnetwork                    = module.networking.subnetwork
@@ -33,11 +33,11 @@ module "cloud_composer" {
 }
 
 module "networking" {
-  source  = "./dev/networking"
+  source  = "./networking"
   project = var.project
 }
 
 module "service_accounts" {
-  source  = "./dev/service_accounts"
+  source  = "./service_accounts"
   project = var.project
 }
