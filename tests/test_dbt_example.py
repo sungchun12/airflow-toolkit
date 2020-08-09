@@ -5,7 +5,7 @@ import time
 from google.cloud import secretmanager
 
 # import created modules
-import dags.dbt_kube_dag as pilot_pipeline
+import dags.examples.dbt_example as pilot_pipeline
 from airflow.models import Variable
 from airflow.operators.dummy_operator import DummyOperator
 import json
