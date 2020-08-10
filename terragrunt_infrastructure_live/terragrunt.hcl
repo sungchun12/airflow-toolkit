@@ -58,7 +58,7 @@ remote_state {
     location    = "${local.region}"
     credentials = "${local.credentials}"
     bucket      = "secure-bucket-tfstate-airflow-infra-${local.region}"
-    prefix      = "${local.environment}"
+    prefix      = "${path_relative_to_include()}"
   }
 }
 
