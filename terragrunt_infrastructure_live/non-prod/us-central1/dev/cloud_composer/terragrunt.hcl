@@ -33,6 +33,8 @@ dependency "networking" {
   }
 
   mock_outputs_allowed_terraform_commands = ["plan", "validate"]
+
+  skip_outputs = true
 }
 
 dependency "service_accounts" {
@@ -43,6 +45,8 @@ dependency "service_accounts" {
   }
 
   mock_outputs_allowed_terraform_commands = ["plan", "validate"]
+
+  skip_outputs = true
 }
 
 dependencies {
