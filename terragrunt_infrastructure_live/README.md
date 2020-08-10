@@ -4,6 +4,18 @@ This directory is intended to keep your terraform code DRY using terragrunt. If 
 
 There is a simple dev example, and you can mirror the folder structure for other environments like QA and PROD.
 
+## Deployment Instructions
+
+```bash
+cd non-prod/us-central1/
+
+terragrunt plan-all
+```
+
+## Notes
+
+terraform keeps overriding state as modules run in parallel to compete for state
+
 ## Resources
 
 [Keep your Terraform code DRY](https://terragrunt.gruntwork.io/docs/features/keep-your-terraform-code-dry/)
