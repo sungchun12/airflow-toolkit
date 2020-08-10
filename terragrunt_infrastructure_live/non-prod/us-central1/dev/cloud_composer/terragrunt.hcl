@@ -39,7 +39,7 @@ dependency "service_accounts" {
   config_path = "../service_accounts"
 
   mock_outputs = {
-    composer-worker-service-account = "service_account"
+    composer-worker-service-account = "service-account-compute@developer.gserviceaccount.com"
   }
 
   mock_outputs_allowed_terraform_commands = ["plan", "validate"]
