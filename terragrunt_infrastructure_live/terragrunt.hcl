@@ -57,7 +57,7 @@ remote_state {
     project     = "${local.project}"
     location    = "${local.region}"
     credentials = "${local.credentials}"
-    bucket      = "secure-bucket-tfstate-composer-${local.region}"
+    bucket      = "secure-bucket-tfstate-airflow-infra-${local.region}"
     prefix      = "${local.environment}"
   }
 }
