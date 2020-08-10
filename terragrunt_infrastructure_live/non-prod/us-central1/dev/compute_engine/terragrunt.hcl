@@ -13,36 +13,32 @@ locals {
 # Terragrunt will copy the Terraform configurations specified by the source parameter, along with any files in the
 # working directory, into a temporary folder, and execute your Terraform commands in that folder.
 terraform {
-  source = "../../../../../terragrunt_infrastructure_modules//compute_engine"
+  source = "${get_parent_terragrunt_dir()}/../terragrunt_infrastructure_modules//compute_engine"
 }
 
 # Define dependencies
 dependency "networking" {
-  config_path = "../networking"
+  config_path = "${get_terragrunt_dir()}/../networking"
 
   mock_outputs = {
     subnetwork = "subnetwork_id"
   }
 
-  mock_outputs_allowed_terraform_commands = ["plan", "validate"]
-
-  skip_outputs = true
+  mock_outputs_allowed_terraform_commands = ["validate"]
 }
 
 dependency "service_accounts" {
-  config_path = "../service_accounts"
+  config_path = "${get_terragrunt_dir()}/../service_accounts"
 
   mock_outputs = {
     service-account-bastion-host-email = "bastion_host_email"
   }
 
-  mock_outputs_allowed_terraform_commands = ["plan", "validate"]
-
-  skip_outputs = true
+  mock_outputs_allowed_terraform_commands = ["validate"]
 }
 
 dependencies {
-  paths = ["../enable_apis"]
+  paths = ["${get_terragrunt_dir()}/../enable_apis"]
 }
 
 # Include all settings from the root terragrunt.hcl file
