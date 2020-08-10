@@ -2,4 +2,5 @@
 # configure the remote state bucket and pass forward to the child modules as inputs.
 locals {
   region = "us-central1"
+  zone   = "us-central1-b"
 }

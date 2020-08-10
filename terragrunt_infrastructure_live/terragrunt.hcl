@@ -9,33 +9,14 @@ locals {
   environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
 
   # Extract the variables we need for easy access
-  account_name = local.account_vars.locals.account_name
-  account_id   = local.account_vars.locals.aws_account_id
-  aws_region   = local.region_vars.locals.aws_region
-}
+  project               = local.account_vars.locals.project
+  service_account_email = local.account_vars.locals.project
+  region                = local.region_vars.locals.region
+  zone                  = local.region_vars.locals.zone
+  environment           = local.environment_vars.locals.environment
 
-terraform {
-  extra_arguments "common_vars" {
-    commands = ["plan", "apply"]
-    arguments = [
-      "-var-file=common.tfvars",
-    ]
-  }
-}
-
-remote_state {
-  backend = "gcs"
-  generate = {
-    path      = "backend.tf"
-    if_exists = "overwrite"
-  }
-  config = {
-    project     = "wam-bam-258119"
-    location    = "US"
-    credentials = "service_account.json"
-    bucket      = "secure-bucket-tfstate-composer"
-    prefix      = "dev"
-  }
+  # Extract gitignored service account credentials json file
+  credentials = "service_account.json"
 }
 
 generate "provider" {
@@ -49,21 +30,36 @@ generate "provider" {
 # Note: The "google-beta" provider needs to be setup in ADDITION to the "google" provider
 # ---------------------------------------------------------------------------------------------------------------------
 provider "google" {
-  credentials = var.credentials
-  project     = var.project
-  region      = var.location
-  zone        = var.zone
+  credentials = "${local.credentials}"
+  project     = "${local.project}"
+  region      = "${local.region}"
+  zone        = "${local.zone}"
   version     = "~> 3.29.0"
 }
 
 provider "google-beta" {
-  credentials = var.credentials
-  project     = var.project
-  region      = var.location
-  zone        = var.zone
+  credentials = "${local.credentials}"
+  project     = "${local.project}"
+  region      = "${local.region}"
+  zone        = "${local.zone}"
   version     = "~> 3.29.0"
 }
 EOF
+}
+
+remote_state {
+  backend = "gcs"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite"
+  }
+  config = {
+    project     = "${local.project}"
+    location    = "${local.region}"
+    credentials = "${local.credentials}"
+    bucket      = "secure-bucket-tfstate-composer-${local.region}"
+    prefix      = "${local.environment}"
+  }
 }
 
 generate "versions" {
@@ -78,3 +74,17 @@ terraform {
 }
 EOF
 }
+
+# ---------------------------------------------------------------------------------------------------------------------
+# GLOBAL PARAMETERS
+# These variables apply to all configurations in this subfolder. These are automatically merged into the child
+# `terragrunt.hcl` config via the include block.
+# ---------------------------------------------------------------------------------------------------------------------
+
+# Configure root level variables that all resources can inherit. This is especially helpful with multi-account configs
+# where terraform_remote_state data sources are placed directly into the modules.
+inputs = merge(
+  local.account_vars.locals,
+  local.region_vars.locals,
+  local.environment_vars.locals,
+)
