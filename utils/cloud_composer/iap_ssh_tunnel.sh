@@ -12,7 +12,7 @@ PROJECT_ID="wam-bam-258119"
 gcloud config set project $PROJECT_ID
 
 # enable the service account
-SERVICE_ACCOUNT_EMAIL="service-account-iap-ssh@wam-bam-258119.iam.gserviceaccount.com"
+SERVICE_ACCOUNT_EMAIL="iap-ssh-sa-dev@wam-bam-258119.iam.gserviceaccount.com"
 gcloud beta iam service-accounts enable $SERVICE_ACCOUNT_EMAIL
 
 # download a private json key
@@ -26,5 +26,5 @@ gcloud auth activate-service-account --key-file=$KEY_FILE
 
 # ssh tunnel into the bastion host
 BASTION_HOST="bastion-host-to-composer"
-ZONE="us-central1-a"
+ZONE="us-central1-b"
 gcloud compute ssh $BASTION_HOST --tunnel-through-iap --zone $ZONE
