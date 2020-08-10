@@ -22,3 +22,4 @@ terraform keeps overriding state as modules run in parallel to compete for state
 [Relative Paths](https://community.gruntwork.io/t/relative-paths-in-terragrunt-modules/144/6)
 [Handling Dependencies](https://community.gruntwork.io/t/handling-dependencies/315/2)
 [Terraform force unlock](https://www.terraform.io/docs/commands/force-unlock.html)
+[Third Party Reasons to use terragrunt](https://transcend.io/blog/why-we-use-terragrunt)
