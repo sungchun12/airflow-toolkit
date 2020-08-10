@@ -7,3 +7,6 @@ There is a simple dev example, and you can mirror the folder structure for other
 ## Resources
 
 [Keep your Terraform code DRY](https://terragrunt.gruntwork.io/docs/features/keep-your-terraform-code-dry/)
+[Relative Paths](https://community.gruntwork.io/t/relative-paths-in-terragrunt-modules/144/6)
+[Handling Dependencies](https://community.gruntwork.io/t/handling-dependencies/315/2)
+[Terraform force unlock](https://www.terraform.io/docs/commands/force-unlock.html)
