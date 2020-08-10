@@ -7,6 +7,7 @@ __pycache__/
 **/service_account.json
 **account.json
 **config
+.terragrunt-cache
 account-lumpy-space-prince.json
 ssh_dataproc_custom_profile.json
 iap-ssh-access-sa.json
