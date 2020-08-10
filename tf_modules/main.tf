@@ -24,6 +24,8 @@ module "compute_engine" {
 module "cloud_composer" {
   source                        = "./cloud_composer"
   project                       = var.project
+  region                        = var.location
+  zone                          = var.zone
   network                       = module.networking.network
   subnetwork                    = module.networking.subnetwork
   service_account               = module.service_accounts.composer-worker-service-account

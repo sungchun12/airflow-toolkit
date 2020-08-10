@@ -1,3 +1,7 @@
+# ---------------------------------------------------------------------------------------------------------------------
+# DEPLOY SERVICE ACCOUNTS
+# ---------------------------------------------------------------------------------------------------------------------
+
 ##### setup bastion host service account to be attached to compute engine VM #####
 resource "google_service_account" "service-account-bastion-host" {
   project      = var.project

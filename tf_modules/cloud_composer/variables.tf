@@ -7,28 +7,38 @@ variable "project" {
   type        = string
 }
 
+variable "region" {
+  description = "Region where cloud composer will be deployed"
+  type        = string
+}
+
+variable "zone" {
+  description = "Specific zone where cloud composer will be deployed"
+  type        = string
+}
+
 variable "network" {
-  description = "A reference (self link) to the subnetwork to host the cluster in"
+  description = "VPC Network where cloud composer will be setup"
   type        = string
 }
 
 variable "subnetwork" {
-  description = "A reference (self link) to the subnetwork to host the cluster in"
+  description = "Subnetwork where cloud composer will be setup"
   type        = string
 }
 
 variable "service_account" {
-  description = "A reference (self link) to the subnetwork to host the cluster in"
+  description = "Service account to assign the cloud composer environment, typically to setup composer worker permissions"
   type        = string
 }
 
 variable "cluster_secondary_range_name" {
-  description = "A reference (self link) to the subnetwork to host the cluster in"
+  description = "IP address range for the Kubernetes pods"
   type        = string
 }
 
 variable "services_secondary_range_name" {
-  description = "A reference (self link) to the subnetwork to host the cluster in"
+  description = "IP address range for the Kubernetes services within the cluster"
   type        = string
 }
 
@@ -42,12 +52,6 @@ variable "name" {
   default     = "dev-composer"
 }
 
-variable "region" {
-  description = "Region where cloud composer will be deployed"
-  type        = string
-  default     = "us-central1"
-}
-
 variable "labels" {
   description = "Labels for the cloud composer environment"
   type        = map(string)
@@ -58,12 +62,6 @@ variable "node_count" {
   description = "Number of nodes"
   type        = number
   default     = 3
-}
-
-variable "zone" {
-  description = "Specific zone where cloud composer will be deployed"
-  type        = string
-  default     = "us-central1-b"
 }
 
 variable "machine_type" {
@@ -109,10 +107,9 @@ variable "pypi_packages" {
   description = "Python packages to be downloaded from the public internet"
   type        = map(string)
   default = {
-    numpy      = ""
-    scipy      = "==1.1.0"
-    kubernetes = "==11.0.0"
-    pytest     = "==5.4.3"
+    numpy  = ""
+    scipy  = "==1.1.0"
+    pytest = "==5.4.3"
   }
 }
 
@@ -157,7 +154,7 @@ variable "web_server_ipv4_cidr_block" {
 }
 
 variable "allowed_ip_ranges" {
-  description = "Private IP that follows range options compliant with RFC 1918. This is a Google-specific default for the web server."
+  description = "This is a Google-specific default for the web server, and allows any public internet access through identity aware proxy."
   type        = list(any)
   default = [
     {

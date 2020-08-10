@@ -8,13 +8,13 @@ variable "project" {
 }
 
 variable "subnetwork_id" {
-  type    = string
-  default = ""
+  description = "Subnetwork where bastion host will be setup, defaults to the same one as cloud composer"
+  type        = string
 }
 
 variable "bastion_host_email" {
-  type    = string
-  default = ""
+  description = "Service account email with cloud composer permissions"
+  type        = string
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
