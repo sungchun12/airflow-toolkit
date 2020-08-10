@@ -56,7 +56,7 @@ variable "subnetwork_region" {
 variable "secondary_ip_range" {
   description = "List of maps related to cluster and services secondary ip ranges"
   type        = list(any)
-  # cluster and services ip ranges but be listed in this exact order
+  # cluster and services ip ranges must be listed in this exact order
   default = [
     {
       ip_cidr_range = "172.16.0.0/20" # cluster

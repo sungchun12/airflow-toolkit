@@ -44,7 +44,7 @@ resource "google_composer_environment" "cloud-composer-env" {
       web_server_ipv4_cidr_block = var.web_server_ipv4_cidr_block # default IP range
     }
 
-    # default access
+    # default access, but built for dynamic ip range blocks
     web_server_network_access_control {
       dynamic "allowed_ip_range" {
         for_each = [for s in var.allowed_ip_ranges : {

@@ -1,3 +1,7 @@
+# ---------------------------------------------------------------------------------------------------------------------
+# DEPLOY NETWORKING FOR CLOUD COMPOSER SETUP
+# ---------------------------------------------------------------------------------------------------------------------
+
 #  https://cloud.google.com/vpc/docs/vpc#valid-ranges
 resource "google_compute_network" "network-composer" {
   project                 = var.project

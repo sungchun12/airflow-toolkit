@@ -1,4 +1,8 @@
-########## VM SETUP BEGINS ###############
+# ---------------------------------------------------------------------------------------------------------------------
+# DEPLOY COMPUTE ENGINE BASTION HOST TO RUN COMMANDS AGAINST THE CLOUD COMPOSER KUBERNETES CLUSTER
+# ---------------------------------------------------------------------------------------------------------------------
+
+# Minimal Setup
 resource "google_compute_instance" "bastion-host-to-composer" {
   project      = var.project
   name         = var.name

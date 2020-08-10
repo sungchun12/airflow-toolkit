@@ -14,7 +14,7 @@ variable "project" {
 variable "api_services" {
   description = "list of Google Cloud apis to enable when launching terraform"
   type        = list(string)
-  default     = ["datafusion.googleapis.com", "composer.googleapis.com"]
+  default     = ["composer.googleapis.com"]
 }
 
 variable "disable_services_on_destroy_bool" {
