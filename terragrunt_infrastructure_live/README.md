@@ -10,6 +10,9 @@ There is a simple dev example, and you can mirror the folder structure for other
 cd non-prod/us-central1/
 
 terragrunt plan-all
+
+# delete the terragrunt temp dirs
+find . -type d -name ".terragrunt-cache" -prune -exec rm -rf {} \;
 ```
 
 ## Notes
