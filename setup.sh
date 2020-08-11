@@ -93,4 +93,3 @@ export POD_NAME=$(kubectl get pods --namespace airflow -l "component=web,app=air
 echo "airflow UI webserver --> http://127.0.0.1:8080"
 
 kubectl port-forward --namespace airflow $POD_NAME 8080:8080
-
