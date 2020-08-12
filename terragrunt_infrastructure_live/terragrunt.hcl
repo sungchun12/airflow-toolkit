@@ -18,7 +18,7 @@ locals {
   # Extract gitignored service account credentials json file
   # When run in CICD, this file will NOT persist
   # Secrets are written to a temporary file in case different privileges are required across modules
-  # Minimizes the secrets manager API calls instead of setting individually setting each credentials var
+  # Minimizes the secrets manager API calls by NOT individually setting each credentials var
   credentials = run_cmd("--terragrunt-quiet", "${get_parent_terragrunt_dir()}/get_secret.sh")
   credentials_file = "${get_terragrunt_dir()}/service_account.json"
 }
