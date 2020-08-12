@@ -43,14 +43,14 @@ jobs:
           version: "301.0.0"
           service_account_key: ${{secrets.GCLOUD_CREDENTIALS}}
 
-      - name: Terragrunt Validate
+      - name: Terragrunt Mock Plan with Placeholder Module Dependency outputs
         run: |
           pwd &&
           cd $WORKING_DIR &&
           terragrunt plan-all
 
-      - name: Terragrunt Mock Plan
+      - name: Terragrunt Validate Syntax
         run: |
           pwd &&
           cd $WORKING_DIR &&
-          terragrunt plan-all
+          terragrunt validate-all
