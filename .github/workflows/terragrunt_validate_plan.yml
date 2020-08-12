@@ -7,7 +7,8 @@ on:
     branches: [master]
 
 env:
-  #TODO(developer): update WORKING_DIR
+  #TODO(developer): update PROJECT_ID, WORKING_DIR
+  PROJECT_ID: "wam-bam-258119"
   WORKING_DIR: "./terragrunt_infrastructure_live/non-prod/us-central1/dev"
 
 jobs:
