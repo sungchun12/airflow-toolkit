@@ -56,5 +56,4 @@ jobs:
           terragrunt validate-all
 
       - name: Cleanup Terragrunt Directories and Files
-        run: |
-          ./terragrunt_cleanup.sh
+        run: ./terragrunt_infrastructure_live/terragrunt_cleanup.sh
