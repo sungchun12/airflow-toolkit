@@ -16,7 +16,7 @@ locals {
   environment           = local.environment_vars.locals.environment
 
   # Extract gitignored service account credentials json file
-  credentials = "service_account.json"
+  credentials = run_cmd("--terragrunt-quiet", "${get_parent_terragrunt_dir()}/get_secret.sh")
 }
 
 generate "provider" {
