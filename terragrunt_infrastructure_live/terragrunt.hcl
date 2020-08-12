@@ -16,7 +16,11 @@ locals {
   environment           = local.environment_vars.locals.environment
 
   # Extract gitignored service account credentials json file
+  # When run in CICD, this file will NOT persist
+  # Secrets are written to a temporary file in case different privileges are required across modules
+  # Minimizes the secrets manager API calls instead of setting individually setting each credentials var
   credentials = run_cmd("--terragrunt-quiet", "${get_parent_terragrunt_dir()}/get_secret.sh")
+  credentials_file = "${get_terragrunt_dir()}/service_account.json"
 }
 
 generate "provider" {
@@ -30,7 +34,7 @@ generate "provider" {
 # Note: The "google-beta" provider needs to be setup in ADDITION to the "google" provider
 # ---------------------------------------------------------------------------------------------------------------------
 provider "google" {
-  credentials = "${local.credentials}"
+  credentials = "${local.credentials_file}"
   project     = "${local.project}"
   region      = "${local.region}"
   zone        = "${local.zone}"
@@ -38,7 +42,7 @@ provider "google" {
 }
 
 provider "google-beta" {
-  credentials = "${local.credentials}"
+  credentials = "${local.credentials_file}"
   project     = "${local.project}"
   region      = "${local.region}"
   zone        = "${local.zone}"
@@ -56,7 +60,7 @@ remote_state {
   config = {
     project     = "${local.project}"
     location    = "${local.region}"
-    credentials = "${local.credentials}"
+    credentials = "${local.credentials_file}"
     bucket      = "secure-bucket-tfstate-airflow-infra-${local.region}"
     prefix      = "${path_relative_to_include()}"
   }
