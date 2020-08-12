@@ -33,8 +33,6 @@ cd non-prod/us-central1/
 
 terragrunt plan-all
 
-# delete the terragrunt temp dirs
-find . -type d -name ".terragrunt-cache" -prune -exec rm -rf {} \;
 ```
 
 ## Notes
