@@ -45,10 +45,12 @@ jobs:
 
       - name: Terragrunt Validate
         run: |
+          pwd &&
           cd $WORKING_DIR &&
           terragrunt validate-all
 
-      - name: Terragrunt Validate
+      - name: Terragrunt Mock Plan
         run: |
+          pwd &&
           cd $WORKING_DIR &&
           terragrunt plan-all
