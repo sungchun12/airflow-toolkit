@@ -32,7 +32,7 @@ dependency "networking" {
     services_secondary_range_name = "services_secondary_range_name"
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate"]
+  mock_outputs_allowed_terraform_commands = ["plan", "validate"]
 }
 
 dependency "service_accounts" {
@@ -42,7 +42,7 @@ dependency "service_accounts" {
     composer-worker-service-account = "service-account-compute@developer.gserviceaccount.com"
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate"]
+  mock_outputs_allowed_terraform_commands = ["plan", "validate"]
 }
 
 dependencies {

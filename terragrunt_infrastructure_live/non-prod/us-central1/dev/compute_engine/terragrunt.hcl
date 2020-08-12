@@ -24,7 +24,7 @@ dependency "networking" {
     subnetwork = "subnetwork_id"
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate"]
+  mock_outputs_allowed_terraform_commands = ["plan", "validate"]
 }
 
 dependency "service_accounts" {
@@ -34,7 +34,7 @@ dependency "service_accounts" {
     service-account-bastion-host-email = "bastion_host_email"
   }
 
-  mock_outputs_allowed_terraform_commands = ["validate"]
+  mock_outputs_allowed_terraform_commands = ["plan", "validate"]
 }
 
 dependencies {
