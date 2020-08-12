@@ -49,3 +49,4 @@ terraform keeps overriding state as modules run in parallel to compete for state
 [Terraform force unlock](https://www.terraform.io/docs/commands/force-unlock.html)
 [Third Party Reasons to use terragrunt](https://transcend.io/blog/why-we-use-terragrunt)
 [Managing Terraform Secrets](https://blog.gruntwork.io/a-comprehensive-guide-to-managing-secrets-in-your-terraform-code-1d586955ace1)
+[Google Provider Documentation](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#full-reference)
