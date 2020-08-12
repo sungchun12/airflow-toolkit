@@ -18,7 +18,7 @@ module "compute_engine" {
   project            = var.project
   subnetwork_id      = module.networking.subnetwork
   bastion_host_email = module.service_accounts.service-account-bastion-host-email
-  depends_on         = [module.api-enable-services] #TODO(developer): uncomment once version v0.13.0 is in GA, terragrunt handles module dependencies for now
+  depends_on         = [module.api-enable-services]
 }
 
 module "cloud_composer" {
