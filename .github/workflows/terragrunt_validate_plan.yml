@@ -47,7 +47,7 @@ jobs:
         run: |
           pwd &&
           cd $WORKING_DIR &&
-          terragrunt validate-all
+          terragrunt plan-all
 
       - name: Terragrunt Mock Plan
         run: |
