@@ -1,0 +1,52 @@
+name: Terragrunt Deployment-Validate Syntax and Plan
+
+on:
+  push:
+    branches: [master, feature-work]
+  pull_request:
+    branches: [master]
+
+env:
+  #TODO(developer): update WORKING_DIR
+  WORKING_DIR: "./terragrunt_infrastructure_live/non-prod/us-central1/dev"
+
+jobs:
+  setup-validate-plan:
+    name: Setup, Validate, and Mock Plan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Installing Homebrew
+        run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+          test -d ~/.linuxbrew && eval $(~/.linuxbrew/bin/brew shellenv)
+          test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+          echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.profile
+          echo "::add-path::/home/linuxbrew/.linuxbrew/bin"
+          brew --version
+
+      - name: Verify Homebrew's Installation
+        run: brew --version
+
+      - name: Install Terragrunt
+        run: |
+          cd $WORKING_DIR &&
+          brew install terragrunt
+
+      - name: Terragrunt Validate
+        run: |
+          cd $WORKING_DIR &&
+          terragrunt validate-all
+
+      - name: Terragrunt Validate
+        run: |
+          cd $WORKING_DIR &&
+          terragrunt plan-all
+
+      - name: Setup gcloud CLI
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: "301.0.0"
+          service_account_key: ${{secrets.GCLOUD_CREDENTIALS}}
