@@ -54,7 +54,7 @@ provider "google" {
   project     = var.project
   region      = var.location
   zone        = var.zone
-  version     = "~> 3.29.0"
+  version     = "~> 3.34.0"
 }
 
 provider "google-beta" {
@@ -62,7 +62,7 @@ provider "google-beta" {
   project     = var.project
   region      = var.location
   zone        = var.zone
-  version     = "~> 3.29.0"
+  version     = "~> 3.34.0"
 }
 EOF
 }
@@ -72,10 +72,17 @@ generate "versions" {
   if_exists = "overwrite_terragrunt"
   contents  = <<EOF
 terraform {
-  required_version = "~> 0.12.29"
   required_providers {
-    google = "<4.0,>= 2.12"
+    google = {
+      source = "hashicorp/google"
+      version = "<4.0,>= 2.12"
+    }
+    google-beta = {
+      source = "hashicorp/google-beta"
+      version = "<4.0,>= 2.12"
+    }
   }
+  required_version = ">= 0.13"
 }
 EOF
 }

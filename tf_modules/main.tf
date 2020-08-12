@@ -18,7 +18,7 @@ module "compute_engine" {
   project            = var.project
   subnetwork_id      = module.networking.subnetwork
   bastion_host_email = module.service_accounts.service-account-bastion-host-email
-  # depends_on         = [module.api-enable-services] #TODO(developer): uncomment once version v0.13.0 is in GA, terragrunt handles module dependencies for now
+  depends_on         = [module.api-enable-services] #TODO(developer): uncomment once version v0.13.0 is in GA, terragrunt handles module dependencies for now
 }
 
 module "cloud_composer" {
@@ -31,15 +31,17 @@ module "cloud_composer" {
   service_account               = module.service_accounts.composer-worker-service-account
   cluster_secondary_range_name  = module.networking.cluster_secondary_range_name
   services_secondary_range_name = module.networking.services_secondary_range_name
-  # depends_on           = [module.service_accounts.composer-worker-iam-member, module.api-enable-services] #TODO(developer): uncomment once version v0.13.0 is in GA, terragrunt handles module dependencies for now
+  depends_on                    = [module.api-enable-services]
 }
 
 module "networking" {
-  source  = "./networking"
-  project = var.project
+  source     = "./networking"
+  project    = var.project
+  depends_on = [module.api-enable-services]
 }
 
 module "service_accounts" {
-  source  = "./service_accounts"
-  project = var.project
+  source     = "./service_accounts"
+  project    = var.project
+  depends_on = [module.api-enable-services]
 }
