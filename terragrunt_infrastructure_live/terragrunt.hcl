@@ -71,11 +71,19 @@ generate "versions" {
   if_exists = "overwrite_terragrunt"
   contents  = <<EOF
 terraform {
-  required_version = "~> 0.12.29"
   required_providers {
-    google = "<4.0,>= 2.12"
+    google = {
+      source = "hashicorp/google"
+      version = "<4.0,>= 2.12"
+    }
+    google-beta = {
+      source = "hashicorp/google-beta"
+      version = "<4.0,>= 2.12"
+    }
   }
+  required_version = ">= 0.13"
 }
+
 EOF
 }
 
