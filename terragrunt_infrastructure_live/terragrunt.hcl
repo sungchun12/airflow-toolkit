@@ -34,7 +34,7 @@ provider "google" {
   project     = "${local.project}"
   region      = "${local.region}"
   zone        = "${local.zone}"
-  version     = "~> 3.29.0"
+  version     = "~> 3.34.0"
 }
 
 provider "google-beta" {
@@ -42,7 +42,7 @@ provider "google-beta" {
   project     = "${local.project}"
   region      = "${local.region}"
   zone        = "${local.zone}"
-  version     = "~> 3.29.0"
+  version     = "~> 3.34.0"
 }
 EOF
 }
