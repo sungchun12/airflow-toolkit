@@ -16,12 +16,6 @@ terraform {
     execute      = ["echo", "Finished running Terraform"]
     run_on_error = true
   }
-
-  after_hook "airflow_open_url" {
-    commands     = ["apply"]
-    execute      = ["python3", "-m", "webbrowser", "https://airflow.apache.org/"] # TODO:replace with airflow url output var
-    run_on_error = true
-  }
 }
 
 remote_state {
