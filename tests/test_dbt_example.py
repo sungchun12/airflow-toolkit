@@ -62,6 +62,33 @@ def test_contains_tasks(setup_method):
     assert task_ids == ["dbt-debug", "dbt-run", "dbt-test"]
 
 
+def test_task_dependencies(setup_method):
+    """Check the task dependencies of dåummy_task in hello_world dag"""
+    dag_id = PIPELINE
+    dag = setup_method.get_dag(dag_id)
+
+    # dbt debug upstream and downstream task dependencies
+    dbt_debug_task = getattr(test_dag, "dbt_debug")
+    upstream_task_ids = list(map(lambda task: task.task_id, dbt_debug_task.upstream_list))
+    assert upstream_task_ids == []
+    downstream_task_ids = list(map(lambda task: task.task_id, dbt_debug_task.downstream_list))
+    assert downstream_task_ids == ["dbt-run"]
+
+    # dbt run upstream and downstream task dependencies
+    dbt_run_task = getattr(test_dag, "dbt_run")
+    upstream_task_ids = list(map(lambda task: task.task_id, dbt_run_task.upstream_list))
+    assert upstream_task_ids == ["dbt-debug"]
+    downstream_task_ids = list(map(lambda task: task.task_id, dbt_run_task.downstream_list))
+    assert downstream_task_ids == ["dbt-test"]
+
+    # dbt test upstream and downstream task dependencies
+    dbt_test_task = getattr(test_dag, "dbt_test")
+    upstream_task_ids = list(map(lambda task: task.task_id, dbt_test_task.upstream_list))
+    assert upstream_task_ids == ["dbt-run"]
+    downstream_task_ids = list(map(lambda task: task.task_id, dbt_test_task.downstream_list))
+    assert downstream_task_ids == []
+
+
 def test_schedule(setup_method):
     """Test that the DAG only contains the schedule expected"""
     dag_id = PIPELINE
