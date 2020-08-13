@@ -5,7 +5,7 @@ import time
 from google.cloud import secretmanager
 
 # import created modules
-import dags.examples.dbt_example as pilot_pipeline
+import dags.examples.dbt_example as test_dag
 from airflow.models import Variable
 from airflow.operators.dummy_operator import DummyOperator
 import json
@@ -16,21 +16,25 @@ import os
 import subprocess
 
 
-# https://blog.usejournal.com/testing-in-airflow-part-1-dag-validation-tests-dag-definition-tests-and-unit-tests-2aa94970570c
+# Reference Blog: https://blog.usejournal.com/testing-in-airflow-part-1-dag-validation-tests-dag-definition-tests-and-unit-tests-2aa94970570c
 
 """Tests the airflow commands and verifies 
 successful connections to the proper environments
 """
 
+# TODO: Things to consider
+# How do I make the project and env vars dynamic throughout the tests? Assumed in Cloud Composer and local setup?
+# Where do I need to redefine the dbt commands?
+# Minimize storing configs in airflow db vars to prevent extra integration testing that's excessive
+# dynamically update airflow utils
+
 # Global Vars
-PIPELINE = "dbt_kube_dag"  # DAG to be tested
+PIPELINE = "dbt_example"  # DAG to be tested
 PROJECT_NAME = os.environ["DBT_DATABASE"].lower()  # GCP project where BQ resides
-ENVIRONMENT = os.environ["ENV"].lower()
+ENVIRONMENT = os.environ["ENV"].lower() # dev, qa, prod
 
 DEFAULT_ARGS = Variable.get(f"{PIPELINE}_default_args", deserialize_json=True)
-RUNTIME_PARAMETERS = Variable.get(
-    f"{PIPELINE}_runtime_parameters", deserialize_json=True
-)
+RUNTIME_PARAMETERS = Variable.get(f"{PIPELINE}_runtime_parameters", deserialize_json=True)
 DBT_COMMANDS = Variable.get(f"{PIPELINE}_dbt_commands", deserialize_json=True)
 
 
@@ -40,8 +44,7 @@ def get_test_configs():
     This can be extended to include more specific test configurations
     """
     with open(
-        f"/pytest/dag_environment_configs/{ENVIRONMENT}/{PIPELINE}_pytest_{ENVIRONMENT}.json",
-        "r",
+        f"/pytest/dag_environment_configs/{ENVIRONMENT}/{PIPELINE}_pytest_{ENVIRONMENT}.json", "r",
     ) as openfile:
         # read in the file
         json_object = json.load(openfile)
@@ -64,8 +67,7 @@ def setup_method():
 def reset_pytest_airflow_vars():
     """reset arguments back to default"""
     with open(
-        f"/pytest/dag_environment_configs/{ENVIRONMENT}/{PIPELINE}_pytest_{ENVIRONMENT}.json",
-        "r",
+        f"/pytest/dag_environment_configs/{ENVIRONMENT}/{PIPELINE}_pytest_{ENVIRONMENT}.json", "r",
     ) as openfile:
         # read in the file
         json_object = json.load(openfile)
@@ -76,12 +78,10 @@ def reset_pytest_airflow_vars():
             json.dumps(json_object[f"{PIPELINE}_runtime_parameters"]),
         )
         Variable.set(
-            f"{PIPELINE}_default_args",
-            json.dumps(json_object[f"{PIPELINE}_default_args"]),
+            f"{PIPELINE}_default_args", json.dumps(json_object[f"{PIPELINE}_default_args"]),
         )
         Variable.set(
-            f"{PIPELINE}_dbt_commands",
-            json.dumps(json_object[f"{PIPELINE}_dbt_commands"]),
+            f"{PIPELINE}_dbt_commands", json.dumps(json_object[f"{PIPELINE}_dbt_commands"]),
         )
     print("Reset Airflow Variables to pytest defaults")
 
@@ -112,8 +112,8 @@ def test_schedule(setup_method, reset_pytest_airflow_vars):
     assert dag._schedule_interval == None
 
 
-def test_task_count_pilot_pipeline(setup_method, reset_pytest_airflow_vars):
-    """Check task count of pilot_pipeline_dynamic_template dag"""
+def test_task_count_test_dag(setup_method, reset_pytest_airflow_vars):
+    """Check task count of test_dag_dynamic_template dag"""
     reset_pytest_airflow_vars
     dag_id = PIPELINE
     dag = setup_method.get_dag(dag_id)
@@ -139,7 +139,7 @@ dbt_task_list = [
 def test_dbt_tasks(dbt_task, reset_pytest_airflow_vars):
     "Tests that dbt tasks in scope operate as expected"
     reset_pytest_airflow_vars
-    task = getattr(pilot_pipeline, dbt_task)  # dynamically call attribute function call
+    task = getattr(test_dag, dbt_task)  # dynamically call attribute function call
     ti = TaskInstance(task=task, execution_date=datetime.now())
     task.execute(ti.get_template_context())
 
@@ -172,7 +172,7 @@ def dbt_task_generator(request, reset_pytest_airflow_vars):
     reset_pytest_airflow_vars
 
     # create the utility
-    dynamic_task_generator = pilot_pipeline.dynamic_task_generator_utility()
+    dynamic_task_generator = test_dag.dynamic_task_generator_utility()
 
     # set dbt_commands
     dynamic_task_generator.dbt_commands = request.param
@@ -187,9 +187,7 @@ def test_dbt_dynamic_tasks(dbt_task_generator, reset_pytest_airflow_vars):
     dbt_commands = dbt_task_generator.dbt_commands
 
     # create a completely separate dag during test runtime
-    with DAG(
-        "test_dbt_dynamnic_tasks", default_args=default_args, schedule_interval=None
-    ):
+    with DAG("test_dbt_dynamnic_tasks", default_args=default_args, schedule_interval=None):
         dbt_dynamic_tasks = dbt_task_generator.dbt_dynamic_tasks()
 
     # compare created and input tasks
@@ -219,9 +217,7 @@ def test_sequential_append_dbt(dbt_task_generator, reset_pytest_airflow_vars):
         dbt_dynamic_tasks = dbt_task_generator.dbt_dynamic_tasks()
 
         # append dbt tasks to the dummy task
-        dbt_task_generator.sequential_append(
-            to_task=dummy_task, from_task_list=dbt_dynamic_tasks
-        )
+        dbt_task_generator.sequential_append(to_task=dummy_task, from_task_list=dbt_dynamic_tasks)
 
     # (2) A dag generated without using sequential_append
     # ---------------------------------
@@ -242,9 +238,7 @@ def test_sequential_append_dbt(dbt_task_generator, reset_pytest_airflow_vars):
             dummy_task >> dbt_dynamic_tasks[0]
 
             # chain dbt tasks
-            for up_task, down_task in zip(
-                dbt_dynamic_tasks[:-1], dbt_dynamic_tasks[1:]
-            ):
+            for up_task, down_task in zip(dbt_dynamic_tasks[:-1], dbt_dynamic_tasks[1:]):
                 up_task >> down_task
 
     # validate dependencies from tasks in dag (1) and dag (2)
@@ -296,18 +290,17 @@ def test_end_to_end_pipeline(reset_pytest_airflow_vars, get_test_configs, get_se
     blob_dag.upload_from_filename(file_location_dag)
 
     # upload reset_dag_configs_{ENVIRONMENT_CONFIG}.json into cloud storage bucket for cloud composer
-    file_location_config = f"/pytest/dag_environment_configs/{ENVIRONMENT}/{PIPELINE}_pytest_{ENVIRONMENT}.json"
+    file_location_config = (
+        f"/pytest/dag_environment_configs/{ENVIRONMENT}/{PIPELINE}_pytest_{ENVIRONMENT}.json"
+    )
     blob_config = bucket.blob(
-        f"data/dag_environment_configs/{ENVIRONMENT}/"
-        + "{PIPELINE}_pytest_{ENVIRONMENT}.json"
+        f"data/dag_environment_configs/{ENVIRONMENT}/" + "{PIPELINE}_pytest_{ENVIRONMENT}.json"
     )
     blob_config.upload_from_filename(file_location_config)
 
     # upload pipeline configs in scope to cloud storage bucket for cloud composer
     for config_file in reset_dag_configs_generator.reset_configs_in_scope_list:
-        file_location = (
-            reset_dag_configs_generator.reset_configs_directory_in_scope + config_file
-        )
+        file_location = reset_dag_configs_generator.reset_configs_directory_in_scope + config_file
         blob = bucket.blob(f"data/dag_environment_configs/{ENVIRONMENT}/" + config_file)
         blob.upload_from_filename(file_location)
 
