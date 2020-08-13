@@ -16,6 +16,7 @@ default_args = {
     "priority_weight": 1000,
 }
 
+# TODO: reference private repo with a draft of using secrets manager vs. a hard-coded file
 default_params = {
     "gcp_project": "wam-bam-258119",
     "key_file_path": "/account.json",
@@ -26,9 +27,7 @@ default_params = {
 
 def add_gcp_connection(ds, **kwargs):
     """"Add a airflow connection for GCP"""
-    new_conn = Connection(
-        conn_id=default_params["gcp_conn_id"], conn_type="google_cloud_platform",
-    )
+    new_conn = Connection(conn_id=default_params["gcp_conn_id"], conn_type="google_cloud_platform",)
     scopes = [
         "https://www.googleapis.com/auth/cloud-platform",
     ]
@@ -41,9 +40,7 @@ def add_gcp_connection(ds, **kwargs):
     new_conn.set_extra(conn_extra_json)
 
     session = settings.Session()
-    if not (
-        session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()
-    ):
+    if not (session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()):
         session.add(new_conn)
         session.commit()
         msg = "\n\tA connection with `conn_id`={conn_id} is newly created\n"
@@ -71,9 +68,7 @@ def add_docker_connection(ds, **kwargs):
         new_conn.set_password(data)
 
     session = settings.Session()
-    if not (
-        session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()
-    ):
+    if not (session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()):
         session.add(new_conn)
         session.commit()
         msg = "\n\tA connection with `conn_id`={conn_id} is newly created\n"
@@ -85,9 +80,7 @@ def add_docker_connection(ds, **kwargs):
         print(msg)
 
 
-with DAG(
-    "add_gcp_connection", default_args=default_args, schedule_interval="@once"
-) as dag:
+with DAG("add_gcp_connection", default_args=default_args, schedule_interval="@once") as dag:
 
     # Task to add a google cloud connection
     t1 = PythonOperator(
