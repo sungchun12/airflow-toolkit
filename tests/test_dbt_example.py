@@ -41,7 +41,9 @@ def setup_method():
     """ setup any state specific to the execution of the given class (which
     usually contains tests).
     """
-    dag_folder = "/opt/airflow/dags/"  # TODO: make this dynamic for the cloud composer path
+    dag_folder = (
+        "/opt/airflow/dags/"  # TODO: make this dynamic for the cloud composer path
+    )
     setup_dagbag = DagBag(dag_folder=dag_folder)
     return setup_dagbag
 
@@ -69,23 +71,33 @@ def test_task_dependencies(setup_method):
 
     # dbt debug upstream and downstream task dependencies
     dbt_debug_task = getattr(test_dag, "dbt_debug")
-    upstream_task_ids = list(map(lambda task: task.task_id, dbt_debug_task.upstream_list))
+    upstream_task_ids = list(
+        map(lambda task: task.task_id, dbt_debug_task.upstream_list)
+    )
     assert upstream_task_ids == []
-    downstream_task_ids = list(map(lambda task: task.task_id, dbt_debug_task.downstream_list))
+    downstream_task_ids = list(
+        map(lambda task: task.task_id, dbt_debug_task.downstream_list)
+    )
     assert downstream_task_ids == ["dbt-run"]
 
     # dbt run upstream and downstream task dependencies
     dbt_run_task = getattr(test_dag, "dbt_run")
     upstream_task_ids = list(map(lambda task: task.task_id, dbt_run_task.upstream_list))
     assert upstream_task_ids == ["dbt-debug"]
-    downstream_task_ids = list(map(lambda task: task.task_id, dbt_run_task.downstream_list))
+    downstream_task_ids = list(
+        map(lambda task: task.task_id, dbt_run_task.downstream_list)
+    )
     assert downstream_task_ids == ["dbt-test"]
 
     # dbt test upstream and downstream task dependencies
     dbt_test_task = getattr(test_dag, "dbt_test")
-    upstream_task_ids = list(map(lambda task: task.task_id, dbt_test_task.upstream_list))
+    upstream_task_ids = list(
+        map(lambda task: task.task_id, dbt_test_task.upstream_list)
+    )
     assert upstream_task_ids == ["dbt-run"]
-    downstream_task_ids = list(map(lambda task: task.task_id, dbt_test_task.downstream_list))
+    downstream_task_ids = list(
+        map(lambda task: task.task_id, dbt_test_task.downstream_list)
+    )
     assert downstream_task_ids == []
 
 
@@ -129,19 +141,7 @@ def test_dbt_tasks(dbt_task, capfd):
     assert expected_result_dict.get(dbt_task) in out  # dynamic assertion key value pair
 
 
-@pytest.fixture
-def get_secret(project_name, secret_name):
-    secrets = secretmanager.SecretManagerServiceClient()
-    secret_value = (
-        secrets.access_secret_version(
-            "projects/" + project_name + "/secrets/" + secret_name + "/versions/latest"
-        )
-        .payload.data.decode("utf-8")
-        .replace("\n", "")
-    )
-    return secret_value
-
-
+# TODO: to be drafted later
 @pytest.mark.skip(reason="waiting until cloud composer is deployed first")
 def test_end_to_end_pipeline(get_secret):
     """
@@ -172,7 +172,9 @@ def test_end_to_end_pipeline(get_secret):
 
     # upload pipeline configs in scope to cloud storage bucket for cloud composer
     for config_file in reset_dag_configs_generator.reset_configs_in_scope_list:
-        file_location = reset_dag_configs_generator.reset_configs_directory_in_scope + config_file
+        file_location = (
+            reset_dag_configs_generator.reset_configs_directory_in_scope + config_file
+        )
         blob = bucket.blob(f"data/dag_environment_configs/{ENVIRONMENT}/" + config_file)
         blob.upload_from_filename(file_location)
 
