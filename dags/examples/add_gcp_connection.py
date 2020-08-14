@@ -131,14 +131,14 @@ with DAG(
 
     # Task to add a google cloud connection
     t1 = PythonOperator(
-        task_id="add_gcp_connection_python",
+        task_id="add-gcp-connection-python",
         python_callable=add_gcp_connection,
         provide_context=True,
     )
 
     # Task to add a google container registry connection
     t2 = PythonOperator(
-        task_id="add_docker_connection_python",
+        task_id="add-docker-connection-python",
         python_callable=add_docker_connection,
         provide_context=True,
     )
