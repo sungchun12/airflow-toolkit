@@ -65,10 +65,7 @@ def test_contains_tasks(setup_method):
 
 
 def test_task_dependencies(setup_method):
-    """Check the task dependencies of dåummy_task in hello_world dag"""
-    dag_id = PIPELINE
-    dag = setup_method.get_dag(dag_id)
-
+    """Check the task dependencies of the dag"""
     # dbt debug upstream and downstream task dependencies
     dbt_debug_task = getattr(test_dag, "dbt_debug")
     upstream_task_ids = list(
