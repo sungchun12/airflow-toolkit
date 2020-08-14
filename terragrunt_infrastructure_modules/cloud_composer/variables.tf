@@ -77,10 +77,11 @@ variable "disk_size_gb" {
 }
 
 # you should NOT have to change this default
+# https://cloud.google.com/container-registry/docs/using-with-google-cloud-platform#gke-permissions
 variable "oauth_scopes" {
   description = "Determine which services cloud composer is allowed to interact with"
   type        = list(string)
-  default     = ["https://www.googleapis.com/auth/cloud-platform"]
+  default     = ["https://www.googleapis.com/auth/cloud-platform", "https://www.googleapis.com/auth/devstorage.full_control"]
 }
 
 variable "use_ip_aliases" {

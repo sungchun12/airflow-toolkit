@@ -78,6 +78,6 @@ variable "metadata_startup_script" {
 variable "scopes" {
   description = "Determine which services this compute engine instance is allowed to interact with"
   type        = list(string)
-  default     = ["https://www.googleapis.com/auth/cloud-platform"]
+  default     = ["https://www.googleapis.com/auth/cloud-platform", "https://www.googleapis.com/auth/devstorage.full_control"]
 }
 
