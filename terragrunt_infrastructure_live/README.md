@@ -28,10 +28,48 @@ gcloud secrets list
 # verify secret contents ad hoc
 gcloud secrets versions access latest --secret="terraform-secret"
 
+# setup permissions to run terragrunt operations
+export PROJECT_ID="wam-bam-258119"
+gcloud auth activate-service-account --key-file=service_account.json
+
 # deploy all infrastructure
 cd non-prod/us-central1/
 
 terragrunt plan-all
+
+```
+
+## Post-Deployment Instructions
+
+```bash
+# Error: Error waiting to create Environment: Error waiting to create Environment: Error waiting for Creating Environment: error while retrieving operation: Get "https://composer.googleapis.com/v1beta1/projects/wam-bam-258119/locations/us-central1/operations/de094856-fea7-4ac4-824f-691b6cb42838?alt=json&prettyPrint=false": EOF. An initial environment was or is still being created, and clean up failed with error: Getting creation operation state failed while waiting for environment to finish creating, but environment seems to still be in 'CREATING' state. Wait for operation to finish and either manually delete environment or import "projects/wam-bam-258119/locations/us-central1/environments/dev-composer" into your state.
+
+# add secrets manager IAM policy binding to composer service account
+PROJECT_ID="wam-bam-258119"
+MEMBER_SERVICE_ACCOUNT_EMAIL="serviceAccount:composer-sa-dev@wam-bam-258119.iam.gserviceaccount.com"
+SECRET_ID="airflow-conn-secret"
+
+gcloud secrets add-iam-policy-binding $SECRET_ID \
+    --member=$MEMBER_SERVICE_ACCOUNT_EMAIL \
+    --role="roles/secretmanager.secretAccessor"
+
+# gcloud projects add-iam-policy-binding $PROJECT_ID \
+#   --member=$MEMBER_SERVICE_ACCOUNT_EMAIL \
+#   --role="roles/storage.objectAdmin"
+
+# gcloud projects add-iam-policy-binding $PROJECT_ID \
+#   --member=$MEMBER_SERVICE_ACCOUNT_EMAIL \
+#   --role="roles/container.clusterAdmin"
+
+# https://stackoverflow.com/questions/60359125/kubernetespodoperator-not-recognizing-the-service-account-name
+# https://stackoverflow.com/questions/55498599/how-to-set-proper-permissions-to-run-kubernetespodoperator-in-cloud-composer
+# https://cloud.google.com/container-registry/docs/access-control#grant
+# kubectl auth can-i create pods -n default--as=system:serviceaccount:composer-1-11-2-airflow-1-10-9-de094856:default
+
+# https://cloud.google.com/composer/docs/how-to/managing/creating#gcloud
+
+# specific permission to container registry bucket
+gsutil iam ch $MEMBER_SERVICE_ACCOUNT_EMAIL:objectAdmin gs://artifacts.wam-bam-258119.appspot.com/
 
 ```
 
