@@ -21,7 +21,7 @@ TASK_PARAMS_DICT = {
 }
 
 with DAG(
-    "bigquery_operator_check", default_args=default_args, schedule_interval="@once"
+    "bigquery_connection_check", default_args=default_args, schedule_interval="@once"
 ) as dag:
     bigquery_connection_check = BigQueryGetDatasetOperator(
         task_id="bigquery-connection-check",
