@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # This script runs each time the dbt Docker image is run.
 # The SERVICE_ACCOUNT variable is passed to the container
