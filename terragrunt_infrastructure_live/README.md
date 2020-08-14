@@ -53,6 +53,7 @@ gcloud secrets add-iam-policy-binding $SECRET_ID \
     --member=$MEMBER_SERVICE_ACCOUNT_EMAIL \
     --role="roles/secretmanager.secretAccessor"
 
+# gcloud iam service-accounts add-iam-policy-binding [SERVICE_ACCOUNT] --member [MEMBER_EMAIL] --role roles/iam.serviceAccountUser
 # gcloud projects add-iam-policy-binding $PROJECT_ID \
 #   --member=$MEMBER_SERVICE_ACCOUNT_EMAIL \
 #   --role="roles/storage.objectAdmin"
@@ -69,6 +70,7 @@ gcloud secrets add-iam-policy-binding $SECRET_ID \
 # https://cloud.google.com/composer/docs/how-to/managing/creating#gcloud
 
 # specific permission to container registry bucket
+# https://cloud.google.com/container-registry/docs/using-with-google-cloud-platform#gke-permissions
 gsutil iam ch $MEMBER_SERVICE_ACCOUNT_EMAIL:objectAdmin gs://artifacts.wam-bam-258119.appspot.com/
 
 ```
