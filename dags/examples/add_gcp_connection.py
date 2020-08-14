@@ -1,9 +1,27 @@
 import json
-
+import os
 from airflow import DAG, settings
 from airflow.models import Connection
 from airflow.operators.python_operator import PythonOperator
 from datetime import datetime
+from google.cloud import secretmanager
+
+# TODO(developer)
+# # create a secrets manager secret from the local service accountkey
+# gcloud secrets create airflow-conn-secret \
+#     --replication-policy="automatic" \
+#     --data-file=service_account.json
+
+# # List the secret
+# gcloud secrets list
+
+# # verify secret contents ad hoc
+# gcloud secrets versions access latest --secret="airflow-conn-secret"
+
+# TODO(developer): for cloud composer, IAM policies will be assumed while running this DAG
+# this must be set for the local kubernetes setup to work
+# this can be removed for the cloud composer version of the DAG
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/account.json"
 
 default_args = {
     "owner": "airflow",
@@ -12,35 +30,57 @@ default_args = {
     "start_date": datetime(2001, 1, 1),
     "email_on_failure": False,
     "email_on_retry": False,
-    "retries": 5,
+    "retries": 0,
     "priority_weight": 1000,
 }
 
-# TODO: reference private repo with a draft of using secrets manager vs. a hard-coded file
-default_params = {
+# TODO(developer): update for your specific naming conventions
+CONN_PARAMS_DICT = {
     "gcp_project": "wam-bam-258119",
-    "key_file_path": "/account.json",
     "gcp_conn_id": "my_gcp_connection",
     "gcr_conn_id": "gcr_docker_connection",
+    "secret_name": "airflow-conn-secret",
 }
+
+
+def get_secret(project_name, secret_name):
+    """
+        Returns the value of a secret in Secret Manager for use in DAGs
+    """
+    secrets = secretmanager.SecretManagerServiceClient()
+    secret_value = (
+        secrets.access_secret_version(
+            "projects/" + project_name + "/secrets/" + secret_name + "/versions/latest"
+        )
+        .payload.data.decode("utf-8")
+        .replace("\n", "")
+    )
+    return secret_value
 
 
 def add_gcp_connection(ds, **kwargs):
     """"Add a airflow connection for GCP"""
-    new_conn = Connection(conn_id=default_params["gcp_conn_id"], conn_type="google_cloud_platform",)
+    new_conn = Connection(
+        conn_id=CONN_PARAMS_DICT["gcp_conn_id"], conn_type="google_cloud_platform",
+    )
     scopes = [
         "https://www.googleapis.com/auth/cloud-platform",
     ]
     conn_extra = {
         "extra__google_cloud_platform__scope": ",".join(scopes),
-        "extra__google_cloud_platform__project": default_params["gcp_project"],
-        "extra__google_cloud_platform__key_path": default_params["key_file_path"],
+        "extra__google_cloud_platform__project": CONN_PARAMS_DICT.get("gcp_project"),
+        "extra__google_cloud_platform__keyfile_dict": get_secret(
+            project_name=CONN_PARAMS_DICT.get("gcp_project"),
+            secret_name=CONN_PARAMS_DICT.get("secret_name"),
+        ),
     }
     conn_extra_json = json.dumps(conn_extra)
     new_conn.set_extra(conn_extra_json)
 
     session = settings.Session()
-    if not (session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()):
+    if not (
+        session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()
+    ):
         session.add(new_conn)
         session.commit()
         msg = "\n\tA connection with `conn_id`={conn_id} is newly created\n"
@@ -56,19 +96,24 @@ def add_gcp_connection(ds, **kwargs):
 def add_docker_connection(ds, **kwargs):
     """"Add a airflow connection for google container registry"""
     new_conn = Connection(
-        conn_id=default_params["gcr_conn_id"],
+        conn_id=CONN_PARAMS_DICT.get("gcr_conn_id"),
         conn_type="docker",
-        host="gcr.io/" + default_params["gcp_project"],
+        host="gcr.io/" + CONN_PARAMS_DICT.get("gcp_project"),
         login="_json_key",
     )
 
     # save contents of service account key into encrypted password field
-    with open(default_params["key_file_path"], "r") as file:
-        data = file.read().replace("\\n", "\n")  # replace new lines
-        new_conn.set_password(data)
+    json_key = get_secret(
+        project_name=CONN_PARAMS_DICT.get("gcp_project"),
+        secret_name=CONN_PARAMS_DICT.get("secret_name"),
+    )
+    data = str(json.loads(json_key))
+    new_conn.set_password(data)
 
     session = settings.Session()
-    if not (session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()):
+    if not (
+        session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()
+    ):
         session.add(new_conn)
         session.commit()
         msg = "\n\tA connection with `conn_id`={conn_id} is newly created\n"
@@ -80,7 +125,9 @@ def add_docker_connection(ds, **kwargs):
         print(msg)
 
 
-with DAG("add_gcp_connection", default_args=default_args, schedule_interval="@once") as dag:
+with DAG(
+    "add_gcp_connection", default_args=default_args, schedule_interval="@once"
+) as dag:
 
     # Task to add a google cloud connection
     t1 = PythonOperator(
@@ -96,4 +143,4 @@ with DAG("add_gcp_connection", default_args=default_args, schedule_interval="@on
         provide_context=True,
     )
 
-    t1 >> t2
+    [t1, t2]
