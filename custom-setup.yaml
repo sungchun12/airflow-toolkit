@@ -172,22 +172,22 @@ airflow:
   extraVolumes: # this will create the volume from the directory
     - name: dags
       hostPath:
-        path: /Users/sungwon.chung/Desktop/airflow-toolkit/dags/ # For you this is something like /home/*user*/github/airflowDAGs/dags
+        path: /Users/sung/Desktop/airflow-toolkit/dags/ # For you this is something like /home/*user*/github/airflowDAGs/dags
     - name: dag-environment-configs
       hostPath:
-        path: /Users/sungwon.chung/Desktop/airflow-toolkit/dag_environment_configs/
+        path: /Users/sung/Desktop/airflow-toolkit/dag_environment_configs/
     - name: kube-config
       hostPath:
-        path: /Users/sungwon.chung/Desktop/airflow-toolkit/.kube/
+        path: /Users/sung/Desktop/airflow-toolkit/.kube/
     - name: service-account
       hostPath:
-        path: /Users/sungwon.chung/Desktop/airflow-toolkit/account.json
+        path: /Users/sung/Desktop/airflow-toolkit/account.json
     - name: tests
       hostPath:
-        path: /Users/sungwon.chung/Desktop/airflow-toolkit/tests/
+        path: /Users/sung/Desktop/airflow-toolkit/tests/
     - name: post-deploy
       hostPath:
-        path: /Users/sungwon.chung/Desktop/airflow-toolkit/scripts/
+        path: /Users/sung/Desktop/airflow-toolkit/scripts/
 
 ###################################
 # Airflow - Scheduler Configs
