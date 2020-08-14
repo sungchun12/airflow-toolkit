@@ -9,7 +9,8 @@ DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-sung-latest"
 
 # TODO: fix kubernetes namespace context
 # namespace = conf.get("kubernetes", "NAMESPACE")
-namespace = "airflow"
+# namespace = "airflow"
+namespace = "default"
 
 # env = os.environ.copy()
 # GIT_BRANCH = env["GIT_BRANCH"]
@@ -32,6 +33,7 @@ def get_secret(project_name, secret_name):
 
 
 # GitLab default settings for all DAGs
+# https://cloud.google.com/composer/docs/how-to/using/using-kubernetes-pod-operator#gcloud
 def set_kube_pod_defaults(namespace):
     if namespace == "airflow":
         kube_pod_defaults = dict(
@@ -47,11 +49,11 @@ def set_kube_pod_defaults(namespace):
         kube_pod_defaults = dict(
             get_logs=True,
             image_pull_policy="Always",
-            in_cluster=True,
+            in_cluster=False,
             is_delete_operator_pod=True,
             namespace="default",
             cmds=["/bin/bash", "-cx"],
-            config_file=None,
+            # config_file="/home/airflow/composer_kube_config",
         )
     return kube_pod_defaults
 
