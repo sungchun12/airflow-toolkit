@@ -21,7 +21,7 @@ from airflow_utils import get_secret
 # TODO(developer): for cloud composer, IAM policies will be assumed while running this DAG
 # this must be set for the local kubernetes setup to work
 # this can be removed for the cloud composer version of the DAG
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/account.json"
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/account.json"
 
 default_args = {
     "owner": "airflow",
@@ -63,9 +63,7 @@ def add_gcp_connection(ds, **kwargs):
     new_conn.set_extra(conn_extra_json)
 
     session = settings.Session()
-    if not (
-        session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()
-    ):
+    if not (session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()):
         session.add(new_conn)
         session.commit()
         msg = "\n\tA connection with `conn_id`={conn_id} is newly created\n"
@@ -96,9 +94,7 @@ def add_docker_connection(ds, **kwargs):
     new_conn.set_password(data)
 
     session = settings.Session()
-    if not (
-        session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()
-    ):
+    if not (session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()):
         session.add(new_conn)
         session.commit()
         msg = "\n\tA connection with `conn_id`={conn_id} is newly created\n"
@@ -110,9 +106,7 @@ def add_docker_connection(ds, **kwargs):
         print(msg)
 
 
-with DAG(
-    "add_gcp_connections", default_args=default_args, schedule_interval="@once"
-) as dag:
+with DAG("add_gcp_connections", default_args=default_args, schedule_interval="@once") as dag:
 
     # Task to add a google cloud connection
     t1 = PythonOperator(
