@@ -1,7 +1,7 @@
 """ This file contains common operators/functions to be used across multiple DAGs """
 import os
 from airflow import configuration as conf
-
+from google.cloud import secretmanager
 
 GIT_REPO = "git@github.com:sungchun12/airflow-toolkit.git"
 PROJECT_ID = "wam-bam-258119"
@@ -14,6 +14,22 @@ namespace = "airflow"
 # env = os.environ.copy()
 # GIT_BRANCH = env["GIT_BRANCH"]
 GIT_BRANCH = "feature-work"
+
+
+def get_secret(project_name, secret_name):
+    """
+        Returns the value of a secret in Secret Manager for use in DAGs
+    """
+    secrets = secretmanager.SecretManagerServiceClient()
+    secret_value = (
+        secrets.access_secret_version(
+            "projects/" + project_name + "/secrets/" + secret_name + "/versions/latest"
+        )
+        .payload.data.decode("utf-8")
+        .replace("\n", "")
+    )
+    return secret_value
+
 
 # GitLab default settings for all DAGs
 def set_kube_pod_defaults(namespace):

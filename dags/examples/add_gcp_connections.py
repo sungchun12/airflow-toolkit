@@ -4,7 +4,7 @@ from airflow import DAG, settings
 from airflow.models import Connection
 from airflow.operators.python_operator import PythonOperator
 from datetime import datetime
-from google.cloud import secretmanager
+from airflow_utils import get_secret
 
 # TODO(developer)
 # # create a secrets manager secret from the local service accountkey
@@ -41,21 +41,6 @@ CONN_PARAMS_DICT = {
     "gcr_conn_id": "gcr_docker_connection",
     "secret_name": "airflow-conn-secret",
 }
-
-
-def get_secret(project_name, secret_name):
-    """
-        Returns the value of a secret in Secret Manager for use in DAGs
-    """
-    secrets = secretmanager.SecretManagerServiceClient()
-    secret_value = (
-        secrets.access_secret_version(
-            "projects/" + project_name + "/secrets/" + secret_name + "/versions/latest"
-        )
-        .payload.data.decode("utf-8")
-        .replace("\n", "")
-    )
-    return secret_value
 
 
 def add_gcp_connection(ds, **kwargs):
