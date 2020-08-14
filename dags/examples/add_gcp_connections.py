@@ -126,7 +126,7 @@ def add_docker_connection(ds, **kwargs):
 
 
 with DAG(
-    "add_gcp_connection", default_args=default_args, schedule_interval="@once"
+    "add_gcp_connections", default_args=default_args, schedule_interval="@once"
 ) as dag:
 
     # Task to add a google cloud connection
