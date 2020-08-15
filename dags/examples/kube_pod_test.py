@@ -48,5 +48,19 @@ failing = KubernetesPodOperator(
     dag=dag,
 )
 
-passing.set_upstream(start)
-failing.set_upstream(start)
+PROJECT_ID = "wam-bam-258119"
+DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-sungwon.chung-latest"
+
+private_gcr_passing = KubernetesPodOperator(
+    namespace="default",
+    image=DBT_IMAGE,
+    cmds=["python", "-c"],
+    arguments=["print('hello world')"],
+    labels={"foo": "bar"},
+    name="private-gcr-passing",
+    task_id="private-gcr-passing-task",
+    get_logs=True,
+    dag=dag,
+)
+
+start >> [passing, failing, private_gcr_passing]
