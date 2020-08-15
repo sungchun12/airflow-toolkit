@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow.operators.dummy_operator import DummyOperator
 
+from airflow_utils import pod_env_vars
+
 
 default_args = {
     "owner": "airflow",
@@ -60,6 +62,8 @@ private_gcr_passing = KubernetesPodOperator(
     name="private-gcr-passing",
     task_id="private-gcr-passing-task",
     get_logs=True,
+    # Storing sensitive credentials in env_vars will be exposed in plain text
+    env_vars=pod_env_vars,
     dag=dag,
 )
 
