@@ -45,6 +45,8 @@ terragrunt plan-all
 # Error: Error waiting to create Environment: Error waiting to create Environment: Error waiting for Creating Environment: error while retrieving operation: Get "https://composer.googleapis.com/v1beta1/projects/wam-bam-258119/locations/us-central1/operations/de094856-fea7-4ac4-824f-691b6cb42838?alt=json&prettyPrint=false": EOF. An initial environment was or is still being created, and clean up failed with error: Getting creation operation state failed while waiting for environment to finish creating, but environment seems to still be in 'CREATING' state. Wait for operation to finish and either manually delete environment or import "projects/wam-bam-258119/locations/us-central1/environments/dev-composer" into your state.
 
 # you may have to recreate this secret on multiple redeployments
+gcloud secrets delete airflow-conn-secret
+
 # create a secrets manager secret from the local service accountkey
 gcloud secrets create airflow-conn-secret \
     --replication-policy="automatic" \
