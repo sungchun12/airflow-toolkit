@@ -5,7 +5,7 @@ from google.cloud import secretmanager
 
 GIT_REPO = "git@github.com:sungchun12/airflow-toolkit.git"
 PROJECT_ID = "wam-bam-258119"
-DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-sung-latest"
+DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-sungwon.chung-latest"
 
 # TODO: fix kubernetes namespace context
 # namespace = conf.get("kubernetes", "NAMESPACE")
