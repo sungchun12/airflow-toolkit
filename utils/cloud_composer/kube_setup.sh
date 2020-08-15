@@ -22,7 +22,8 @@ cat <<EOF > service_account.json
 <service account file contents>
 EOF
 
-kubectl create secret generic dbt-secret --from-file=service_account.json
+# be very careful with naming convention for this secret or else the KubernetesPodOperator will timeout
+kubectl create secret generic dbt-secret --from-file=account.json
 
 # Create SSH key pair for secure git clones
 ssh-keygen
