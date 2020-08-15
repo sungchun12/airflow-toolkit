@@ -81,7 +81,7 @@ variable "disk_size_gb" {
 variable "oauth_scopes" {
   description = "Determine which services cloud composer is allowed to interact with"
   type        = list(string)
-  default     = ["https://www.googleapis.com/auth/cloud-platform", "https://www.googleapis.com/auth/devstorage.full_control"]
+  default     = ["https://www.googleapis.com/auth/cloud-platform"]
 }
 
 variable "use_ip_aliases" {
