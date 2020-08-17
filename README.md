@@ -22,6 +22,13 @@ TODO: add a airflow logo with toolkit emoji, add breeze streaks
 - `terratest` for terraform unit testing
 - DAGs relying on external data sources outside this repo
 
+## Table of Contents
+
+- [Pre-requisites](##Pre-requisites)
+- [Toolkit #1: Local Desktop Kubernetes Airflow Deployment](##Toolkit-#1:-Local-Desktop-Kubernetes-Airflow-Deployment)
+- [Toolkit #2: Terragrunt-Driven Terraform Deployment to Google Cloud](##Toolkit-#2:-Terragrunt-Driven-Terraform-Deployment-to-Google-Cloud)
+- [Toolkit #3: Simple Terraform Deployment to Google Cloud](##Toolkit-#3:-Simple-Terraform-Deployment-to-Google-Cloud)
+
 ## Pre-requisites
 
 1. [Sign up for a free trial](https://cloud.google.com/free/?hl=ar) _OR_ use an existing GCP account
