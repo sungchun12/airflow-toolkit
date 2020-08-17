@@ -12,7 +12,8 @@ DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-sungwon.chung-latest"
 # namespace = "airflow"
 namespace = "default"
 
-# env = os.environ.copy()
+env = os.environ.copy()
+DEPLOYMENT_SETUP = env["DEPLOYMENT_SETUP"]
 # GIT_BRANCH = env["GIT_BRANCH"]
 GIT_BRANCH = "feature-work"
 
@@ -34,18 +35,18 @@ def get_secret(project_name, secret_name):
 
 # GitLab default settings for all DAGs
 # https://cloud.google.com/composer/docs/how-to/using/using-kubernetes-pod-operator#gcloud
-def set_kube_pod_defaults(namespace):
-    if namespace == "airflow":
+def set_kube_pod_defaults(deployment_setup):
+    if deployment_setup == "local_desktop":
         kube_pod_defaults = dict(
             get_logs=True,
             image_pull_policy="Always",
             in_cluster=True,
             is_delete_operator_pod=True,
-            namespace=namespace,
+            namespace="airflow",
             cmds=["/bin/bash", "-cx"],
             config_file="/home/airflow/.kube/config",
         )
-    else:
+    else:  # default to cloud composer defaults
         kube_pod_defaults = dict(
             get_logs=True,
             image_pull_policy="Always",
@@ -58,7 +59,18 @@ def set_kube_pod_defaults(namespace):
     return kube_pod_defaults
 
 
-kube_pod_defaults = set_kube_pod_defaults(namespace)
+def set_google_app_credentials(deployment_setup):
+    if deployment_setup == "local_desktop":
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/account.json"
+        print(
+            f"Set custom environment variable GOOGLE_APPLICATION_CREDENTIALS for deployment setup: {deployment_setup}"
+        )
+    else:  # default to cloud composer defaults
+        print("Using existing default environment variable GOOGLE_APPLICATION_CREDENTIALS")
+
+
+set_google_app_credentials(DEPLOYMENT_SETUP)
+kube_pod_defaults = set_kube_pod_defaults(DEPLOYMENT_SETUP)
 pod_env_vars = {"PROJECT_ID": PROJECT_ID}
 
 
