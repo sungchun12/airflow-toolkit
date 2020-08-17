@@ -85,7 +85,8 @@ gcloud secrets add-iam-policy-binding $SECRET_ID \
 
 # specific permission to container registry bucket
 # https://cloud.google.com/container-registry/docs/using-with-google-cloud-platform#gke-permissions
-gsutil iam ch $MEMBER_SERVICE_ACCOUNT_EMAIL:objectAdmin gs://artifacts.wam-bam-258119.appspot.com/
+# add IAM policy binding for this in terraform
+# gsutil iam ch $MEMBER_SERVICE_ACCOUNT_EMAIL:objectAdmin gs://artifacts.wam-bam-258119.appspot.com/
 
 ```
 
