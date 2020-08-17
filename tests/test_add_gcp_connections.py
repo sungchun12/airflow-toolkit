@@ -4,8 +4,7 @@ from datetime import datetime
 import time
 
 # import created modules
-import dags.examples.dbt_example as test_dag
-from airflow.models import Variable
+import dags.examples.add_gcp_connections as test_dag
 from airflow.operators.dummy_operator import DummyOperator
 import json
 from airflow import DAG, settings
@@ -21,17 +20,12 @@ import subprocess
 successful connections to the proper environments
 """
 
-# TODO: Things to consider
-# How do I make the project and env vars dynamic throughout the tests? Assumed in Cloud Composer and local setup?
-# Where do I need to redefine the dbt commands?
-# Minimize storing configs in airflow db vars to prevent extra integration testing that's excessive
-# dynamically update airflow utils
 
 os.environ["DBT_DATABASE"] = "wam-bam-258119"
 os.environ["ENV"] = "dev"
 
 # Global Vars
-PIPELINE = "dbt_example"  # DAG to be tested
+PIPELINE = "add_gcp_connections"  # DAG to be tested
 PROJECT_NAME = os.environ["DBT_DATABASE"].lower()  # GCP project where BQ resides
 ENVIRONMENT = os.environ["ENV"].lower()  # dev, qa, prod
 
@@ -60,40 +54,30 @@ def test_contains_tasks(setup_method):
     dag_id = PIPELINE
     dag = setup_method.get_dag(dag_id)
     task_ids = list(map(lambda task: task.task_id, dag.tasks))
-    assert any("dbt" in s for s in task_ids) == True
-    assert task_ids == ["dbt-debug", "dbt-run", "dbt-test"]
+    assert task_ids == ["add-gcp-connection-python", "add-docker-connection-python"]
 
 
 def test_task_dependencies(setup_method):
-    """Check the task dependencies of the dag"""
-    # dbt debug upstream and downstream task dependencies
-    dbt_debug_task = getattr(test_dag, "dbt_debug")
+    """Check the task dependencies of the dag dag"""
+    # gcp connection task upstream and downstream task dependencies
+    gcp_conn_task = getattr(test_dag, "t1")
     upstream_task_ids = list(
-        map(lambda task: task.task_id, dbt_debug_task.upstream_list)
+        map(lambda task: task.task_id, gcp_conn_task.upstream_list)
     )
     assert upstream_task_ids == []
     downstream_task_ids = list(
-        map(lambda task: task.task_id, dbt_debug_task.downstream_list)
+        map(lambda task: task.task_id, gcp_conn_task.downstream_list)
     )
-    assert downstream_task_ids == ["dbt-run"]
+    assert downstream_task_ids == []
 
-    # dbt run upstream and downstream task dependencies
-    dbt_run_task = getattr(test_dag, "dbt_run")
-    upstream_task_ids = list(map(lambda task: task.task_id, dbt_run_task.upstream_list))
-    assert upstream_task_ids == ["dbt-debug"]
-    downstream_task_ids = list(
-        map(lambda task: task.task_id, dbt_run_task.downstream_list)
-    )
-    assert downstream_task_ids == ["dbt-test"]
-
-    # dbt test upstream and downstream task dependencies
-    dbt_test_task = getattr(test_dag, "dbt_test")
+    # google container registry connection task upstream and downstream task dependencies
+    gcr_conn_task = getattr(test_dag, "t2")
     upstream_task_ids = list(
-        map(lambda task: task.task_id, dbt_test_task.upstream_list)
+        map(lambda task: task.task_id, gcr_conn_task.upstream_list)
     )
-    assert upstream_task_ids == ["dbt-run"]
+    assert upstream_task_ids == []
     downstream_task_ids = list(
-        map(lambda task: task.task_id, dbt_test_task.downstream_list)
+        map(lambda task: task.task_id, gcr_conn_task.downstream_list)
     )
     assert downstream_task_ids == []
 
@@ -111,31 +95,42 @@ def test_task_count_test_dag(setup_method):
     dag = setup_method.get_dag(dag_id)
     dag_task_count = len(dag.tasks)
 
-    total_expected_task_count = 3
+    total_expected_task_count = 2
 
     assert dag_task_count == total_expected_task_count
 
 
-dbt_task_list = [
-    "dbt_debug",
-    "dbt_run",
-    "dbt_test",
+task_list = [
+    "t1",
+    "t2",
 ]
-# TODO(developer): airflow tests will NOT overwrite existing tables. These simply test if all dbt tasks run through successfully.
-# capture stdout
-@pytest.mark.parametrize("dbt_task", dbt_task_list)
-def test_dbt_tasks(dbt_task, capfd):
+
+
+@pytest.mark.parametrize("task_to_run", task_list)
+def test_tasks(task_to_run, capfd):
     "Tests that dbt tasks in scope operate as expected"
     expected_result_dict = {
-        "dbt_debug": "Connection test: OK connection ok",
-        "dbt_run": "Completed successfully",
-        "dbt_test": "Completed successfully",
+        "t1": [
+            "\n\tA connection with `conn_id`=my_gcp_connection is newly created\n\n",
+            "\n\tA connection with `conn_id`=my_gcp_connection already exists\n\n",
+        ],
+        "t2": [
+            "\n\tA connection with `conn_id`=gcr_docker_connection is newly created\n\n",
+            "\n\tA connection with `conn_id`=gcr_docker_connection already exists\n\n",
+        ],
     }
-    task = getattr(test_dag, dbt_task)  # dynamically call attribute function call
-    ti = TaskInstance(task=task, execution_date=datetime.now())
-    result = task.execute(ti.get_template_context())
-    out, err = capfd.readouterr()
-    assert expected_result_dict.get(dbt_task) in out  # dynamic assertion key value pair
+    try:
+        task = getattr(
+            test_dag, task_to_run
+        )  # dynamically call attribute function call
+        ti = TaskInstance(task=task, execution_date=datetime.now())
+        result = task.execute(ti.get_template_context())
+        out, err = capfd.readouterr()
+        assert (
+            out == expected_result_dict.get(task_to_run)[0]
+        )  # dynamic assertion key value pair
+    except AssertionError:
+        assert out == expected_result_dict.get(task_to_run)[1]
 
 
 # TODO: to be drafted later

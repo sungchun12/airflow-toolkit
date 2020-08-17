@@ -104,7 +104,9 @@ airflow:
   ##           name: airflow-ldap-password
   ##           key: value
   ##
-  extraEnv: []
+  extraEnv: # this is equivalent to `export DEPLOYMENT_SETUP="local_desktop"
+    - name: DEPLOYMENT_SETUP
+      value: "local_desktop"
 
   ## extra configMap volumeMounts for the web/scheduler/worker Pods
   ##
@@ -139,6 +141,7 @@ airflow:
   extraPipPackages:
     - "kubernetes==11.0.0"
     - "pytest==5.4.3"
+    - "google-cloud-secret-manager==0.2.0"
 
   # https://stackoverflow.com/questions/58299948/helm-stable-airflow-custom-values-for-airflow-deployment-with-shared-persisten
   ## extra volumeMounts for the web/scheduler/worker Pods
@@ -171,22 +174,22 @@ airflow:
   extraVolumes: # this will create the volume from the directory
     - name: dags
       hostPath:
-        path: /Users/sung/Desktop/airflow-toolkit/dags/ # For you this is something like /home/*user*/github/airflowDAGs/dags
+        path: /Users/sungwon.chung/Desktop/airflow-toolkit/dags/ # For you this is something like /home/*user*/github/airflowDAGs/dags
     - name: dag-environment-configs
       hostPath:
-        path: /Users/sung/Desktop/airflow-toolkit/dag_environment_configs/
+        path: /Users/sungwon.chung/Desktop/airflow-toolkit/dag_environment_configs/
     - name: kube-config
       hostPath:
-        path: /Users/sung/Desktop/airflow-toolkit/.kube/
+        path: /Users/sungwon.chung/Desktop/airflow-toolkit/.kube/
     - name: service-account
       hostPath:
-        path: /Users/sung/Desktop/airflow-toolkit/account.json
+        path: /Users/sungwon.chung/Desktop/airflow-toolkit/account.json
     - name: tests
       hostPath:
-        path: /Users/sung/Desktop/airflow-toolkit/tests/
+        path: /Users/sungwon.chung/Desktop/airflow-toolkit/tests/
     - name: post-deploy
       hostPath:
-        path: /Users/Sung/Desktop/airflow-toolkit/scripts/
+        path: /Users/sungwon.chung/Desktop/airflow-toolkit/scripts/
 
 ###################################
 # Airflow - Scheduler Configs
@@ -645,6 +648,17 @@ flower:
   ##
   podAnnotations: {}
 
+  ## the name of a pre-created secret containing the basic authentication value for flower
+  ##
+  ## NOTE:
+  ## - This sets `AIRFLOW__CELERY__FLOWER_BASIC_AUTH`
+  ##
+  basicAuthSecret: ""
+
+  ## the key within `flower.basicAuthSecret` containing the basic authentication string
+  ##
+  basicAuthSecretKey: ""
+
   ## sets `AIRFLOW__CELERY__FLOWER_URL_PREFIX`
   ##
   ## NOTE:
@@ -660,6 +674,8 @@ flower:
     externalPort: 5555
     loadBalancerIP: ""
     loadBalancerSourceRanges: []
+    nodePort:
+      http: ""
 
   ## the number of seconds to wait (in bash) before starting the flower container
   ##

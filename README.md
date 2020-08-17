@@ -34,13 +34,19 @@ https://www.docker.com/products/docker-desktop
 # install helm
 brew install helm
 
-# Install Google Cloud SDK
+# Install Google Cloud SDK and follow the prompts
 # https://cloud.google.com/sdk/install
-curl https://sdk.cloud.google.com > install.sh
-bash install.sh --disable-prompts
+curl https://sdk.cloud.google.com | bash
 
 # close the shell and start a new one for the changes to take effect
 
+```
+
+- [Create a Service Account](https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating)
+- [Enable the Service Account](https://cloud.google.com/iam/docs/creating-managing-service-accounts#iam-service-accounts-enable-console)
+- [Create a Service Account Key JSON File-should automatically download](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#iam-service-account-keys-create-console)
+
+```bash
 # Authenticate with service-account key file
 gcloud auth activate-service-account --key-file account.json
 
@@ -53,9 +59,16 @@ gcloud auth configure-docker
 ssh-keygen
 
 # copy and paste contents to your git repo SSH keys section
+# https://github.com/settings/keys
 cat ~/.ssh/id_rsa.pub
 
+# clone with SSH tunnel into desktop
+cd $HOME/Desktop/
+git clone git@github.com:sungchun12/airflow-toolkit.git
+
 ```
+
+- Move private `JSON` key into the root directory of this git repo you just cloned and rename it `account.json`(don't worry it will be officially `gitignored`)
 
 ## Setup Airflow
 
@@ -65,8 +78,6 @@ python3 -m venv py37_venv
 source py37_venv/bin/activate
 pip3 install --upgrade pip
 pip3 install -r requirements.txt
-
-minikube start --cpus 4 --memory 8192
 
 # run the full setup script
 source setup.sh
@@ -141,3 +152,4 @@ sh.helm.release.v1.airflow.v1   helm.sh/release.v1                    1      50m
 - [kubectl commands](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands)
 - [What is a pod?](https://kubernetes.io/docs/concepts/workloads/pods/pod/)
 - [Kubernetes Dashboard for Docker Desktop](https://medium.com/backbase/kubernetes-in-local-the-easy-way-f8ef2b98be68)
+- [Cost effective way to scale the airflow scheduler](https://medium.com/@royzipuff/the-smarter-way-of-scaling-with-composers-airflow-scheduler-on-gke-88619238c77b)
