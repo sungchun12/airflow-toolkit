@@ -15,6 +15,7 @@ TODO: add a airflow logo with toolkit emoji, add breeze streaks
 - Reusable in another kubernetes cluster
 - Same DAGs work in both local desktop computer and Google Cloud Composer
 - Secure cloud infrastructure and network(least privliges access and minimal public internet touchpoints)
+- Low cost/Free(assumes you have free-trial credits)
 
 **Out of Scope**
 
