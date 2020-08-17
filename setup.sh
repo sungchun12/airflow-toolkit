@@ -5,12 +5,12 @@
 echo "***********************"
 echo "Persist Environment Variables"
 echo "***********************"
-source ./scripts/env.sh
+source ./utils/local_desktop/env.sh
 
 echo "***********************"
 echo "Build and push custom dbt docker image to Google Container Registry"
 echo "***********************"
-source ./scripts/dbt_docker.sh
+source ./utils/local_desktop/dbt_docker.sh
 
 echo "***********************"
 echo "Copy Docker for Desktop Kube Config into git repo"
