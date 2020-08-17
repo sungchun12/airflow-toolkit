@@ -48,6 +48,8 @@ TODO: add a airflow logo with toolkit emoji, add breeze streaks
 
 ### System Design
 
+TODO: add a full architecture diagram
+
 ### Specific Use Cases
 
 ### How to Deploy
@@ -127,6 +129,8 @@ source teardown.sh
 
 ### System Design
 
+TODO: add a full architecture diagram
+
 ### Specific Use Cases
 
 ### How to Deploy
@@ -203,6 +207,8 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk
 > Note: This uses terragrunt as a thin wrapper within a single subdirectory
 
 ### System Design
+
+TODO: add a full architecture diagram
 
 ### Specific Use Cases
 
