@@ -59,7 +59,7 @@ This toolkit is for BOTH Data and DevOps engineers to prevent the headaches abov
 
 ## Toolkit #1: Local Desktop Kubernetes Airflow Deployment
 
-> Note: This was ONLY tested on a Mac
+> Note: This was ONLY tested on a Mac desktop environment
 
 ### System Design
 
@@ -67,38 +67,41 @@ TODO: add a full architecture diagram
 
 ### Specific Use Cases
 
+- Free local dev environment
+- Rapid DAG development without waiting for an equivalent environment to sync DAG changes
+- Experiment with a wider array of customization and permissions to then handoff to DevOps
+- Minimal knowledge of kubernetes and helm required
+
 ### How to Deploy
 
-#### One Time Installs
+#### One Time Setup
 
-[Download docker desktop](https://www.docker.com/products/docker-desktop) and start docker desktop
+- [Download docker desktop](https://www.docker.com/products/docker-desktop) and start docker desktop
+
+- Customize Docker Desktop for the below settings
+  ![custom_resources](/docs/custom_resources.png)
+  ![enable_kubernetes](/docs/enable_kubernetes.png)
+
+- Run the below commands in your terminal
 
 ```bash
 # install homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
-# install docker desktop
-https://www.docker.com/products/docker-desktop
-
-#enable kubernetes through docker for desktop UI
-
-#TODO: include section about downloading kubectl and other little tools as needed
-
-# install helm, terragrunt, terraform to local desktop
-brew install helm terragrunt terraform
+# install helm, terragrunt, terraform, kubectl to local desktop
+brew install helm terragrunt terraform kubectl
 
 # Install Google Cloud SDK and follow the prompts
 # https://cloud.google.com/sdk/install
 curl https://sdk.cloud.google.com | bash
-
-# close the shell and start a new one for the changes to take effect
-
 ```
 
-- [Create a Service Account](https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating)
-- [Enable the Service Account](https://cloud.google.com/iam/docs/creating-managing-service-accounts#iam-service-accounts-enable-console)
-- [Create a Service Account Key JSON File-should automatically download](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#iam-service-account-keys-create-console)
-- Move private `JSON` key into the root directory of this git repo you just cloned and rename it `account.json`(don't worry it will be officially `gitignored`)
+- Close the terminal shell and start a new one for the changes to take effect
+
+* [Create a Service Account](https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating)
+* [Enable the Service Account](https://cloud.google.com/iam/docs/creating-managing-service-accounts#iam-service-accounts-enable-console)
+* [Create a Service Account Key JSON File-should automatically download](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#iam-service-account-keys-create-console)
+* Move private `JSON` key into the root directory of this git repo you just cloned and rename it `account.json`(don't worry it will be officially `gitignored`)
 
 ```bash
 # Authenticate with service-account key file
