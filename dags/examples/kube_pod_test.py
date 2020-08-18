@@ -22,26 +22,28 @@ dag = DAG("kubernetes_sample", default_args=default_args, schedule_interval="@on
 
 start = DummyOperator(task_id="run_this_first", dag=dag)
 
-passing = KubernetesPodOperator(
+# intentionally pointing to "default" kubernetes namespace to illustrate that pods can run in different environments
+# "default" should work for cloud composer as well
+passing_python = KubernetesPodOperator(
     namespace="default",
     image="python:3.6-stretch",
     cmds=["python", "-c"],
     arguments=["print('hello world')"],
     labels={"foo": "bar"},
-    name="passing-test",
-    task_id="passing-task",
+    name="passing-python",
+    task_id="passing-python-task",
     get_logs=True,
     dag=dag,
 )
 
-failing = KubernetesPodOperator(
+passing_bash = KubernetesPodOperator(
     namespace="default",
     image="ubuntu:16.04",
-    cmds=["python", "-c"],
-    arguments=["print('hello world')"],
+    cmds=["/bin/bash", "-cx"],
+    arguments=["echo hello world"],
     labels={"foo": "bar"},
     name="fail",
-    task_id="failing-task",
+    task_id="passing-bash-task",
     get_logs=True,
     dag=dag,
 )
@@ -63,4 +65,4 @@ private_gcr_passing = KubernetesPodOperator(
     dag=dag,
 )
 
-start >> [passing, failing, private_gcr_passing]
+start >> [passing_python, passing_bash, private_gcr_passing]
