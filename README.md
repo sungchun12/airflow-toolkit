@@ -1,8 +1,21 @@
 # airflow-toolkit
 
+Any Airflow project day 1, you can spin up a local desktop Kubernetes Airflow environment AND a Google Cloud Composer Airflow environment with working example DAGs across both :sparkles:
+
 TODO: add a airflow logo with toolkit emoji, add breeze streaks
 
 ## Motivations
+
+It is a painful exercise to setup secure airflow enviroments with parity(local desktop, dev, qa, prod). Too often, I've done all this work in my local desktop airflow environment only to find out the DAGs don't work in a Kubernetes deployment or vice versa. As I got more hands-on with infrastructure/networking, it felt like I was performing two jobs: Data and DevOps engineer. Responsibilities overlap and both roles are traditionally ill-equipped to come to consensus. Either the networking specifics go over Data engineer's head and/or the data pipeline IAM permissions and DAG idempotency go over the DevOps engineer's head. There's also the issue of security and DevOps saying that spinning up an airflow-dev-cloud-environment is too risky without several development cycles to setup bastion hosts, subnets, private IPs, etc.
+
+This toolkit is for BOTH Data and DevOps engineers to prevent the headaches above :astonished:
+
+**High-Level Success Criteria:**
+
+- Deploy airflow in 4 environments(local desktop, dev, qa, prod) in ONE day with this repo(save 4-5 weeks of development time)
+- Confidence that base DAG integration components work based on successful example DAGs(save 1-2 weeks of development time)
+- It FEELS less painful to iteratively develop airflow DAG code AND infrastructure as code
+- Inspired to automate other painful parts of setting up airflow environments for others
 
 ## Use Cases
 
@@ -124,41 +137,6 @@ source teardown.sh
 
 ### Tradeoffs
 
-## Toolkit #2: Terragrunt-Driven Terraform Deployment to Google Cloud
-
-> Note: This follows the example directory structure provided by terragrunt housed within the same git repo
-
-### System Design
-
-TODO: add a full architecture diagram
-
-### Specific Use Cases
-
-### How to Deploy
-
-```bash
-#!/bin/bash
-# assumes you are already in the the repo root directory
-cd terragrunt_infrastructure_live/non-prod/us-central1/dev/
-
-terragrunt plan-all
-
-terragrunt validate-all
-
-# follow terminal prompt after entering below command
-terragrunt apply-all
-```
-
-### How to Destroy
-
-```bash
-#!/bin/bash
-# follow terminal prompt after entering below command
-terragrunt destroy-all
-```
-
-### Tradeoffs
-
 ### General Concepts
 
 - The airflow kubernetes cluster will use the service account within the `airflow` namespace to pull the image from Google Container Registry based on the manually created secret: `gcr-key`
@@ -202,6 +180,41 @@ http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kube
 kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk '/^deployment-controller-token-/{print $1}') | awk '$1=="token:"{print $2}'
 
 ```
+
+## Toolkit #2: Terragrunt-Driven Terraform Deployment to Google Cloud
+
+> Note: This follows the example directory structure provided by terragrunt housed within the same git repo
+
+### System Design
+
+TODO: add a full architecture diagram
+
+### Specific Use Cases
+
+### How to Deploy
+
+```bash
+#!/bin/bash
+# assumes you are already in the the repo root directory
+cd terragrunt_infrastructure_live/non-prod/us-central1/dev/
+
+terragrunt plan-all
+
+terragrunt validate-all
+
+# follow terminal prompt after entering below command
+terragrunt apply-all
+```
+
+### How to Destroy
+
+```bash
+#!/bin/bash
+# follow terminal prompt after entering below command
+terragrunt destroy-all
+```
+
+### Tradeoffs
 
 ## Toolkit #3: Simple Terraform Deployment to Google Cloud
 
