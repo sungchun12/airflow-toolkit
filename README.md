@@ -1,4 +1,4 @@
-# airflow-toolkit
+# airflow-toolkit :rocket:
 
 Any Airflow project day 1, you can spin up a local desktop Kubernetes Airflow environment AND a Google Cloud Composer Airflow environment with working example DAGs across both :sparkles:
 
@@ -14,6 +14,7 @@ This toolkit is for BOTH Data and DevOps engineers to prevent the headaches abov
 
 - Deploy airflow in 4 environments(local desktop, dev, qa, prod) in ONE day with this repo(save 4-5 weeks of development time)
 - Confidence that base DAG integration components work based on successful example DAGs(save 1-2 weeks of development time)
+- Simple setup and teardown for all toolkits and environments
 - It FEELS less painful to iteratively develop airflow DAG code AND infrastructure as code
 - Inspired to automate other painful parts of setting up airflow environments for others
 
@@ -24,8 +25,8 @@ This toolkit is for BOTH Data and DevOps engineers to prevent the headaches abov
 - Works on local computer with docker desktop installed
 - Run meaningful example DAGs with passing unit and integration tests
 - Easily setup and teardown any environment
-- Sync DAGs real-time with local git repo directory
-- Reusable in another kubernetes cluster
+- Sync DAGs real-time with local git repo directory(local desktop)
+- Reusable configs in another kubernetes cluster
 - Same DAGs work in both local desktop computer and Google Cloud Composer
 - Secure cloud infrastructure and network(least privliges access and minimal public internet touchpoints)
 - Low cost/Free(assumes you have free-trial credits)
