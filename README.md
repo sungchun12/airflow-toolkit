@@ -57,24 +57,7 @@ It is a painful exercise to setup secure airflow enviroments with parity(local d
 
 4. Get into starting position for deployment: `cd airflow-toolkit/`
 
-## Toolkit #1: Local Desktop Kubernetes Airflow Deployment
-
-> Note: This was ONLY tested on a Mac desktop environment
-
-### System Design
-
-TODO: add a full architecture diagram
-
-### Specific Use Cases
-
-- Free local dev environment
-- Rapid DAG development without waiting for an equivalent environment to sync DAG changes
-- Experiment with a wider array of customization and permissions to then handoff to DevOps
-- Minimal knowledge of kubernetes and helm required
-
-### How to Deploy
-
-#### One Time Setup
+### One Time Setup for All Toolkits
 
 > Time to Complete: 10-20 minutes
 
@@ -167,7 +150,24 @@ cat ~/.ssh/id_rsa.pub
 
 - [Paste public ssh key contents location](https://github.com/settings/ssh/new)
 
-After doing the above ONCE, you can run the below multiple times with the same environment result
+> After doing the above ONCE, you can run the below toolkits multiple times with the same results(idempotent)
+
+## Toolkit #1: Local Desktop Kubernetes Airflow Deployment
+
+> Note: This was ONLY tested on a Mac desktop environment
+
+### System Design
+
+TODO: add a full architecture diagram
+
+### Specific Use Cases
+
+- Free local dev environment
+- Rapid DAG development without waiting for an equivalent environment to sync DAG changes
+- Experiment with a wider array of customization and permissions to then handoff to DevOps
+- Minimal knowledge of kubernetes and helm required
+
+### How to Deploy
 
 > Time to Complete: 2-3 minutes
 
