@@ -165,7 +165,7 @@ cat ~/.ssh/id_rsa.pub
 
 ## Toolkit #1: Local Desktop Kubernetes Airflow Deployment
 
-> Time to Complete: 2-3 minutes
+> Time to Complete: 5-8 minutes
 
 > Note: This was ONLY tested on a Mac desktop environment
 
@@ -191,6 +191,12 @@ cat ~/.ssh/id_rsa.pub
 # TODO: add setting custom env vars
 source deploy_local_desktop_airflow.sh
 ```
+
+- Turn on all the DAGs using the on/off button on the left side of the UI
+- After waiting a couple minutes, all the DAGs would succeed
+  > Note: `bigquery_connection_check` will fail unless `add_gcp_connections` succeeds first
+
+![local_desktop_airflow.png](/docs/local_desktop_airflow_success.png)
 
 > Note: the airflow webserver may freeze given resource limitations
 
