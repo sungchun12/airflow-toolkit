@@ -177,6 +177,7 @@ After doing the above ONCE, you can run the below multiple times with the same e
 #!/bin/bash
 # follow terminal prompt after entering below command
 # leave this terminal open to sustain airflow webserver
+# TODO: add setting custom env vars
 source deploy_local_desktop_airflow.sh
 ```
 
@@ -278,6 +279,10 @@ secret "ssh-key-secret" deleted
 namespace "airflow" deleted
 ```
 
+### How to give local desktop airflow more horsepower :horse:
+
+- [Scaling airflow resources](https://www.astronomer.io/guides/airflow-scaling-workers/)
+
 ### Tradeoffs
 
 #### Pros
@@ -344,7 +349,7 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk
 
 ## Toolkit #2: Terragrunt-Driven Terraform Deployment to Google Cloud
 
-> Note: This follows the example directory structure provided by terragrunt with modules housed in the same git repo-[link](https://github.com/gruntwork-io/terragrunt-infrastructure-live-example)
+> Note: This follows the example directory structure provided by terragrunt with modules housed in the same git repo-[further reading](https://github.com/gruntwork-io/terragrunt-infrastructure-live-example)
 
 ### System Design
 
@@ -352,22 +357,21 @@ TODO: add a full architecture diagram
 
 #### Resources
 
-[Keep your Terraform code DRY](https://terragrunt.gruntwork.io/docs/features/keep-your-terraform-code-dry/)
-[Relative Paths](https://community.gruntwork.io/t/relative-paths-in-terragrunt-modules/144/6)
-[Handling Dependencies](https://community.gruntwork.io/t/handling-dependencies/315/2)
-[Terraform force unlock](https://www.terraform.io/docs/commands/force-unlock.html)
-[Third Party Reasons to use terragrunt](https://transcend.io/blog/why-we-use-terragrunt)
-[Managing Terraform Secrets](https://blog.gruntwork.io/a-comprehensive-guide-to-managing-secrets-in-your-terraform-code-1d586955ace1)
-[Google Provider Documentation](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#full-reference)
-[Installing Homebrew in GitHub Actions](https://github.community/t/installing-homebrew-on-linux/17994)
+- [Keep your Terraform code DRY](https://terragrunt.gruntwork.io/docs/features/keep-your-terraform-code-dry/)
+- [Relative Paths](https://community.gruntwork.io/t/relative-paths-in-terragrunt-modules/144/6)
+- [Handling Dependencies](https://community.gruntwork.io/t/handling-dependencies/315/2)
+- [Terraform force unlock](https://www.terraform.io/docs/commands/force-unlock.html)
+- [Third Party Reasons to use terragrunt](https://transcend.io/blog/why-we-use-terragrunt)
+- [Managing Terraform Secrets](https://blog.gruntwork.io/a-comprehensive-guide-to-managing-secrets-in-your-terraform-code-1d586955ace1)
+- [Google Provider Documentation](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#full-reference)
+- [Installing Homebrew in GitHub Actions](https://github.community/t/installing-homebrew-on-linux/17994)
 
 ### Specific Use Cases
 
 - Low cost cloud airflow dev environment($10-$20/day)
 - Test local desktop DAGs against cloud infrastructure that will have more parity with qa and prod environments
 - Add more horsepower to your data pipelines
-- Infrastructure code that is DevOps friendly with terraform modules that do NOT change or duplicate, only terragrunt configs change
--
+- Infrastructure as code that is DevOps friendly with terraform modules that do NOT change or duplicate, only terragrunt configs change
 
 ### How to Deploy
 
@@ -376,11 +380,14 @@ TODO: add a full architecture diagram
 # assumes you are already in the the repo root directory
 cd terragrunt_infrastructure_live/non-prod/us-central1/dev/
 
+# this has mock outputs to emulate module dependencies
 terragrunt plan-all
 
+# this has mock outputs to emulate module dependencies
 terragrunt validate-all
 
 # follow terminal prompt after entering below command
+# do NOT interrupt this process until finished or it will corrupt terraform state
 terragrunt apply-all
 ```
 
@@ -409,13 +416,14 @@ TODO: add a full architecture diagram
 ```bash
 #!/bin/bash
 cd terraform_simple_setup/
+# preview the cloud resources you will create
+terraform plan
 
-terragrunt plan
-
-terragrunt validate
+# validate terraform syntax and configuration
+terraform validate
 
 # follow terminal prompt after entering below command
-terragrunt apply
+terraform apply
 ```
 
 ### How to Destroy
@@ -423,7 +431,7 @@ terragrunt apply
 ```bash
 #!/bin/bash
 # follow terminal prompt after entering below command
-terragrunt destroy
+terraform destroy
 ```
 
 ### Tradeoffs
