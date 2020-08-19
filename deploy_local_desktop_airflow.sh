@@ -55,7 +55,7 @@ kubectl create secret docker-registry gcr-key --docker-server=gcr.io --docker-us
 kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "gcr-key"}]}'
 
 echo "***********************"
-echo "Create Kubernetes Secrets for dbt operations based on Service Account ssh-keygen, to be used later in KubernetesPodOperator"
+echo "Create Kubernetes Secrets for dbt operations based on Service Account  and ssh-keygen, to be used later in KubernetesPodOperator"
 echo "***********************"
 # create dbt-secret with SERVICE_ACCOUNT
 kubectl create secret generic dbt-secret --from-file=account.json
@@ -87,6 +87,9 @@ kubectl get pods
 # check status
 helm ls
 
+echo "***********************"
+echo "View the airflow UI webserver in your browser. Click on the URL based within this terminal output"
+echo "***********************"
 # view airflow UI
 export POD_NAME=$(kubectl get pods --namespace airflow -l "component=web,app=airflow" -o jsonpath="{.items[0].metadata.name}")
 
