@@ -15,7 +15,7 @@ namespace = "default"
 env = os.environ.copy()
 DEPLOYMENT_SETUP = env["DEPLOYMENT_SETUP"]
 # GIT_BRANCH = env["GIT_BRANCH"]
-GIT_BRANCH = "feature-work"
+GIT_BRANCH = "feature-docs"
 
 
 def get_secret(project_name, secret_name):
@@ -66,7 +66,9 @@ def set_google_app_credentials(deployment_setup):
             f"Set custom environment variable GOOGLE_APPLICATION_CREDENTIALS for deployment setup: {deployment_setup}"
         )
     else:  # default to cloud composer defaults
-        print("Using existing default environment variable GOOGLE_APPLICATION_CREDENTIALS")
+        print(
+            "Using existing default environment variable GOOGLE_APPLICATION_CREDENTIALS"
+        )
 
 
 set_google_app_credentials(DEPLOYMENT_SETUP)
