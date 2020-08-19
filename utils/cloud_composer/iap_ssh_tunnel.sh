@@ -4,7 +4,7 @@
 # into the the bastion host through identity access proxy
 
 # setup the higher access service account to do the below operations
-ACCESS_KEY_FILE="service_account.json"
+ACCESS_KEY_FILE="account.json"
 gcloud auth activate-service-account --key-file=$ACCESS_KEY_FILE
 
 # set project config
