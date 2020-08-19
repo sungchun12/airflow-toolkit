@@ -44,7 +44,13 @@ It is a painful exercise to setup secure airflow enviroments with parity(local d
 - [Toolkit #2: Terragrunt-Driven Terraform Deployment to Google Cloud](##Toolkit-#2:-Terragrunt-Driven-Terraform-Deployment-to-Google-Cloud)
 - [Toolkit #3: Simple Terraform Deployment to Google Cloud](##Toolkit-#3:-Simple-Terraform-Deployment-to-Google-Cloud)
 
+---
+
+---
+
 ## Pre-requisites
+
+> Time to Complete: 5-10 minutes
 
 1. [Sign up for a free trial](https://cloud.google.com/free/?hl=ar) _OR_ use an existing GCP account
 2. Manually FORK the repo through the github interface _OR_ CLONE this repo: `git clone https://github.com/sungchun12/airflow-toolkit.git`
@@ -59,7 +65,7 @@ It is a painful exercise to setup secure airflow enviroments with parity(local d
 
 ### One Time Setup for All Toolkits
 
-> Time to Complete: 10-20 minutes
+> Time to Complete: 10-15 minutes
 
 - [Download docker desktop](https://www.docker.com/products/docker-desktop) and start docker desktop
 
@@ -152,7 +158,13 @@ cat ~/.ssh/id_rsa.pub
 
 > After doing the above ONCE, you can run the below toolkits multiple times with the same results(idempotent)
 
+---
+
+---
+
 ## Toolkit #1: Local Desktop Kubernetes Airflow Deployment
+
+> Time to Complete: 2-3 minutes
 
 > Note: This was ONLY tested on a Mac desktop environment
 
@@ -168,8 +180,6 @@ TODO: add a full architecture diagram
 - Minimal knowledge of kubernetes and helm required
 
 ### How to Deploy
-
-> Time to Complete: 2-3 minutes
 
 - Run the below commands in your terminal
 
@@ -292,6 +302,7 @@ namespace "airflow" deleted
 - Same example DAGs work as is in cloud infrastructure setup
 - Minimal kubernetes/helm skills required to start
 - Ability to scale infrastructure locally(ex: add more worker pods)
+- Run `pytest` directly within this setup
 
 #### Cons
 
@@ -345,9 +356,15 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk
 
 ![kube_resource_dashboard](/docs/kube_resource_dashboard.png)
 
-> press `ctrl + c` within the terminal where you ran the kubernetes dashboard script to close it
+> enter `ctrl + c` within the terminal where you ran the kubernetes dashboard script to close it
+
+---
+
+---
 
 ## Toolkit #2: Terragrunt-Driven Terraform Deployment to Google Cloud
+
+> Time to Complete: 50-60 minutes(majority of time waiting for cloud composer to finish deploying)
 
 > Note: This follows the example directory structure provided by terragrunt with modules housed in the same git repo-[further reading](https://github.com/gruntwork-io/terragrunt-infrastructure-live-example)
 
@@ -368,19 +385,48 @@ TODO: add a full architecture diagram
 
 ### Specific Use Cases
 
-- Low cost cloud airflow dev environment($10-$20/day)
+- Low cost Google Cloud dev airflow dev environment($10-$20/day)
 - Test local desktop DAGs against cloud infrastructure that will have more parity with qa and prod environments
 - Add more horsepower to your data pipelines
 - Infrastructure as code that is DevOps friendly with terraform modules that do NOT change or duplicate, only terragrunt configs change
 
 ### How to Deploy
 
+- Create a service account secret to authorize the terragrunt/terraform deployment
+
+```bash
+#!/bin/bash
+# create a secrets manager secret from the key
+gcloud secrets create terraform-secret \
+    --replication-policy="automatic" \
+    --data-file=account.json
+
+# List the secret
+# example terminal output
+# NAME                 CREATED              REPLICATION_POLICY  LOCATIONS
+# airflow-conn-secret  2020-08-18T19:45:50  automatic           -
+# terraform-secret     2020-08-12T14:34:50  automatic           -
+gcloud secrets list
+
+
+# verify secret contents ad hoc
+gcloud secrets versions access latest --secret="terraform-secret"
+```
+
 ```bash
 #!/bin/bash
 # assumes you are already in the the repo root directory
 cd terragrunt_infrastructure_live/non-prod/us-central1/dev/
 
-# this has mock outputs to emulate module dependencies
+# export the Google Cloud project ID where the secrets live-to be used by terragrunt
+# example: export PROJECT_ID="wam-bam-258119"
+export PROJECT_ID=<your project id>
+
+gcloud config set project $PROJECT_ID #TODO: add this step to the CICD pipeline rather than the get secret shell script
+
+# this has mock outputs to emulate module dependencies with a prefix "mock-"
+# OR you can run a more specific plan
+# terragrunt plan-all -out=terragrunt_plan
 terragrunt plan-all
 
 # this has mock outputs to emulate module dependencies
@@ -388,10 +434,15 @@ terragrunt validate-all
 
 # follow terminal prompt after entering below command
 # do NOT interrupt this process until finished or it will corrupt terraform state
+# OR you can apply a more specific plan
+# terragrunt apply-all terragrunt_plan
 terragrunt apply-all
+
 ```
 
 ### How to Destroy
+
+> Time to Complete: 5-10 minutes
 
 ```bash
 #!/bin/bash
@@ -401,7 +452,35 @@ terragrunt destroy-all
 
 ### Tradeoffs
 
+#### Pros
+
+- Explicit terraform module dependencies(through terragrunt functionality)
+- Keeps your terraform code DRY
+- terraform state is divided by module
+- Separate config and terraform module management
+- Ability to spin up multiple environments(dev, qa) with a single `terragrunt plan-all` command within the dir: `./terragrunt_infrastructure_live/non-prod/`
+- Same example DAGs work as is in local desktop setup
+- Minimal kubernetes skills required to start
+- Access to more virtual horsepower(ex: add more worker pods through cloud composer configs)
+- Dynamically authorizes infrastructure operations through secrets manager
+- A DevOps engineer should only need to copy and paste the dev terragrunt configs and update inputs for other environments(qa, prod)
+- VPC-native, private-IP, bastion host, ssh via identity aware proxy, and other security-based, reasonable defaults(minimal touchpoints with the public internet)
+
+#### Cons
+
+- You must destroy your respective dev environments every day or risk accruing costs for idle resources
+- Time to complete is long
+- Destroying all the infrastructure through terragrunt/terraform does NOT automatically destroy the cloud composer gcs bucket used to sync DAGs-[further reading](https://www.terraform.io/docs/providers/google/r/composer_environment.html)
+- If you customize the VPC to prevent any kind of public internet access, cloud composer will not deploy properly(as it needs to reach out to pypi for python dependencies)
+- Need to learn another tool: terragrunt(definitely worth it)
+
+---
+
+---
+
 ## Toolkit #3: Simple Terraform Deployment to Google Cloud
+
+> Time to Complete: 50-60 minutes(majority of time waiting for cloud composer to finish deploying)
 
 > Note: This uses terragrunt as a thin wrapper within a single subdirectory
 
@@ -411,22 +490,56 @@ TODO: add a full architecture diagram
 
 ### Specific Use Cases
 
+- Best used for quick and easy setup for a data engineer, NOT intended for hand off to a DevOps engineer
+- Low cost Google Cloud dev airflow dev environment($10-$20/day)
+- Test local desktop DAGs against cloud infrastructure that will have more parity with qa and prod environments
+- Add more horsepower to your data pipelines
+
 ### How to Deploy
+
+- Create a service account secret to authorize the terraform deployment
 
 ```bash
 #!/bin/bash
+# create a secrets manager secret from the key
+gcloud secrets create terraform-secret \
+    --replication-policy="automatic" \
+    --data-file=account.json
+
+# List the secret
+# example terminal output
+# NAME                 CREATED              REPLICATION_POLICY  LOCATIONS
+# airflow-conn-secret  2020-08-18T19:45:50  automatic           -
+# terraform-secret     2020-08-12T14:34:50  automatic           -
+gcloud secrets list
+
+
+# verify secret contents ad hoc
+gcloud secrets versions access latest --secret="terraform-secret"
+```
+
+```bash
+#!/bin/bash
+
 cd terraform_simple_setup/
+
 # preview the cloud resources you will create
+# OR you can run a more specific plan
+# terraform plan -out=terraform_plan
 terraform plan
 
 # validate terraform syntax and configuration
 terraform validate
 
 # follow terminal prompt after entering below command
+# OR you can apply a more specific plan
+# terraform apply terraform_plan
 terraform apply
 ```
 
 ### How to Destroy
+
+> Time to Complete: 5-10 minutes
 
 ```bash
 #!/bin/bash
@@ -435,6 +548,106 @@ terraform destroy
 ```
 
 ### Tradeoffs
+
+#### Pros
+
+- Explicit terraform module dependencies(through built-in terraform functionality)
+- Separate config and terraform module management
+- Same example DAGs work as is in local desktop setup
+- Minimal kubernetes skills required to start
+- Access to more virtual horsepower(ex: add more worker pods through cloud composer configs)
+- Dynamically authorizes infrastructure operations through secrets manager
+- A DevOps engineer should only need to copy and paste the dev terragrunt configs and update inputs for other environments(qa, prod)
+- VPC-native, private-IP, bastion host, ssh via identity aware proxy, and other security-based, reasonable defaults(minimal touchpoints with the public internet)
+
+#### Cons
+
+- You must destroy your respective dev environments every day or risk accruing costs for idle resources
+- Time to complete is long
+- Destroying all the infrastructure through terragrunt/terraform does NOT automatically destroy the cloud composer gcs bucket used to sync DAGs-[further reading](https://www.terraform.io/docs/providers/google/r/composer_environment.html)
+- If you customize the VPC to prevent any kind of public internet access, cloud composer will not deploy properly(as it needs to reach out to pypi for python dependencies)
+- To create a similar environment(qa, prod), you would have to copy and paste the terraform modules into a separate directory and run the above steps. Terraform code is NOT DRY
+- The DevOps engineer has to take on a lot more work to maintain this deployment across several environments
+- terraform state is all contained within one file
+
+---
+
+---
+
+## Post-Deployment Instructions for Toolkits #2 & #3
+
+- After the terragrunt deployment is successful, run the below commands in your local desktop terminal
+
+```bash
+#!/bin/bash
+
+# Configure variables to interact with cloud composer
+export PROJECT_DIR=$PWD
+export GCP_PROJECT="wam-bam-258119"
+
+# Set Composer location
+gcloud config set composer/location us-central1
+
+COMPOSER_ENVIRONMENT="dev-composer"
+COMPOSER_BUCKET=$(gcloud composer environments describe ${COMPOSER_ENVIRONMENT} --format='value(config.dagGcsPrefix)' | sed 's/\/dags//g')
+
+# sync files in dags folder to the gcs bucket linked to cloud composer
+gsutil -m rsync -r $PROJECT_DIR/dags $COMPOSER_BUCKET/dags
+```
+
+- Open a separate terminal to run the below
+
+```bash
+#!/bin/bash
+
+# ssh via identity aware proxy into the bastion host(which will then run commands against cloud composer)
+source utils/cloud_composer/iap_ssh_tunnel.sh
+
+# install basic software in the bastion host
+sudo apt-get install kubectl git
+
+# list cloud composer DAGs
+gcloud composer environments run dev-composer \
+    --project wam-bam-258119 \
+    --location us-central1 \
+    list_dags
+
+# capture cloud composer environment config
+COMPOSER_ENVIRONMENT="dev-composer"
+COMPOSER_CONFIG=$(gcloud composer environments describe ${COMPOSER_ENVIRONMENT} --format='value(config.dagGcsPrefix)') #ex: projects/wam-bam-258119/zones/us-central1-b/clusters/us-central1-dev-composer-de094856-gke
+
+# capture kubernetes credentials and have kubectl commands point to this cluster
+gcloud container clusters get-credentials $COMPOSER_CONFIG \
+    --zone us-central1-b \
+    --project wam-bam-258119
+
+# copy and paste contents of service account json file from local machine into the bastion host
+cat <<EOF > service_account.json
+<service account file contents>
+EOF
+
+# be very careful with naming convention for this secret or else the KubernetesPodOperator will timeout
+kubectl create secret generic dbt-secret --from-file=account.json
+
+# Create SSH key pair for secure git clones
+ssh-keygen
+
+# copy and paste contents to your git repo SSH keys section
+# https://github.com/settings/keys
+cat ~/.ssh/id_rsa.pub
+
+# create the ssh key secret
+kubectl create secret generic ssh-key-secret --from-file=id_rsa=$HOME/.ssh/id_rsa --from-file=id_rsa.pub=$HOME/.ssh/id_rsa.pub
+
+kubectl get secrets
+```
+
+- Access the airflow webserver UI #TODO: add more details about getting to the URL and how to sign-in
+- Rerun all DAGs within cloud composer for success validation
+
+---
+
+---
 
 ## Frequently Asked Questions(FAQ)
 
