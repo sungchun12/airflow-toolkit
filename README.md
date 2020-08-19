@@ -6,9 +6,9 @@ TODO: add a airflow logo with toolkit emoji, add breeze streaks
 
 ## Motivations
 
-It is a painful exercise to setup secure airflow enviroments with parity(local desktop, dev, qa, prod). Too often, I've done all this work in my local desktop airflow environment only to find out the DAGs don't work in a Kubernetes deployment or vice versa. As I got more hands-on with infrastructure/networking, it felt like I was performing two jobs: Data and DevOps engineer. Responsibilities overlap and both roles are traditionally ill-equipped to come to consensus. Either the networking specifics go over Data engineer's head and/or the data pipeline IAM permissions and DAG idempotency go over the DevOps engineer's head. There's also the issue of security and DevOps saying that spinning up an airflow-dev-cloud-environment is too risky without several development cycles to setup bastion hosts, subnets, private IPs, etc.
+It is a painful exercise to setup secure airflow enviroments with parity(local desktop, dev, qa, prod). Too often, I've done all this work in my local desktop airflow environment only to find out the DAGs don't work in a Kubernetes deployment or vice versa. As I got more hands-on with infrastructure/networking, it felt like I was performing two jobs: Data and DevOps engineer. Responsibilities overlap and both roles are traditionally ill-equipped to come to consensus. Either the networking specifics go over the Data engineer's head and/or the data pipeline IAM permissions and DAG idempotency go over the DevOps engineer's head. There's also the issue of security and DevOps saying that spinning up an airflow-dev-cloud-environment is too risky without several development cycles to setup bastion hosts, subnets, private IPs, etc. These conversations alone can lead to several-weeks delays before you can even START DRAFTING airflow pipelines! It doesn't have to be this way.
 
-**This toolkit is for BOTH Data and DevOps engineers to prevent the headaches above** :astonished:
+**This toolkit is for BOTH Data and DevOps engineers to solve the problems above** :astonished:
 
 **High-Level Success Criteria:**
 
@@ -16,7 +16,8 @@ It is a painful exercise to setup secure airflow enviroments with parity(local d
 - Confidence that base DAG integration components work based on successful example DAGs(save 1-2 weeks of development time)
 - Simple setup and teardown for all toolkits and environments
 - It FEELS less painful to iteratively develop airflow DAG code AND infrastructure as code
-- Inspired to automate other painful parts of setting up airflow environments for others
+- Secure and private environments by default
+- You are inspired to automate other painful parts of setting up airflow environments for others
 
 ## Use Cases
 
@@ -581,9 +582,17 @@ terraform destroy
 ```bash
 #!/bin/bash
 
+# add secrets manager IAM policy binding to composer service account
+PROJECT_ID="wam-bam-258119"
+MEMBER_SERVICE_ACCOUNT_EMAIL="serviceAccount:composer-sa-dev@wam-bam-258119.iam.gserviceaccount.com" #TODO: make this dynamic
+SECRET_ID="airflow-conn-secret"
+
+gcloud secrets add-iam-policy-binding $SECRET_ID \
+    --member=$MEMBER_SERVICE_ACCOUNT_EMAIL \
+    --role="roles/secretmanager.secretAccessor"
+
 # Configure variables to interact with cloud composer
 export PROJECT_DIR=$PWD
-export GCP_PROJECT="wam-bam-258119"
 
 # Set Composer location
 gcloud config set composer/location us-central1
