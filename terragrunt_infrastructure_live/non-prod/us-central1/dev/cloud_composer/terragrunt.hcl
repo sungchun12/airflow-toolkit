@@ -26,10 +26,10 @@ dependency "networking" {
   config_path = "${get_terragrunt_dir()}/../networking"
 
   mock_outputs = {
-    network                       = "network"
-    subnetwork                    = "subnetwork"
-    cluster_secondary_range_name  = "cluster_secondary_range_name"
-    services_secondary_range_name = "services_secondary_range_name"
+    network                       = "mock-network"
+    subnetwork                    = "mock-subnetwork"
+    cluster_secondary_range_name  = "mock-cluster_secondary_range_name"
+    services_secondary_range_name = "mock-services_secondary_range_name"
   }
 
   mock_outputs_allowed_terraform_commands = ["plan", "validate"]
@@ -39,7 +39,7 @@ dependency "service_accounts" {
   config_path = "${get_terragrunt_dir()}/../service_accounts"
 
   mock_outputs = {
-    composer-worker-service-account = "service-account-compute@developer.gserviceaccount.com"
+    composer-worker-service-account = "mock-service-account-compute@developer.gserviceaccount.com"
   }
 
   mock_outputs_allowed_terraform_commands = ["plan", "validate"]

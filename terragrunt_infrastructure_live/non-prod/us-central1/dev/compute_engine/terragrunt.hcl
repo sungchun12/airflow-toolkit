@@ -21,7 +21,7 @@ dependency "networking" {
   config_path = "${get_terragrunt_dir()}/../networking"
 
   mock_outputs = {
-    subnetwork = "subnetwork_id"
+    subnetwork = "mock-subnetwork_id"
   }
 
   mock_outputs_allowed_terraform_commands = ["plan", "validate"]
@@ -31,7 +31,7 @@ dependency "service_accounts" {
   config_path = "${get_terragrunt_dir()}/../service_accounts"
 
   mock_outputs = {
-    service-account-bastion-host-email = "bastion_host_email"
+    service-account-bastion-host-email = "mock-bastion_host_email"
   }
 
   mock_outputs_allowed_terraform_commands = ["plan", "validate"]
