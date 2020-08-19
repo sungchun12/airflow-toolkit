@@ -183,6 +183,23 @@ cat ~/.ssh/id_rsa.pub
 
 ### How to Deploy
 
+**General Mechanics**
+
+> shell script logs will generate similar mechanics
+
+- Set environment variables
+- Build and push a custom dbt docker image
+- Copy Docker for Desktop Kube Config into git repo
+- Download stable helm repo
+- Setup Kubernetes airflow namespace
+- Create Kubernetes Secrets for the local cluster to download docker images from Google Container Registry based on Service Account
+- Create Kubernetes Secrets for dbt operations based on Service Account and ssh-keygen, to be used later in KubernetesPodOperator
+- Setup and Install Airflow Kubernetes Cluster with Helm
+- Wait for the Kubernetes Cluster to settle
+- Open airflow UI webserver from terminal
+
+---
+
 - Run the below commands in your terminal
 
 ```bash
@@ -401,6 +418,8 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk
 
 ### How to Deploy
 
+**General Mechanics**
+
 - Create a service account secret to authorize the terragrunt/terraform deployment
 
 ```bash
@@ -507,6 +526,8 @@ terragrunt destroy-all
 - Add more horsepower to your data pipelines
 
 ### How to Deploy
+
+**General Mechanics**
 
 - Create a service account secret to authorize the terraform deployment
 
