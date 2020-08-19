@@ -176,8 +176,9 @@ cat ~/.ssh/id_rsa.pub
 ### Specific Use Cases
 
 - Free local dev environment
-- Rapid DAG development without waiting for an equivalent environment to sync DAG changes
-- Experiment with a wider array of customization and permissions to then handoff to DevOps
+- Customize local cluster resources as needed
+- Rapid DAG development without waiting for an equivalent cloud environment to sync DAG changes
+- Experiment with a wider array of customization and permissions
 - Minimal knowledge of kubernetes and helm required
 
 ### How to Deploy
@@ -193,7 +194,7 @@ source deploy_local_desktop_airflow.sh
 ```
 
 - Turn on all the DAGs using the on/off button on the left side of the UI
-- After waiting a couple minutes, all the DAGs would succeed
+- After waiting a couple minutes, all the DAGs should succeed
   > Note: `bigquery_connection_check` will fail unless `add_gcp_connections` succeeds first
 
 ![local_desktop_airflow.png](/docs/local_desktop_airflow_success.png)
@@ -377,9 +378,11 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk
 
 ### System Design
 
-TODO: add a full architecture diagram
+![terragrunt_deployment](/docs/terragrunt_deployment.png)
 
-#### Resources
+> terraform state will be split into multiple files per module
+
+#### Terragrunt Resources
 
 - [Keep your Terraform code DRY](https://terragrunt.gruntwork.io/docs/features/keep-your-terraform-code-dry/)
 - [Relative Paths](https://community.gruntwork.io/t/relative-paths-in-terragrunt-modules/144/6)
@@ -388,7 +391,6 @@ TODO: add a full architecture diagram
 - [Third Party Reasons to use terragrunt](https://transcend.io/blog/why-we-use-terragrunt)
 - [Managing Terraform Secrets](https://blog.gruntwork.io/a-comprehensive-guide-to-managing-secrets-in-your-terraform-code-1d586955ace1)
 - [Google Provider Documentation](https://www.terraform.io/docs/providers/google/guides/provider_reference.html#full-reference)
-- [Installing Homebrew in GitHub Actions](https://github.community/t/installing-homebrew-on-linux/17994)
 
 ### Specific Use Cases
 
@@ -493,7 +495,9 @@ terragrunt destroy-all
 
 ### System Design
 
-TODO: add a full architecture diagram
+![terragrunt_deployment](/docs/terragrunt_deployment.png)
+
+> terraform state will be stored in one file
 
 ### Specific Use Cases
 
@@ -684,3 +688,4 @@ kubectl get secrets
 - [Kubernetes Dashboard for Docker Desktop](https://medium.com/backbase/kubernetes-in-local-the-easy-way-f8ef2b98be68)
 - [Cost effective way to scale the airflow scheduler](https://medium.com/@royzipuff/the-smarter-way-of-scaling-with-composers-airflow-scheduler-on-gke-88619238c77b)
 - [Kubernetes on Docker Desktop Limitations](https://docs.docker.com/docker-for-mac/kubernetes/)
+- [Installing Homebrew in GitHub Actions](https://github.community/t/installing-homebrew-on-linux/17994)
