@@ -504,7 +504,7 @@ workers:
   ## NOTE:
   ## - when `workers.autoscaling.enabled` is true, this is the minimum
   ##
-  replicas: 1
+  replicas: 2
 
   ## the nodeSelector configs for the worker Pods
   ##
@@ -568,7 +568,7 @@ workers:
     ## NOTE:
     ## - sets AIRFLOW__CELERY__WORKER_CONCURRENCY
     ##
-    instances: 1
+    instances: 10
 
     ## if we should wait for tasks to finish on a celery worker before SIGTERM of Pod
     ##
