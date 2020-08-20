@@ -227,9 +227,6 @@ extraVolumes: # this will create the volume from the directory
   - name: tests
     hostPath:
       path: <YOUR GIT REPO DIRECTORY HERE>/tests/
-  - name: post-deploy
-    hostPath:
-      path: <YOUR GIT REPO DIRECTORY HERE>/scripts/
 
 # example below
 extraVolumes: # this will create the volume from the directory
@@ -248,9 +245,6 @@ extraVolumes: # this will create the volume from the directory
   - name: tests
     hostPath:
       path: /Users/sung/Desktop/airflow-toolkit/tests/
-  - name: post-deploy
-    hostPath:
-      path: /Users/sung/Desktop/airflow-toolkit/scripts/
 ```
 
 - Run the below commands in your terminal
