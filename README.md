@@ -617,34 +617,7 @@ terraform destroy
 
 > Time to Complete: 5-10 minutes
 
-- After the terragrunt deployment is successful, run the below commands in your local desktop terminal
-
-```bash
-#!/bin/bash
-
-# add secrets manager IAM policy binding to composer service account
-PROJECT_ID="wam-bam-258119"
-MEMBER_SERVICE_ACCOUNT_EMAIL="serviceAccount:composer-sa-dev@wam-bam-258119.iam.gserviceaccount.com" #TODO: make this dynamic
-SECRET_ID="airflow-conn-secret"
-
-gcloud secrets add-iam-policy-binding $SECRET_ID \
-    --member=$MEMBER_SERVICE_ACCOUNT_EMAIL \
-    --role="roles/secretmanager.secretAccessor"
-
-# Configure variables to interact with cloud composer
-export PROJECT_DIR=$PWD
-
-# Set Composer location
-gcloud config set composer/location us-central1
-
-COMPOSER_ENVIRONMENT="dev-composer"
-COMPOSER_BUCKET=$(gcloud composer environments describe ${COMPOSER_ENVIRONMENT} --format='value(config.dagGcsPrefix)' | sed 's/\/dags//g')
-
-# sync files in dags folder to the gcs bucket linked to cloud composer
-gsutil -m rsync -r $PROJECT_DIR/dags $COMPOSER_BUCKET/dags
-```
-
-- Open a separate terminal to run the below
+- After the terragrunt/terraform deployment is successful, run the below commands in your local desktop terminal
 
 ```bash
 #!/bin/bash
@@ -694,6 +667,33 @@ kubectl create secret generic ssh-key-secret \
   --from-file=id_rsa.pub=$HOME/.ssh/id_rsa.pub
 
 kubectl get secrets
+```
+
+- Open a separate terminal to run the below
+
+```bash
+#!/bin/bash
+
+# add secrets manager IAM policy binding to composer service account
+PROJECT_ID="wam-bam-258119"
+MEMBER_SERVICE_ACCOUNT_EMAIL="serviceAccount:composer-sa-dev@wam-bam-258119.iam.gserviceaccount.com" #TODO: make this dynamic
+SECRET_ID="airflow-conn-secret"
+
+gcloud secrets add-iam-policy-binding $SECRET_ID \
+    --member=$MEMBER_SERVICE_ACCOUNT_EMAIL \
+    --role="roles/secretmanager.secretAccessor"
+
+# Configure variables to interact with cloud composer
+export PROJECT_DIR=$PWD
+
+# Set Composer location
+gcloud config set composer/location us-central1
+
+COMPOSER_ENVIRONMENT="dev-composer"
+COMPOSER_BUCKET=$(gcloud composer environments describe ${COMPOSER_ENVIRONMENT} --format='value(config.dagGcsPrefix)' | sed 's/\/dags//g')
+
+# sync files in dags folder to the gcs bucket linked to cloud composer
+gsutil -m rsync -r $PROJECT_DIR/dags $COMPOSER_BUCKET/dags
 ```
 
 - Access the airflow webserver UI #TODO: add more details about getting to the URL and how to sign-in
