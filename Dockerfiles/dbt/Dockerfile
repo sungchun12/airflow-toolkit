@@ -8,6 +8,20 @@ RUN apt-get update -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# RUN curl -sSL https://sdk.cloud.google.com | bash
+
+# ENV PATH $PATH:/root/google-cloud-sdk/bin
+# Downloading gcloud package
+RUN curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > /tmp/google-cloud-sdk.tar.gz
+
+# Installing the package
+RUN mkdir -p /usr/local/gcloud \
+    && tar -C /usr/local/gcloud -xvf /tmp/google-cloud-sdk.tar.gz \
+    && /usr/local/gcloud/google-cloud-sdk/install.sh
+
+# Adding the package path to local
+ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin
+
 # Install DBT
 RUN pip install -U pip
 RUN pip install dbt==0.17.0

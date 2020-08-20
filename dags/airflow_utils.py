@@ -66,25 +66,23 @@ def set_google_app_credentials(deployment_setup):
             f"Set custom environment variable GOOGLE_APPLICATION_CREDENTIALS for deployment setup: {deployment_setup}"
         )
     else:  # default to cloud composer defaults
-        print(
-            "Using existing default environment variable GOOGLE_APPLICATION_CREDENTIALS"
-        )
+        print("Using existing default environment variable GOOGLE_APPLICATION_CREDENTIALS")
 
 
 set_google_app_credentials(DEPLOYMENT_SETUP)
 kube_pod_defaults = set_kube_pod_defaults(DEPLOYMENT_SETUP)
 pod_env_vars = {"PROJECT_ID": PROJECT_ID}
 
-
-# This assumes the ssh private key for the git repo will exist within the working directory of the docker container
-git_clone_cmds = f"""
-    export GIT_SSH_COMMAND='ssh -i .ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' &&
-    git clone -b {GIT_BRANCH} {GIT_REPO}"""
-
 # entrypoint is called specifically in these commands for smoother dynamic permissions when working with the account.json file
+# utilizes cloud source mirror repo to prevent the private IP cloud composer cluster from reaching out to the public internet for the git repo
+# this also prevents an extra need to create a Cloud NAT Gateway
+git_clone_cmds = f"""
+    /entrypoint.sh &&
+    gcloud auth activate-service-account --key-file=account.json &&
+    gcloud source repos clone github_sungchun12_airflow-toolkit --project={PROJECT_ID}"""
+
 dbt_setup_cmds = f"""
     {git_clone_cmds} &&
-    cd airflow-toolkit/dbt_bigquery_example &&
-    /entrypoint.sh &&
+    cd github_sungchun12_airflow-toolkit/dbt_bigquery_example &&
     export DBT_PROFILES_DIR=$(pwd) &&
     export DBT_GOOGLE_BIGQUERY_KEYFILE=/dbt/account.json"""
