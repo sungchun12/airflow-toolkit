@@ -6,7 +6,7 @@ TODO: add a airflow logo with toolkit emoji, add breeze streaks
 
 ## Motivations
 
-It is a painful exercise to setup secure airflow enviroments with parity(local desktop, dev, qa, prod). Too often, I've done all this work in my local desktop airflow environment only to find out the DAGs don't work in a Kubernetes deployment or vice versa. As I got more hands-on with infrastructure/networking, it felt like I was performing two jobs: Data and DevOps engineer. Responsibilities overlap and both roles are traditionally ill-equipped to come to consensus. Either the networking specifics go over the Data engineer's head and/or the data pipeline IAM permissions and DAG idempotency go over the DevOps engineer's head. There's also the issue of security and DevOps saying that spinning up an airflow-dev-cloud-environment is too risky without several development cycles to setup bastion hosts, subnets, private IPs, etc. These conversations alone can lead to several-weeks delays before you can even START DRAFTING airflow pipelines! It doesn't have to be this way.
+It is a painful exercise to setup secure airflow enviroments with parity(local desktop, dev, qa, prod). Too often, I've done all this work in my local desktop airflow environment only to find out the DAGs don't work in a Kubernetes deployment or vice versa. As I got more hands-on with infrastructure/networking, I was performing two jobs: Data and DevOps engineer. Responsibilities overlap and both roles are traditionally ill-equipped to come to consensus. Either the networking specifics go over the Data engineer's head and/or the data pipeline IAM permissions and DAG idempotency go over the DevOps engineer's head. There's also the issue of security and DevOps saying that spinning up an airflow-dev-cloud-environment is too risky without several development cycles to setup bastion hosts, subnets, private IPs, etc. These conversations alone can lead to several-weeks delays before you can even START DRAFTING airflow pipelines! It doesn't have to be this way.
 
 **This toolkit is for BOTH Data and DevOps engineers to solve the problems above** :astonished:
 
@@ -23,7 +23,7 @@ It is a painful exercise to setup secure airflow enviroments with parity(local d
 
 **In Scope**
 
-- Works on local computer with docker desktop installed
+- Airflow works on local computer with docker desktop installed
 - Run meaningful example DAGs with passing unit and integration tests
 - Easily setup and teardown any environment
 - Sync DAGs real-time with local git repo directory(local desktop)
@@ -49,7 +49,7 @@ It is a painful exercise to setup secure airflow enviroments with parity(local d
 
 ---
 
-## Pre-requisites
+## Prerequisites
 
 > Time to Complete: 5-10 minutes
 
@@ -103,7 +103,7 @@ curl https://sdk.cloud.google.com | bash
 
 - Move private `JSON` key into the root directory of this git repo you just cloned and rename it `account.json`(don't worry it will be officially `gitignored`)
 
-- Run the below commands in your terminal
+- Run the below commands in your local desktop terminal
 
 ```bash
 # Authenticate gcloud commands with service account key file
@@ -134,7 +134,7 @@ gcloud secrets list
 gcloud secrets versions access latest --secret="airflow-conn-secret"
 
 # Optional: install specific Google Cloud version of kubectl
-# The homebrew installation above will suffice
+# The homebrew installation earlier above will suffice
 # ┌──────────────────────────────────────────────────────────────────┐
 # │               These components will be installed.                │
 # ├─────────────────────┬─────────────────────┬──────────────────────┤
@@ -388,7 +388,7 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk
 
 ![kube_resource_dashboard](/docs/kube_resource_dashboard.png)
 
-> enter `ctrl + c` within the terminal where you ran the kubernetes dashboard script to close it
+> Enter `ctrl + c` within the terminal where you ran the kubernetes dashboard script to close it
 
 ---
 
@@ -425,7 +425,7 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk
 
 ### How to Deploy
 
-**General Mechanics**
+> Read Post-Deployment Instructions for Toolkits #2 & #3 after this deployment
 
 - Create a service account secret to authorize the terragrunt/terraform deployment
 
@@ -534,7 +534,7 @@ terragrunt destroy-all
 
 ### How to Deploy
 
-**General Mechanics**
+> Read Post-Deployment Instructions for Toolkits #2 & #3 after this deployment
 
 - Create a service account secret to authorize the terraform deployment
 
@@ -615,6 +615,8 @@ terraform destroy
 
 ## Post-Deployment Instructions for Toolkits #2 & #3
 
+> Time to Complete: 5-10 minutes
+
 - After the terragrunt deployment is successful, run the below commands in your local desktop terminal
 
 ```bash
@@ -653,24 +655,27 @@ source utils/cloud_composer/iap_ssh_tunnel.sh
 # install basic software in the bastion host
 sudo apt-get install kubectl git
 
+# Set Composer project, location, and zone
+# Minimizes redundant flags in downstream commands
+gcloud config set project wam-bam-258119
+gcloud config set composer/location us-central1
+gcloud config set compute/zone us-central1-b
+
 # list cloud composer DAGs
 gcloud composer environments run dev-composer \
-    --project wam-bam-258119 \
-    --location us-central1 \
     list_dags
 
 # capture cloud composer environment config
 COMPOSER_ENVIRONMENT="dev-composer"
-COMPOSER_CONFIG=$(gcloud composer environments describe ${COMPOSER_ENVIRONMENT} --format='value(config.dagGcsPrefix)') #ex: projects/wam-bam-258119/zones/us-central1-b/clusters/us-central1-dev-composer-de094856-gke
+COMPOSER_CONFIG=$(gcloud composer environments describe ${COMPOSER_ENVIRONMENT} --format='value(config.gkeCluster)')
+# COMPOSER_CONFIG ex: projects/wam-bam-258119/zones/us-central1-b/clusters/us-central1-dev-composer-de094856-gke
 
 # capture kubernetes credentials and have kubectl commands point to this cluster
-gcloud container clusters get-credentials $COMPOSER_CONFIG \
-    --zone us-central1-b \
-    --project wam-bam-258119
+gcloud container clusters get-credentials $COMPOSER_CONFIG
 
 # copy and paste contents of service account json file from local machine into the bastion host
-cat <<EOF > service_account.json
-<service account file contents>
+cat <<EOF > account.json
+<paste service account file contents>
 EOF
 
 # be very careful with naming convention for this secret or else the KubernetesPodOperator will timeout
@@ -684,7 +689,9 @@ ssh-keygen
 cat ~/.ssh/id_rsa.pub
 
 # create the ssh key secret
-kubectl create secret generic ssh-key-secret --from-file=id_rsa=$HOME/.ssh/id_rsa --from-file=id_rsa.pub=$HOME/.ssh/id_rsa.pub
+kubectl create secret generic ssh-key-secret \
+  --from-file=id_rsa=$HOME/.ssh/id_rsa \
+  --from-file=id_rsa.pub=$HOME/.ssh/id_rsa.pub
 
 kubectl get secrets
 ```
