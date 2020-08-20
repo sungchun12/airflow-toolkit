@@ -205,6 +205,54 @@ cat ~/.ssh/id_rsa.pub
 
 ---
 
+> Note: I plan to automate this yaml setup in a future feature
+
+- Manually update the extraVolumes section within `custom-setup.yaml`, starting at `line 174`
+- Run `pwd` in your terminal from the root `airflow-toolkit/` directory and replace all the `<YOUR GIT REPO DIRECTORY HERE>` placeholders
+
+```yaml
+extraVolumes: # this will create the volume from the directory
+  - name: dags
+    hostPath:
+      path: <YOUR GIT REPO DIRECTORY HERE>/dags/ # For you this is something like /home/*user*/github/airflowDAGs/dags
+  - name: dag-environment-configs
+    hostPath:
+      path: <YOUR GIT REPO DIRECTORY HERE>/dag_environment_configs/
+  - name: kube-config
+    hostPath:
+      path: <YOUR GIT REPO DIRECTORY HERE>/.kube/
+  - name: service-account
+    hostPath:
+      path: <YOUR GIT REPO DIRECTORY HERE>/account.json
+  - name: tests
+    hostPath:
+      path: <YOUR GIT REPO DIRECTORY HERE>/tests/
+  - name: post-deploy
+    hostPath:
+      path: <YOUR GIT REPO DIRECTORY HERE>/scripts/
+
+# example below
+extraVolumes: # this will create the volume from the directory
+  - name: dags
+    hostPath:
+      path: /Users/sung/Desktop/airflow-toolkit/dags/
+  - name: dag-environment-configs
+    hostPath:
+      path: /Users/sung/Desktop/airflow-toolkit/dag_environment_configs/
+  - name: kube-config
+    hostPath:
+      path: /Users/sung/Desktop/airflow-toolkit/.kube/
+  - name: service-account
+    hostPath:
+      path: /Users/sung/Desktop/airflow-toolkit/account.json
+  - name: tests
+    hostPath:
+      path: /Users/sung/Desktop/airflow-toolkit/tests/
+  - name: post-deploy
+    hostPath:
+      path: /Users/sung/Desktop/airflow-toolkit/scripts/
+```
+
 - Run the below commands in your terminal
 
 ```bash
