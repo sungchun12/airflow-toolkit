@@ -209,7 +209,11 @@ cat ~/.ssh/id_rsa.pub
 #!/bin/bash
 # follow terminal prompt after entering below command
 # leave this terminal open to sustain airflow webserver
-# TODO: add setting custom env vars
+# Set of environment variables
+export ENV="dev"
+export PROJECT_ID="wam-bam-258119"
+export DOCKER_DBT_IMG="gcr.io/$PROJECT_ID/dbt_docker:${ENV}-latest"
+
 source deploy_local_desktop_airflow.sh
 ```
 

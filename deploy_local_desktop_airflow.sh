@@ -3,11 +3,6 @@
 # Script to setup Kubernetes cluster on Docker Desktop for Mac Context
 
 echo "***********************"
-echo "Persist Environment Variables"
-echo "***********************"
-source ./utils/local_desktop/env.sh
-
-echo "***********************"
 echo "Build and push custom dbt docker image to Google Container Registry"
 echo "***********************"
 source ./utils/local_desktop/dbt_docker.sh
