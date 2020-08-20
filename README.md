@@ -91,14 +91,17 @@ curl https://sdk.cloud.google.com | bash
 
 - Close the current terminal and start a new one for the above changes to take effect
 
-* [Create a Service Account](https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating)
+- [Create a Service Account](https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating)
 
 - Add the `Editor` role
+
   > Note: this provides wide permissions for the purposes of this demo, this will need to be updated based on your specific situation
 
-* [Enable the Service Account](https://cloud.google.com/iam/docs/creating-managing-service-accounts#enabling)
-* [Create a Service Account Key JSON File-should automatically download](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys)
-* Move private `JSON` key into the root directory of this git repo you just cloned and rename it `account.json`(don't worry it will be officially `gitignored`)
+- [Enable the Service Account](https://cloud.google.com/iam/docs/creating-managing-service-accounts#enabling)
+
+- [Create a Service Account Key JSON File-should automatically download](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys)
+
+- Move private `JSON` key into the root directory of this git repo you just cloned and rename it `account.json`(don't worry it will be officially `gitignored`)
 
 - Run the below commands in your terminal
 
@@ -689,14 +692,28 @@ kubectl get secrets
 
 ---
 
+## Git Repo Folder Structure
+
+| Folder                            | Purpose                                                                                 |
+| --------------------------------- | --------------------------------------------------------------------------------------- |
+| .github/workflows                 | Quick terragrunt/terraform validations                                                  |
+| dags                              | Jenkins draft code to build, test, and deploy code to various Google Cloud environments |
+| dbt_bigquery_example              | Working and locally tested dbt code which performs BigQuery SQL transforms              |
+| Dockerfiles                       | Docker images to be used by Cloud Composer                                              |
+| docs                              | Images and other relevant documentation                                                 |
+| terraform_simple_setup            | Terraform modules for a terraform-only setup                                            |
+| terragrunt_infrastructure_live    | Terragrunt orchestrator to run terraform operations                                     |
+| terragrunt_infrastructure_modules | Base terraform modules for terragrunt to consume in the `live` directory                |
+| tests                             | Example DAG test cases                                                                  |
+| utils                             | Various utilities to automate more specific ad hoc tasks                                |
+
 ## Frequently Asked Questions(FAQ)
 
 - Why do you use identity aware proxy for remote ssh access into the bastion host?
 - Do you have an equivalent deployment repo for AWS/Azure?
-  - No, more than open to a pull request that includes this
+  - No, more then open to a pull request that includes this
 - Why not use terratest?
 - Why pytest?
--
 
 ## Resources
 
