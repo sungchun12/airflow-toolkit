@@ -214,7 +214,7 @@ cat ~/.ssh/id_rsa.pub
 extraVolumes: # this will create the volume from the directory
   - name: dags
     hostPath:
-      path: <YOUR GIT REPO DIRECTORY HERE>/dags/ # For you this is something like /home/*user*/github/airflowDAGs/dags
+      path: <YOUR GIT REPO DIRECTORY HERE>/dags/
   - name: dag-environment-configs
     hostPath:
       path: <YOUR GIT REPO DIRECTORY HERE>/dag_environment_configs/
