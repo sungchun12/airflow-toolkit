@@ -26,7 +26,7 @@ start = DummyOperator(task_id="run_this_first", dag=dag)
 # "default" should work for cloud composer as well
 passing_python = KubernetesPodOperator(
     namespace="default",
-    image="python:3.6-stretch",
+    image="python:3.7-slim",
     cmds=["python", "-c"],
     arguments=["print('hello world')"],
     labels={"foo": "bar"},
