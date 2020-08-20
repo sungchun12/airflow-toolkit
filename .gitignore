@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 # sensitive files
-**/service_account.json
+**/service_account*.json
 **account.json
 **config
 .terragrunt-cache

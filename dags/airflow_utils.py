@@ -5,7 +5,7 @@ from google.cloud import secretmanager
 
 GIT_REPO = "git@github.com:sungchun12/airflow-toolkit.git"
 PROJECT_ID = "wam-bam-258119"
-DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-sungwon.chung-latest"
+DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-latest"
 
 # TODO: fix kubernetes namespace context
 # namespace = conf.get("kubernetes", "NAMESPACE")
@@ -15,7 +15,7 @@ namespace = "default"
 env = os.environ.copy()
 DEPLOYMENT_SETUP = env["DEPLOYMENT_SETUP"]
 # GIT_BRANCH = env["GIT_BRANCH"]
-GIT_BRANCH = "feature-work"
+GIT_BRANCH = "feature-docs"
 
 
 def get_secret(project_name, secret_name):
@@ -66,7 +66,9 @@ def set_google_app_credentials(deployment_setup):
             f"Set custom environment variable GOOGLE_APPLICATION_CREDENTIALS for deployment setup: {deployment_setup}"
         )
     else:  # default to cloud composer defaults
-        print("Using existing default environment variable GOOGLE_APPLICATION_CREDENTIALS")
+        print(
+            "Using existing default environment variable GOOGLE_APPLICATION_CREDENTIALS"
+        )
 
 
 set_google_app_credentials(DEPLOYMENT_SETUP)
@@ -76,7 +78,8 @@ pod_env_vars = {"PROJECT_ID": PROJECT_ID}
 
 # This assumes the ssh private key for the git repo will exist within the working directory of the docker container
 git_clone_cmds = f"""
-    GIT_SSH_COMMAND='ssh -i .ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' git clone -b {GIT_BRANCH} {GIT_REPO}"""
+    export GIT_SSH_COMMAND='ssh -i .ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' &&
+    git clone -b {GIT_BRANCH} {GIT_REPO}"""
 
 # entrypoint is called specifically in these commands for smoother dynamic permissions when working with the account.json file
 dbt_setup_cmds = f"""

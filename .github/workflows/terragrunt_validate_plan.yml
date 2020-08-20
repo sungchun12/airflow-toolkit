@@ -2,7 +2,7 @@ name: Terragrunt Deployment-Validate Syntax and Plan
 
 on:
   push:
-    branches: [master, feature-work]
+    branches: [master]
   pull_request:
     branches: [master]
 
