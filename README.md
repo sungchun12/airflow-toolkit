@@ -39,6 +39,7 @@ It is a painful exercise to setup secure airflow enviroments with parity(local d
 - Written end to end DAG tests as the dry runs are sufficient for this repo's scope
 - `terratest` for terraform unit testing
 - DAGs relying on external data sources outside this repo
+- Hyper-specific IAM permission mechanics as it depends on your specific situation
 
 ## Table of Contents
 
@@ -293,8 +294,12 @@ kubectl exec -it airflow-worker-0 -- /bin/bash
 
 ```bash
 ➜  airflow-toolkit git:(feature-docs) ✗ kubectl exec -it airflow-worker-0 -- /bin/bash
+
+# list files in current working directory
 airflow@airflow-worker-0:/opt/airflow$ ls
 airflow.cfg  dag_environment_configs  dags  logs  tests  unittests.cfg
+
+# run all test scripts
 airflow@airflow-worker-0:/opt/airflow$ pytest -vv --disable-pytest-warnings
 ======================================== test session starts ========================================
 platform linux -- Python 3.6.10, pytest-5.4.3, py-1.9.0, pluggy-0.13.1 -- /usr/local/bin/python
@@ -324,6 +329,8 @@ tests/test_sample.py::test_answer PASSED                                        
 tests/test_sample.py::test_f PASSED                                                           [100%]
 
 ============================= 17 passed, 2 skipped, 1 warning in 39.77s =============================
+
+# list DAGs
 airflow@airflow-worker-0:/opt/airflow$ airflow list_dags
 [2020-08-18 19:17:09,579] {__init__.py:51} INFO - Using executor CeleryExecutor
 [2020-08-18 19:17:09,580] {dagbag.py:396} INFO - Filling up the DagBag from /opt/airflow/dags
@@ -339,6 +346,16 @@ bigquery_connection_check
 dbt_example
 kubernetes_sample
 tutorial
+
+# import, get, set airflow variables
+airflow@airflow-worker-0:/opt/airflow$ airflow variables --import /opt/airflow/dag_environment_configs/test_airflow_variables.json
+1 of 1 variables successfully updated.
+airflow@airflow-worker-0:/opt/airflow$ airflow variables --get test_airflow_variable
+
+do you see this?
+airflow@airflow-worker-0:/opt/airflow$ airflow variables --set test_airflow_variable "lovely"
+airflow@airflow-worker-0:/opt/airflow$ airflow variables --get test_airflow_variable
+lovely
 ```
 
 ### How to Destroy
