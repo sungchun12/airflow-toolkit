@@ -96,7 +96,7 @@ curl https://sdk.cloud.google.com | bash
 
 - [Create a Service Account](https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating)
 
-- Add the `Editor` role
+- Add the `Editor` and `Secret Manager Admin` role
 
   > Note: this provides wide permissions for the purposes of this demo, this will need to be updated based on your specific situation
 
