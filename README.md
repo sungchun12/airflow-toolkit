@@ -136,6 +136,9 @@ gcloud secrets list
 # verify secret contents ad hoc
 gcloud secrets versions access latest --secret="airflow-conn-secret"
 
+# if you run the below toolkits multiple times, there may be times where you'll have to delete and recreate the secret
+gcloud secrets delete airflow-conn-secret
+
 # Optional: install specific Google Cloud version of kubectl
 # The homebrew installation earlier above will suffice
 # ┌──────────────────────────────────────────────────────────────────┐
@@ -677,6 +680,8 @@ terraform destroy
 ## Post-Deployment Instructions for Toolkits #2 & #3
 
 > Time to Complete: 5-10 minutes
+> Only compute instances on the same VPC as Cloud Composer can access the environment programmatically
+> `gcloud composer` commands will NOT work on your local desktop
 
 - After the terragrunt/terraform deployment is successful, run the below commands in your local desktop terminal
 
@@ -690,6 +695,7 @@ source utils/cloud_composer/iap_ssh_tunnel.sh
 sudo apt-get install kubectl git
 
 # Set Composer project, location, and zone
+# The hard-code values are based on defaults set by terraform module variables
 # Minimizes redundant flags in downstream commands
 gcloud config set project wam-bam-258119
 gcloud config set composer/location us-central1
@@ -735,7 +741,11 @@ kubectl get secrets
 ```bash
 #!/bin/bash
 
+# reauthorize the main service account to gcloud
+gcloud auth activate-service-account --key-file account.json
+
 # add secrets manager IAM policy binding to composer service account
+# The hard-code values are based on defaults set by terraform module variables
 PROJECT_ID="wam-bam-258119"
 MEMBER_SERVICE_ACCOUNT_EMAIL="serviceAccount:composer-sa-dev@wam-bam-258119.iam.gserviceaccount.com" #TODO: make this dynamic
 SECRET_ID="airflow-conn-secret"
@@ -756,6 +766,8 @@ COMPOSER_BUCKET=$(gcloud composer environments describe ${COMPOSER_ENVIRONMENT} 
 # sync files in dags folder to the gcs bucket linked to cloud composer
 gsutil -m rsync -r $PROJECT_DIR/dags $COMPOSER_BUCKET/dags
 ```
+
+> Note: The airflow webserver will take 30 seconds to update the view with the updated DAGs. However, you can run DAGs as soon as you upload the new files to the gcs bucket.
 
 - Access the airflow webserver UI #TODO: add more details about getting to the URL and how to sign-in
 - Rerun all DAGs within cloud composer for success validation
