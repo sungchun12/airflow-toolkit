@@ -726,6 +726,9 @@ remote_state {
 }
 ```
 
+- Copy and paste the `account.json` into the directory below and rename it `service_account.json`
+  > Avoids the hassle of calling the terraform-secret for this simple terraform setup
+
 ```bash
 #!/bin/bash
 
