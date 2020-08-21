@@ -555,6 +555,12 @@ terragrunt apply-all
 #!/bin/bash
 # follow terminal prompt after entering below command
 terragrunt destroy-all
+
+# you may occasionally see terragrunt errors related to duplicate files
+# run the below often to avoid those errors
+cd terragrunt_infrastructure_live/
+
+bash terragrunt_cleanup.sh
 ```
 
 ### Tradeoffs
