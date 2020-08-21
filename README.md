@@ -1,6 +1,6 @@
 ![repo_log](/docs/repo_logo.png)
 
-> `SAME DAGS | WHEREVER YOU RUN THEM`
+> `SAME AIRFLOW DATA PIPELINES | WHEREVER YOU RUN THEM`
 
 # airflow-toolkit :rocket:
 
