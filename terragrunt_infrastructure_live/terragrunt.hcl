@@ -19,7 +19,7 @@ locals {
   # When run in CICD, this file will NOT persist
   # Secrets are written to a temporary file in case different privileges are required across modules
   # Minimizes the secrets manager API calls by NOT individually setting each credentials var with the API call
-  credentials = run_cmd("--terragrunt-quiet", "${get_parent_terragrunt_dir()}/get_secret.sh")
+  credentials      = run_cmd("--terragrunt-quiet", "${get_parent_terragrunt_dir()}/get_secret.sh")
   credentials_file = "${get_terragrunt_dir()}/service_account.json"
 }
 
@@ -51,6 +51,8 @@ provider "google-beta" {
 EOF
 }
 
+# automatically creates the gcs bucket
+# TODO(developer): must be a unique name, so the default bucket value below will error out for you
 remote_state {
   backend = "gcs"
   generate = {

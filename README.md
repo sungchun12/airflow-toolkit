@@ -520,6 +520,36 @@ gcloud secrets list
 gcloud secrets versions access latest --secret="terraform-secret"
 ```
 
+- replace important terragrunt configs for your specific setup
+
+```hcl
+# file location
+# /airflow-toolkit/terragrunt_infrastructure_live/non-prod/account.hcl
+
+locals {
+  project               = "wam-bam-258119" # replace this with your specific project
+  service_account_email = "demo-v2@wam-bam-258119.iam.gserviceaccount.com" # replace this with your specific service account email
+}
+
+# file location
+# /airflow-toolkit/terragrunt_infrastructure_live/terragrunt.hcl
+
+remote_state {
+  backend = "gcs"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite"
+  }
+  config = {
+    project     = "${local.project}"
+    location    = "${local.region}"
+    credentials = "${local.credentials_file}"
+    bucket      = "secure-bucket-tfstate-airflow-infra-${local.region}" # replace with something unique BEFORE `-${local.region}`
+    prefix      = "${path_relative_to_include()}"
+  }
+}
+```
+
 ```bash
 #!/bin/bash
 # assumes you are already in the the repo root directory
