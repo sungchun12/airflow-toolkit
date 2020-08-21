@@ -504,6 +504,7 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk
 > Time to Complete: 50-60 minutes(majority of time waiting for cloud composer to finish deploying)
 
 > Note: This follows the example directory structure provided by terragrunt with modules housed in the same git repo-[further reading](https://github.com/gruntwork-io/terragrunt-infrastructure-live-example)
+
 > Do NOT run this in parallel with toolkit #3 as default variables will cause conflicts
 
 ### System Design
@@ -662,6 +663,7 @@ bash terragrunt_cleanup.sh
 > Time to Complete: 50-60 minutes(majority of time waiting for cloud composer to finish deploying)
 
 > Note: This uses terragrunt as a thin wrapper within a single subdirectory
+
 > Do NOT run this in parallel with toolkit #2 as default variables will cause conflicts
 
 ### System Design
