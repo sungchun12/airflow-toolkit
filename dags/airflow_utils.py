@@ -88,6 +88,6 @@ git_clone_cmds = f"""
 
 dbt_setup_cmds = f"""
     {git_clone_cmds} &&
-    cd github_sungchun12_airflow-toolkit/dbt_bigquery_example &&
+    cd {GIT_REPO}/dbt_bigquery_example &&
     export DBT_PROFILES_DIR=$(pwd) &&
     export DBT_GOOGLE_BIGQUERY_KEYFILE=/dbt/account.json"""
