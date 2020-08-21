@@ -73,6 +73,15 @@ set_google_app_credentials(DEPLOYMENT_SETUP)
 kube_pod_defaults = set_kube_pod_defaults(DEPLOYMENT_SETUP)
 pod_env_vars = {"PROJECT_ID": PROJECT_ID}
 
+# TODO(developer): If you choose to create a Cloud NAT Gateway to allow the private IP Cloud Composer instance to connect to github
+# you can leverage the example below to perform a ssh git clone
+# this will NOT work with the default terraform deployment unless you disable private IP as a simple workaround
+# this will work with the local desktop deployment in its current state
+# This assumes the ssh private key for the git repo will exist within the working directory of the docker container
+# git_clone_cmds = f"""
+#     export GIT_SSH_COMMAND='ssh -i .ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' &&
+#     git clone -b {GIT_BRANCH} {GIT_REPO}"""
+
 # entrypoint is called specifically in these commands for smoother dynamic permissions when working with the account.json file
 # utilizes cloud source mirror repo to prevent the private IP cloud composer cluster from reaching out to the public internet for the git repo
 # this also prevents an extra need to create a Cloud NAT Gateway
