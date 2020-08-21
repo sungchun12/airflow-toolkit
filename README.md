@@ -45,10 +45,14 @@ It is a painful exercise to setup secure airflow enviroments with parity(local d
 
 ## Table of Contents
 
-- [Pre-requisites](##Pre-requisites)
-- [Toolkit #1: Local Desktop Kubernetes Airflow Deployment](##Toolkit-#1:-Local-Desktop-Kubernetes-Airflow-Deployment)
-- [Toolkit #2: Terragrunt-Driven Terraform Deployment to Google Cloud](##Toolkit-#2:-Terragrunt-Driven-Terraform-Deployment-to-Google-Cloud)
-- [Toolkit #3: Simple Terraform Deployment to Google Cloud](##Toolkit-#3:-Simple-Terraform-Deployment-to-Google-Cloud)
+- Pre-requisites
+- Toolkit #1: Local Desktop Kubernetes Airflow Deployment
+- Toolkit #2: Terragrunt-Driven Terraform Deployment to Google Cloud
+- Toolkit #3: Simple Terraform Deployment to Google Cloud
+- Post-Deployment Instructions for Toolkits #2 & #3
+- Git Repo Folder Structure
+- Frequently Asked Questions(FAQ)
+- Resources
 
 ---
 
