@@ -92,7 +92,7 @@ variable "use_ip_aliases" {
 variable "image_version" {
   description = "Specify composer and airflow image version"
   type        = string
-  default     = "composer-1.11.0-airflow-1.10.9"
+  default     = "composer-1.11.2-airflow-1.10.9"
 }
 
 variable "airflow_config_overrides" {

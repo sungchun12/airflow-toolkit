@@ -1,10 +1,12 @@
+![repo_log](/docs/repo_logo.png)
+
+> `SAME AIRFLOW DATA PIPELINES | WHEREVER YOU RUN THEM`
+
 # airflow-toolkit :rocket:
 
 ![Terragrunt Deployment-Validate Syntax and Plan](https://github.com/sungchun12/airflow-toolkit/workflows/Terragrunt%20Deployment-Validate%20Syntax%20and%20Plan/badge.svg)
 
 Any Airflow project day 1, you can spin up a local desktop Kubernetes Airflow environment AND a Google Cloud Composer Airflow environment with working example DAGs across both :sparkles:
-
-TODO: add a airflow logo with toolkit emoji, add breeze streaks
 
 ## Motivations
 
@@ -43,10 +45,14 @@ It is a painful exercise to setup secure airflow enviroments with parity(local d
 
 ## Table of Contents
 
-- [Pre-requisites](##Pre-requisites)
-- [Toolkit #1: Local Desktop Kubernetes Airflow Deployment](##Toolkit-#1:-Local-Desktop-Kubernetes-Airflow-Deployment)
-- [Toolkit #2: Terragrunt-Driven Terraform Deployment to Google Cloud](##Toolkit-#2:-Terragrunt-Driven-Terraform-Deployment-to-Google-Cloud)
-- [Toolkit #3: Simple Terraform Deployment to Google Cloud](##Toolkit-#3:-Simple-Terraform-Deployment-to-Google-Cloud)
+- Pre-requisites
+- Toolkit #1: Local Desktop Kubernetes Airflow Deployment
+- Toolkit #2: Terragrunt-Driven Terraform Deployment to Google Cloud
+- Toolkit #3: Simple Terraform Deployment to Google Cloud
+- Post-Deployment Instructions for Toolkits #2 & #3
+- Git Repo Folder Structure
+- Frequently Asked Questions(FAQ)
+- Resources
 
 ---
 
@@ -165,6 +171,39 @@ cat ~/.ssh/id_rsa.pub
 ```
 
 - [Paste public ssh key contents location](https://github.com/settings/ssh/new)
+
+- Manually create a `cloud source mirror repo` based on the GitHub repo
+
+  > Note: documented to not be possible through the current state API-[further reading](https://issuetracker.google.com/issues/73122477)
+
+  - [Full Instructions to Mirror a GitHub Repository](https://cloud.google.com/source-repositories/docs/mirroring-a-github-repository#create_a_mirrored_repository)
+
+- Replace all relevant variables within `dags/` folder
+
+```python
+# file location
+# /airflow-toolkit/dags/add_gcp_connections.py
+CONN_PARAMS_DICT = {
+    "gcp_project": "wam-bam-258119", # replace with your specific project
+    "gcp_conn_id": "my_gcp_connection",
+    "gcr_conn_id": "gcr_docker_connection",
+    "secret_name": "airflow-conn-secret",
+}
+
+# file location
+# /airflow-toolkit/dags/bigquery_connection_check.py
+TASK_PARAMS_DICT = {
+    "dataset_id": "dbt_bq_example",
+    "project_id": "wam-bam-258119", # replace with your specific project
+    "gcp_conn_id": "my_gcp_connection",
+}
+
+
+# file location
+# /airflow-toolkit/dags/airflow_utils.py
+GIT_REPO = "github_sungchun12_airflow-toolkit" # replace with the cloud source mirror repo name
+PROJECT_ID = "wam-bam-258119" # replace with your specific project
+```
 
 > After doing the above ONCE, you can run the below toolkits multiple times with the same results(idempotent)
 
@@ -460,9 +499,13 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk
 
 ## Toolkit #2: Terragrunt-Driven Terraform Deployment to Google Cloud
 
+**Follow `Post-Deployment Instructions for Toolkits #2 & #3` instructions AFTER deployment**
+
 > Time to Complete: 50-60 minutes(majority of time waiting for cloud composer to finish deploying)
 
 > Note: This follows the example directory structure provided by terragrunt with modules housed in the same git repo-[further reading](https://github.com/gruntwork-io/terragrunt-infrastructure-live-example)
+
+> Do NOT run this in parallel with toolkit #3 as default variables will cause conflicts
 
 ### System Design
 
@@ -512,6 +555,36 @@ gcloud secrets list
 gcloud secrets versions access latest --secret="terraform-secret"
 ```
 
+- replace important terragrunt configs for your specific setup
+
+```hcl
+# file location
+# /airflow-toolkit/terragrunt_infrastructure_live/non-prod/account.hcl
+
+locals {
+  project               = "wam-bam-258119" # replace this with your specific project
+  service_account_email = "demo-v2@wam-bam-258119.iam.gserviceaccount.com" # replace this with your specific service account email
+}
+
+# file location
+# /airflow-toolkit/terragrunt_infrastructure_live/terragrunt.hcl
+
+remote_state {
+  backend = "gcs"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite"
+  }
+  config = {
+    project     = "${local.project}"
+    location    = "${local.region}"
+    credentials = "${local.credentials_file}"
+    bucket      = "secure-bucket-tfstate-airflow-infra-${local.region}" # replace with something unique BEFORE `-${local.region}`
+    prefix      = "${path_relative_to_include()}"
+  }
+}
+```
+
 ```bash
 #!/bin/bash
 # assumes you are already in the the repo root directory
@@ -547,6 +620,12 @@ terragrunt apply-all
 #!/bin/bash
 # follow terminal prompt after entering below command
 terragrunt destroy-all
+
+# you may occasionally see terragrunt errors related to duplicate files
+# run the below often to avoid those errors
+cd terragrunt_infrastructure_live/
+
+bash terragrunt_cleanup.sh
 ```
 
 ### Tradeoffs
@@ -579,9 +658,13 @@ terragrunt destroy-all
 
 ## Toolkit #3: Simple Terraform Deployment to Google Cloud
 
+**Follow `Post-Deployment Instructions for Toolkits #2 & #3` instructions AFTER deployment**
+
 > Time to Complete: 50-60 minutes(majority of time waiting for cloud composer to finish deploying)
 
 > Note: This uses terragrunt as a thin wrapper within a single subdirectory
+
+> Do NOT run this in parallel with toolkit #2 as default variables will cause conflicts
 
 ### System Design
 
@@ -621,10 +704,38 @@ gcloud secrets list
 gcloud secrets versions access latest --secret="terraform-secret"
 ```
 
+- replace important terragrunt configs for your specific setup
+
+```hcl
+# file location
+# /airflow-toolkit/terraform_simple_setup/terragrunt.hcl
+
+remote_state {
+  backend = "gcs"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite"
+  }
+  config = {
+    project     = "wam-bam-258119"
+    location    = "US"
+    credentials = "service_account.json"
+    bucket      = "secure-bucket-tfstate-composer" # replace with something unique
+    prefix      = "dev"
+  }
+}
+```
+
+- Copy and paste the `account.json` into the directory below and rename it `service_account.json`
+  > Avoids the hassle of calling the terraform-secret for this simple terraform setup
+
 ```bash
 #!/bin/bash
 
 cd terraform_simple_setup/
+
+# utilizes terragrunt as a thin wrapper utility to automatically create the gcs backend remote state bucket
+terragrunt init
 
 # preview the cloud resources you will create
 # OR you can run a more specific plan
@@ -740,6 +851,7 @@ kubectl get secrets
 
 ```bash
 #!/bin/bash
+# these commands work from the `airflow-toolkit/` root directory
 
 # reauthorize the main service account to gcloud
 gcloud auth activate-service-account --key-file account.json
@@ -769,8 +881,9 @@ gsutil -m rsync -r $PROJECT_DIR/dags $COMPOSER_BUCKET/dags
 
 > Note: The airflow webserver will take 30 seconds to update the view with the updated DAGs. However, you can run DAGs as soon as you upload the new files to the gcs bucket.
 
-- Access the airflow webserver UI #TODO: add more details about getting to the URL and how to sign-in
+- [Instructions to access the airflow webserver UI](https://cloud.google.com/composer/docs/how-to/accessing/airflow-web-interface?hl=fi#accessing_the_web_interface_via_the)
 - Rerun all DAGs within cloud composer for success validation
+  > Note: `bigquery_connection_check` will fail unless `add_gcp_connections` succeeds first
 
 ---
 
@@ -778,26 +891,31 @@ gsutil -m rsync -r $PROJECT_DIR/dags $COMPOSER_BUCKET/dags
 
 ## Git Repo Folder Structure
 
-| Folder                            | Purpose                                                                                 |
-| --------------------------------- | --------------------------------------------------------------------------------------- |
-| .github/workflows                 | Quick terragrunt/terraform validations                                                  |
-| dags                              | Jenkins draft code to build, test, and deploy code to various Google Cloud environments |
-| dbt_bigquery_example              | Working and locally tested dbt code which performs BigQuery SQL transforms              |
-| Dockerfiles                       | Docker images to be used by Cloud Composer                                              |
-| docs                              | Images and other relevant documentation                                                 |
-| terraform_simple_setup            | Terraform modules for a terraform-only setup                                            |
-| terragrunt_infrastructure_live    | Terragrunt orchestrator to run terraform operations                                     |
-| terragrunt_infrastructure_modules | Base terraform modules for terragrunt to consume in the `live` directory                |
-| tests                             | Example DAG test cases                                                                  |
-| utils                             | Various utilities to automate more specific ad hoc tasks                                |
+| Folder                            | Purpose                                                                    |
+| --------------------------------- | -------------------------------------------------------------------------- |
+| .github/workflows                 | Quick terragrunt/terraform validations                                     |
+| dags                              | airflow pipeline code                                                      |
+| dags_archive                      | draft DAG code                                                             |
+| dbt_bigquery_example              | Working and locally tested dbt code which performs BigQuery SQL transforms |
+| Dockerfiles                       | Docker images to be used by Cloud Composer                                 |
+| docs                              | Images and other relevant documentation                                    |
+| terraform_simple_setup            | Terraform modules for a terraform-only setup                               |
+| terragrunt_infrastructure_live    | Terragrunt orchestrator to run terraform operations                        |
+| terragrunt_infrastructure_modules | Base terraform modules for terragrunt to consume in the `live` directory   |
+| tests                             | Example DAG test cases                                                     |
+| utils                             | Various utilities to automate more specific ad hoc tasks                   |
 
 ## Frequently Asked Questions(FAQ)
 
 - Why do you use identity aware proxy for remote ssh access into the bastion host?
+  - Creates a readable audit trail for ssh access patterns
 - Do you have an equivalent deployment repo for AWS/Azure?
   - No, more then open to a pull request that includes this
 - Why not use terratest?
+  - I don't know the go programming language well enough, but plan to learn in the future ;)
 - Why pytest?
+  - Less verbose testing framework compared to python's built-in unittest
+  - Already had battle-tested boilerplate testing code
 
 ## Resources
 

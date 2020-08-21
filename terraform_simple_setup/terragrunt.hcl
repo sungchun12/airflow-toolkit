@@ -18,6 +18,8 @@ terraform {
   }
 }
 
+# automatically creates the gcs bucket
+# TODO(developer): must be a unique name, so the default bucket value below will error out for you
 remote_state {
   backend = "gcs"
   generate = {
