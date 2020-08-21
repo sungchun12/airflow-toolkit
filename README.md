@@ -178,6 +178,33 @@ cat ~/.ssh/id_rsa.pub
 
   - [Full Instructions to Mirror a GitHub Repository](https://cloud.google.com/source-repositories/docs/mirroring-a-github-repository#create_a_mirrored_repository)
 
+- Replace all relevant variables within `dags/` folder
+
+```python
+# file location
+# /airflow-toolkit/dags/add_gcp_connections.py
+CONN_PARAMS_DICT = {
+    "gcp_project": "wam-bam-258119", # replace with your specific project
+    "gcp_conn_id": "my_gcp_connection",
+    "gcr_conn_id": "gcr_docker_connection",
+    "secret_name": "airflow-conn-secret",
+}
+
+# file location
+# /airflow-toolkit/dags/bigquery_connection_check.py
+TASK_PARAMS_DICT = {
+    "dataset_id": "dbt_bq_example",
+    "project_id": "wam-bam-258119", # replace with your specific project
+    "gcp_conn_id": "my_gcp_connection",
+}
+
+
+# file location
+# /airflow-toolkit/dags/airflow_utils.py
+GIT_REPO = "github_sungchun12_airflow-toolkit" # replace with the cloud source mirror repo name
+PROJECT_ID = "wam-bam-258119" # replace with your specific project
+```
+
 > After doing the above ONCE, you can run the below toolkits multiple times with the same results(idempotent)
 
 ---
