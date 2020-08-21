@@ -849,8 +849,9 @@ gsutil -m rsync -r $PROJECT_DIR/dags $COMPOSER_BUCKET/dags
 
 > Note: The airflow webserver will take 30 seconds to update the view with the updated DAGs. However, you can run DAGs as soon as you upload the new files to the gcs bucket.
 
-- Access the airflow webserver UI #TODO: add more details about getting to the URL and how to sign-in
+- [Instructions to access the airflow webserver UI](https://cloud.google.com/composer/docs/how-to/accessing/airflow-web-interface?hl=fi#accessing_the_web_interface_via_the)
 - Rerun all DAGs within cloud composer for success validation
+  > Note: `bigquery_connection_check` will fail unless `add_gcp_connections` succeeds first
 
 ---
 
@@ -858,18 +859,19 @@ gsutil -m rsync -r $PROJECT_DIR/dags $COMPOSER_BUCKET/dags
 
 ## Git Repo Folder Structure
 
-| Folder                            | Purpose                                                                                 |
-| --------------------------------- | --------------------------------------------------------------------------------------- |
-| .github/workflows                 | Quick terragrunt/terraform validations                                                  |
-| dags                              | Jenkins draft code to build, test, and deploy code to various Google Cloud environments |
-| dbt_bigquery_example              | Working and locally tested dbt code which performs BigQuery SQL transforms              |
-| Dockerfiles                       | Docker images to be used by Cloud Composer                                              |
-| docs                              | Images and other relevant documentation                                                 |
-| terraform_simple_setup            | Terraform modules for a terraform-only setup                                            |
-| terragrunt_infrastructure_live    | Terragrunt orchestrator to run terraform operations                                     |
-| terragrunt_infrastructure_modules | Base terraform modules for terragrunt to consume in the `live` directory                |
-| tests                             | Example DAG test cases                                                                  |
-| utils                             | Various utilities to automate more specific ad hoc tasks                                |
+| Folder                            | Purpose                                                                    |
+| --------------------------------- | -------------------------------------------------------------------------- |
+| .github/workflows                 | Quick terragrunt/terraform validations                                     |
+| dags                              | airflow pipeline code                                                      |
+| dags_archive                      | draft DAG code                                                             |
+| dbt_bigquery_example              | Working and locally tested dbt code which performs BigQuery SQL transforms |
+| Dockerfiles                       | Docker images to be used by Cloud Composer                                 |
+| docs                              | Images and other relevant documentation                                    |
+| terraform_simple_setup            | Terraform modules for a terraform-only setup                               |
+| terragrunt_infrastructure_live    | Terragrunt orchestrator to run terraform operations                        |
+| terragrunt_infrastructure_modules | Base terraform modules for terragrunt to consume in the `live` directory   |
+| tests                             | Example DAG test cases                                                     |
+| utils                             | Various utilities to automate more specific ad hoc tasks                   |
 
 ## Frequently Asked Questions(FAQ)
 
