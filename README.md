@@ -468,9 +468,12 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | awk
 
 ## Toolkit #2: Terragrunt-Driven Terraform Deployment to Google Cloud
 
+**Follow `Post-Deployment Instructions for Toolkits #2 & #3` instructions AFTER deployment**
+
 > Time to Complete: 50-60 minutes(majority of time waiting for cloud composer to finish deploying)
 
 > Note: This follows the example directory structure provided by terragrunt with modules housed in the same git repo-[further reading](https://github.com/gruntwork-io/terragrunt-infrastructure-live-example)
+> Do NOT run this in parallel with toolkit #3 as default variables will cause conflicts
 
 ### System Design
 
@@ -623,9 +626,12 @@ bash terragrunt_cleanup.sh
 
 ## Toolkit #3: Simple Terraform Deployment to Google Cloud
 
+**Follow `Post-Deployment Instructions for Toolkits #2 & #3` instructions AFTER deployment**
+
 > Time to Complete: 50-60 minutes(majority of time waiting for cloud composer to finish deploying)
 
 > Note: This uses terragrunt as a thin wrapper within a single subdirectory
+> Do NOT run this in parallel with toolkit #2 as default variables will cause conflicts
 
 ### System Design
 
@@ -864,10 +870,14 @@ gsutil -m rsync -r $PROJECT_DIR/dags $COMPOSER_BUCKET/dags
 ## Frequently Asked Questions(FAQ)
 
 - Why do you use identity aware proxy for remote ssh access into the bastion host?
+  - Creates a readable audit trail for ssh access patterns
 - Do you have an equivalent deployment repo for AWS/Azure?
   - No, more then open to a pull request that includes this
 - Why not use terratest?
+  - I don't know the go programming language well enough, but plan to learn in the future ;)
 - Why pytest?
+  - Less verbose testing framework compared to python's built-in unittest
+  - Already had battle-tested boilerplate testing code
 
 ## Resources
 
