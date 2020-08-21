@@ -170,6 +170,12 @@ cat ~/.ssh/id_rsa.pub
 
 - [Paste public ssh key contents location](https://github.com/settings/ssh/new)
 
+- Manually create a `cloud source mirror repo` based on the GitHub repo
+
+  > Note: documented to not be possible through the current state API-[further reading](https://issuetracker.google.com/issues/73122477)
+
+  - [Full Instructions to Mirror a GitHub Repository](https://cloud.google.com/source-repositories/docs/mirroring-a-github-repository#create_a_mirrored_repository)
+
 > After doing the above ONCE, you can run the below toolkits multiple times with the same results(idempotent)
 
 ---
