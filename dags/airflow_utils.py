@@ -3,19 +3,15 @@ import os
 from airflow import configuration as conf
 from google.cloud import secretmanager
 
-GIT_REPO = "git@github.com:sungchun12/airflow-toolkit.git"
+# TODO(developer): update for your specific settings
+# GIT_REPO = "git@github.com:sungchun12/airflow-toolkit.git" #placeholder ssh git repo
+GIT_REPO = "github_sungchun12_airflow-toolkit"
 PROJECT_ID = "wam-bam-258119"
 DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-latest"
 
-# TODO: fix kubernetes namespace context
-# namespace = conf.get("kubernetes", "NAMESPACE")
-# namespace = "airflow"
-namespace = "default"
-
 env = os.environ.copy()
 DEPLOYMENT_SETUP = env["DEPLOYMENT_SETUP"]
-# GIT_BRANCH = env["GIT_BRANCH"]
-GIT_BRANCH = "feature-docs"
+GIT_BRANCH = "master"
 
 
 def get_secret(project_name, secret_name):
@@ -77,7 +73,7 @@ pod_env_vars = {"PROJECT_ID": PROJECT_ID}
 # you can leverage the example below to perform a ssh git clone
 # this will NOT work with the default terraform deployment unless you disable private IP as a simple workaround
 # this will work with the local desktop deployment in its current state
-# This assumes the ssh private key for the git repo will exist within the working directory of the docker container
+# this assumes the ssh private key for the git repo will exist within the working directory of the docker container
 # git_clone_cmds = f"""
 #     export GIT_SSH_COMMAND='ssh -i .ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' &&
 #     git clone -b {GIT_BRANCH} {GIT_REPO}"""
@@ -88,7 +84,7 @@ pod_env_vars = {"PROJECT_ID": PROJECT_ID}
 git_clone_cmds = f"""
     /entrypoint.sh &&
     gcloud auth activate-service-account --key-file=account.json &&
-    gcloud source repos clone github_sungchun12_airflow-toolkit --project={PROJECT_ID}"""
+    gcloud source repos clone {GIT_REPO} --project={PROJECT_ID}"""
 
 dbt_setup_cmds = f"""
     {git_clone_cmds} &&

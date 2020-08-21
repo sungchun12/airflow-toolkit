@@ -15,9 +15,7 @@ DBT_SERVICE_ACCOUNT = Secret(
     key="account.json",
 )
 
+# This is included as a placeholder based on the note in `airflow_utils.py`
 GIT_SECRET_ID_RSA_PRIVATE = Secret(
-    deploy_type="volume",
-    deploy_target="/dbt/.ssh/",
-    secret="ssh-key-secret",
-    key="id_rsa",
+    deploy_type="volume", deploy_target="/dbt/.ssh/", secret="ssh-key-secret", key="id_rsa",
 )
