@@ -3,5 +3,5 @@
 # terragrunt.hcl configuration.
 locals {
   project               = "wam-bam-258119"
-  service_account_email = "demo-v2@wam-bam-258119.iam.gserviceaccount.com"
+  service_account_email = "demo-service-account@wam-bam-258119.iam.gserviceaccount.com"
 }
