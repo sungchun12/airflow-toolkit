@@ -665,10 +665,35 @@ gcloud secrets list
 gcloud secrets versions access latest --secret="terraform-secret"
 ```
 
+- replace important terragrunt configs for your specific setup
+
+```hcl
+# file location
+# /airflow-toolkit/terraform_simple_setup/terragrunt.hcl
+
+remote_state {
+  backend = "gcs"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite"
+  }
+  config = {
+    project     = "wam-bam-258119"
+    location    = "US"
+    credentials = "service_account.json"
+    bucket      = "secure-bucket-tfstate-composer" # replace with something unique
+    prefix      = "dev"
+  }
+}
+```
+
 ```bash
 #!/bin/bash
 
 cd terraform_simple_setup/
+
+# utilizes terragrunt as a thin wrapper utility to automatically create the gcs backend remote state bucket
+terragrunt init
 
 # preview the cloud resources you will create
 # OR you can run a more specific plan
@@ -784,6 +809,7 @@ kubectl get secrets
 
 ```bash
 #!/bin/bash
+# these commands work from the `airflow-toolkit/` root directory
 
 # reauthorize the main service account to gcloud
 gcloud auth activate-service-account --key-file account.json
