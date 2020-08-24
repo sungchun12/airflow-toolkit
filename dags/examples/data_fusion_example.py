@@ -16,7 +16,11 @@ from airflow.operators.python_operator import PythonOperator
 
 from airflow_utils import get_secret
 
-
+# We could export the pipelines and create them as part of the script, but when we discussed that,
+# it seemed like they were planning to have Data Fusion running 24/7
+# and getting into it regularly to look at pipelines and such,
+# so the DAG assumes the pipeline is already created and deployed in Data Fusion,
+# and the DAG just runs it on the custom Dataproc instance.
 # TODO: add in config templates
 # TODO: add in secrets manager call
 # TODO: have someone create a secret: create/delete dataproc cluster and create/delete firewall rules for that dataproc cluster
