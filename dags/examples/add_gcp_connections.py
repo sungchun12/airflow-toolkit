@@ -4,7 +4,7 @@ from airflow import DAG, settings
 from airflow.models import Connection
 from airflow.operators.python_operator import PythonOperator
 from datetime import datetime
-from airflow_utils import get_secret
+from airflow_utils import DEPLOYMENT_SETUP, get_secret, set_google_app_credentials
 
 # TODO(developer)
 # # create a secrets manager secret from the local service accountkey
@@ -22,6 +22,8 @@ from airflow_utils import get_secret
 # this must be set for the local kubernetes setup to work
 # this can be removed for the cloud composer version of the DAG
 # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/account.json"
+dag_name = "add_gcp_connections"
+set_google_app_credentials(DEPLOYMENT_SETUP,dag_name)
 
 default_args = {
     "owner": "airflow",
@@ -106,7 +108,7 @@ def add_docker_connection(ds, **kwargs):
         print(msg)
 
 
-with DAG("add_gcp_connections", default_args=default_args, schedule_interval="@once") as dag:
+with DAG(dag_name, default_args=default_args, schedule_interval="@once") as dag:
 
     # Task to add a google cloud connection
     t1 = PythonOperator(
