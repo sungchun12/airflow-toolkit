@@ -89,5 +89,6 @@ git_clone_cmds = f"""
 dbt_setup_cmds = f"""
     {git_clone_cmds} &&
     cd {GIT_REPO}/dbt_bigquery_example &&
+    export PROJECT_ID={PROJECT_ID} &&
     export DBT_PROFILES_DIR=$(pwd) &&
     export DBT_GOOGLE_BIGQUERY_KEYFILE=/dbt/account.json"""
