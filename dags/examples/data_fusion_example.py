@@ -301,7 +301,7 @@ default_dag_args = {
 }
 
 with models.DAG(
-    "Weekly-ETL-DAG-5",
+    "data-fusion-example",
     schedule_interval=None,
     start_date=datetime.datetime.combine(datetime.datetime.today(), datetime.datetime.min.time()),
 ) as dag:
