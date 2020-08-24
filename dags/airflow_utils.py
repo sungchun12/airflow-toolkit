@@ -55,17 +55,16 @@ def set_kube_pod_defaults(deployment_setup):
     return kube_pod_defaults
 
 
-def set_google_app_credentials(deployment_setup):
+def set_google_app_credentials(deployment_setup, dag_name):
     if deployment_setup == "local_desktop":
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/account.json"
         print(
-            f"Set custom environment variable GOOGLE_APPLICATION_CREDENTIALS for deployment setup: {deployment_setup}"
+            f"Set custom environment variable GOOGLE_APPLICATION_CREDENTIALS for DAG: {dag_name}, deployment setup: {deployment_setup}"
         )
     else:  # default to cloud composer defaults
         print("Using existing default environment variable GOOGLE_APPLICATION_CREDENTIALS")
 
 
-set_google_app_credentials(DEPLOYMENT_SETUP)
 kube_pod_defaults = set_kube_pod_defaults(DEPLOYMENT_SETUP)
 pod_env_vars = {"PROJECT_ID": PROJECT_ID}
 
@@ -89,5 +88,6 @@ git_clone_cmds = f"""
 dbt_setup_cmds = f"""
     {git_clone_cmds} &&
     cd {GIT_REPO}/dbt_bigquery_example &&
+    export PROJECT_ID={PROJECT_ID} &&
     export DBT_PROFILES_DIR=$(pwd) &&
     export DBT_GOOGLE_BIGQUERY_KEYFILE=/dbt/account.json"""
