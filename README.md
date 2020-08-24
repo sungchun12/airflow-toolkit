@@ -299,7 +299,7 @@ extraVolumes: # this will create the volume from the directory
 # Set of environment variables
 export ENV="dev"
 export PROJECT_ID="wam-bam-258119"
-export DOCKER_DBT_IMG="gcr.io/$PROJECT_ID/dbt_docker:${ENV}-latest"
+export DOCKER_DBT_IMG="gcr.io/$PROJECT_ID/dbt_docker:$ENV-latest"
 
 source deploy_local_desktop_airflow.sh
 ```
