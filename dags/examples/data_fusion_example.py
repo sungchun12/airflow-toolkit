@@ -246,27 +246,28 @@ def remove_firewall_function(ds, **kwargs):
 # #############################################################################
 # Function to return the Dataproc configuration for the reusable cluster
 # #############################################################################
-# def get_dataproc_config():
-#     return {
-#         "project_id": "data-analytics-webinar",
-#         "cluster_name": "{DATAPROC_CLUSTER_NAME}",
-#         "config": {
-#             "master_config": {
-#                 "num_instances": 1,
-#                 "machine_type_uri": "n1-standard-4",
-#                 "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 1024},
-#             },
-#             "worker_config": {
-#                 "num_instances": 2,
-#                 "machine_type_uri": "n1-standard-4",
-#                 "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 1024},
-#             },
-#             "gce_cluster_config": {
-#                 "tags": {"{DATAPROC_CLUSTER_NAME}"},
-#                 "metadata": {"ssh-keys": "hdfs:ssh-rsa"},
-#             },
-#         },
-#     }
+def get_dataproc_config():
+    return {
+        "project_id": "hdc-gce",
+        "cluster_name": "etl-cluster",
+        "config": {
+            "master_config": {
+                "num_instances": 1,
+                "machine_type_uri": "n1-standard-4",
+                "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 1024},
+            },
+            "worker_config": {
+                "num_instances": 2,
+                "machine_type_uri": "n1-standard-4",
+                "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 1024},
+            },
+            "gce_cluster_config": {
+                "tags": {"etl-cluster"},
+                "metadata": {"ssh-keys": "hdfs:ssh-rsa"},
+                "subnetwork": "projects/hdc-gce/regions/us-central1/subnetworks/backhaul"
+            },
+        },
+    }
 
 
 dataproc_config = {
