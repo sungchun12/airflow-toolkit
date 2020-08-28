@@ -1,0 +1,22 @@
+---
+name: Checkov
+on:
+  push:
+    branches: [master, feature-checkov]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python $
+        uses: actions/setup-python@v1
+        with:
+          python-version: $
+      - name: Test with Checkov
+        run: |
+          pip install checkov
+          checkov -d terragrunt_infrastructure_modules
+          checkov -d terraform_simple_setup
