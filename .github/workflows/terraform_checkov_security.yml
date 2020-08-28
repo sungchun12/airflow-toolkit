@@ -5,16 +5,14 @@ on:
     branches: [master, feature-checkov]
 jobs:
   build:
+    name: Checkov Setup and Run
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.7]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python $
         uses: actions/setup-python@v1
         with:
-          python-version: $
+          python-version: "3.7.x"
       - name: Test with Checkov
         run: |
           pip install checkov
