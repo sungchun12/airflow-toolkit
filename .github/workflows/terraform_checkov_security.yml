@@ -9,12 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python $
+      - name: Set up Python
         uses: actions/setup-python@v1
         with:
           python-version: "3.7.x"
-      - name: Test with Checkov
+      - name: Install Checkov
         run: |
           pip install checkov
+      - name: Security Test-terragrunt_infrastructure_modules
+        run: |
           checkov -d terragrunt_infrastructure_modules
+      - name: Security Test-terraform_simple_setup
+        run: |
           checkov -d terraform_simple_setup
