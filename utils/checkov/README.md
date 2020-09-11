@@ -5,8 +5,8 @@
 
 ```bash
 # setup python virtual environment locally in unix environment
-python3 -m venv py37_venv
-source py37_venv/bin/activate
+python3 -m venv py38_venv
+source py38_venv/bin/activate
 pip3 install --upgrade pip
 pip3 install -r requirements.txt
 ```
@@ -21,7 +21,7 @@ source py37_venv/bin/activate
 # ex: checkov -d /Users/sungwon.chung/Desktop/airflow-toolkit/terragrunt_infrastructure_modules
 # ex: checkov -d /Users/sungwon.chung/Desktop/airflow-toolkit/terragrunt_infrastructure_modules/networking -o json
 # checkov -d /user/path/to/iac/code
-checkov -d ../../terragrunt_infrastructure_modules/
+checkov -d ../../terragrunt_infrastructure_modules/ --quiet
 
 # output to json file
 checkov -d ../../terragrunt_infrastructure_modules/ -o json > checkov_tests.json
