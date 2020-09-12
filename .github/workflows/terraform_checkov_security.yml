@@ -1,5 +1,5 @@
 ---
-name: Checkov
+name: Checkov-Terraform Security Checks
 on:
   push:
     branches: [master, feature-checkov]
@@ -12,11 +12,11 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
-          python-version: "3.7.x"
+          python-version: "3.8.x"
       - name: Install Checkov
         run: |
           pip install checkov
-      - name: Security Test-terragrunt_infrastructure_modules
+      - name: Security Test-terragrunt_infrastructure_modules, Skip Specific Tests
         run: |
           checkov -d terragrunt_infrastructure_modules --skip-check CKV_GCP_26,CKV_GCP_32,CKV_GCP_38
       - name: Security Test-terraform_simple_setup, Skip Specific Tests
