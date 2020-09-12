@@ -4,7 +4,7 @@
 
 # airflow-toolkit :rocket:
 
-![Terragrunt Deployment-Validate Syntax and Plan](https://github.com/sungchun12/airflow-toolkit/workflows/Terragrunt%20Deployment-Validate%20Syntax%20and%20Plan/badge.svg)
+![Terragrunt Deployment-Validate Syntax and Plan](https://github.com/sungchun12/airflow-toolkit/workflows/Terragrunt%20Deployment-Validate%20Syntax%20and%20Plan/badge.svg) ![Checkov-Terraform Security Checks](https://github.com/sungchun12/airflow-toolkit/workflows/Checkov-Terraform%20Security%20Checks/badge.svg)
 
 Any Airflow project day 1, you can spin up a local desktop Kubernetes Airflow environment AND a Google Cloud Composer Airflow environment with working example DAGs across both :sparkles:
 
@@ -876,6 +876,8 @@ COMPOSER_ENVIRONMENT="dev-composer"
 COMPOSER_BUCKET=$(gcloud composer environments describe ${COMPOSER_ENVIRONMENT} --format='value(config.dagGcsPrefix)' | sed 's/\/dags//g')
 
 # sync files in dags folder to the gcs bucket linked to cloud composer
+# this may not work if you have python 3.8.5 installed on macOS
+# see: https://github.com/GoogleCloudPlatform/gsutil/issues/961
 gsutil -m rsync -r $PROJECT_DIR/dags $COMPOSER_BUCKET/dags
 ```
 
