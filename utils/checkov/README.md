@@ -23,9 +23,11 @@ source py38_venv/bin/activate
 
 # checkov -d /user/path/to/iac/code
 checkov -d terragrunt_infrastructure_modules/
+checkov -d terraform_simple_setup/
 
 # only show failed checks
 checkov -d terragrunt_infrastructure_modules/ --quiet
+checkov -d terraform_simple_setup/ --quiet
 
 # output to json file
 checkov -d terragrunt_infrastructure_modules/ -o json > checkov_tests.json
@@ -43,6 +45,9 @@ checkov -d terragrunt_infrastructure_modules/ -o json > checkov_tests.json
 # skip the specific check expected to fail, but should be examined further for production deployments
 
 checkov -d terragrunt_infrastructure_modules/ --quiet \
+  --skip-check CKV_GCP_26,CKV_GCP_32,CKV_GCP_38
+
+checkov -d terraform_simple_setup/ --quiet \
   --skip-check CKV_GCP_26,CKV_GCP_32,CKV_GCP_38
 
 ```
