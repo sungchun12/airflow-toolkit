@@ -19,6 +19,6 @@ jobs:
       - name: Security Test-terragrunt_infrastructure_modules
         run: |
           checkov -d terragrunt_infrastructure_modules
-      - name: Security Test-terraform_simple_setup
+      - name: Security Test-terraform_simple_setup, Skip Specific Tests
         run: |
-          checkov -d terraform_simple_setup
+          checkov -d terraform_simple_setup --skip-check CKV_GCP_26,CKV_GCP_32,CKV_GCP_38
