@@ -876,6 +876,8 @@ COMPOSER_ENVIRONMENT="dev-composer"
 COMPOSER_BUCKET=$(gcloud composer environments describe ${COMPOSER_ENVIRONMENT} --format='value(config.dagGcsPrefix)' | sed 's/\/dags//g')
 
 # sync files in dags folder to the gcs bucket linked to cloud composer
+# this may not work if you have python 3.8.5 installed on macOS
+# see: https://github.com/GoogleCloudPlatform/gsutil/issues/961
 gsutil -m rsync -r $PROJECT_DIR/dags $COMPOSER_BUCKET/dags
 ```
 
