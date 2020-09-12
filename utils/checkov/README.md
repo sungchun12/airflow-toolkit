@@ -41,6 +41,8 @@ checkov -d terragrunt_infrastructure_modules/ -o json > checkov_tests.json
 | CKV_GCP_32 | "Ensure 'Block Project-wide SSH keys' is enabled for VM instances"                             | This blocks the ability to ssh via identity aware proxy. Currently, there is no easily programmatic way to limit IAP ssh access to a single VM.                                            | [Guide](https://docs.bridgecrew.io/docs/bc_gcp_networking_8)                         |
 | CKV_GCP_38 | "Ensure VM disks for critical VMs are encrypted with Customer Supplied Encryption Keys (CSEK)" | Only needed for an extra security layer as VMs come with default encryption keys.                                                                                                          | [Guide](https://docs.bridgecrew.io/docs/encrypt-boot-disks-for-instances-with-cseks) |
 
+> The `enable_apis/` module is skipped for checkov tests as it is a Google-provided workaround and requires wide permissions to work properly
+
 ```bash
 # skip the specific check expected to fail, but should be examined further for production deployments
 
