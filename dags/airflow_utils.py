@@ -87,10 +87,6 @@ git_clone_cmds = f"""
 # git_clone_cmds = f"""
 #     /entrypoint.sh &&
 #     gcloud auth activate-service-account --key-file=account.json &&
-#     git clone {GIT_REPO}"""
-# git_clone_cmds = f"""
-#     /entrypoint.sh &&
-#     gcloud auth activate-service-account --key-file=account.json &&
 #     gcloud source repos clone {GIT_REPO} --project={PROJECT_ID}"""
 
 dbt_setup_cmds = f"""
@@ -99,4 +95,5 @@ dbt_setup_cmds = f"""
     git checkout {GIT_BRANCH} &&
     export PROJECT_ID={PROJECT_ID} &&
     export DBT_PROFILES_DIR=$(pwd) &&
-    export DBT_GOOGLE_BIGQUERY_KEYFILE=/dbt/account.json"""
+    export DBT_GOOGLE_BIGQUERY_KEYFILE=/dbt/account.json &&
+    cat /dbt/account.json"""
