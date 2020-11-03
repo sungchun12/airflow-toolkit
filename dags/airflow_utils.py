@@ -77,17 +77,17 @@ pod_env_vars = {"PROJECT_ID": PROJECT_ID}
 # this will NOT work with the default terraform deployment unless you disable private IP as a simple workaround
 # this will work with the local desktop deployment in its current state
 # this assumes the ssh private key for the git repo will exist within the working directory of the docker container
-# git_clone_cmds = f"""
-#     export GIT_SSH_COMMAND='ssh -i .ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' &&
-#     git clone -b {GIT_BRANCH} {GIT_REPO}"""
+git_clone_cmds = f"""
+    export GIT_SSH_COMMAND='ssh -i .ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' &&
+    git clone -b {GIT_BRANCH} {GIT_REPO}"""
 
 # entrypoint is called specifically in these commands for smoother dynamic permissions when working with the account.json file
 # utilizes cloud source mirror repo to prevent the private IP cloud composer cluster from reaching out to the public internet for the git repo
 # this also prevents an extra need to create a Cloud NAT Gateway
-git_clone_cmds = f"""
-    /entrypoint.sh &&
-    gcloud auth activate-service-account --key-file=account.json &&
-    git clone {GIT_REPO}"""
+# git_clone_cmds = f"""
+#     /entrypoint.sh &&
+#     gcloud auth activate-service-account --key-file=account.json &&
+#     git clone {GIT_REPO}"""
 # git_clone_cmds = f"""
 #     /entrypoint.sh &&
 #     gcloud auth activate-service-account --key-file=account.json &&
