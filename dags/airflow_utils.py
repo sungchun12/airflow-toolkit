@@ -85,7 +85,8 @@ pod_env_vars = {"PROJECT_ID": PROJECT_ID}
 git_clone_cmds = f"""
     /entrypoint.sh &&
     gcloud auth activate-service-account --key-file=account.json &&
-    gcloud source repos clone {GIT_REPO} --project={PROJECT_ID}"""
+    gcloud source repos clone {GIT_REPO} --project={PROJECT_ID} &&
+    git checkout feature-update-tutorial"""
 
 dbt_setup_cmds = f"""
     {git_clone_cmds} &&
