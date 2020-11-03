@@ -5,10 +5,12 @@ from google.cloud import secretmanager
 
 # TODO(developer): update for your specific settings
 # GIT_REPO = "git@github.com:sungchun12/airflow-toolkit.git" #placeholder ssh git repo
-GIT_REPO = "github_sungchun12_airflow-toolkit"
+GIT_REPO = "git@github.com:sungchun12/airflow-toolkit.git"
+# GIT_REPO = "github_sungchun12_airflow-toolkit"
 GIT_BRANCH = "feature-update-tutorial"
 PROJECT_ID = "big-dreams-please"
 DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-latest"
+FOLDER_NAME = GIT_REPO.split("/")[1].split(".")[0]
 
 env = os.environ.copy()
 DEPLOYMENT_SETUP = env["DEPLOYMENT_SETUP"]
@@ -89,7 +91,7 @@ git_clone_cmds = f"""
 
 dbt_setup_cmds = f"""
     {git_clone_cmds} &&
-    cd {GIT_REPO}/dbt_bigquery_example &&
+    cd {FOLDER_NAME}/dbt_bigquery_example &&
     git checkout {GIT_BRANCH} &&
     export PROJECT_ID={PROJECT_ID} &&
     export DBT_PROFILES_DIR=$(pwd) &&
