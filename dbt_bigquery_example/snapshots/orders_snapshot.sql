@@ -13,7 +13,6 @@
     {{
         config
 (
-          target_database='wam-bam-258119',
           target_schema='dbt_bq_example',
           unique_key='id',
           
