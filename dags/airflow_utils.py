@@ -6,7 +6,7 @@ from google.cloud import secretmanager
 # TODO(developer): update for your specific settings
 # GIT_REPO = "git@github.com:sungchun12/airflow-toolkit.git" #placeholder ssh git repo
 GIT_REPO = "github_sungchun12_airflow-toolkit"
-PROJECT_ID = "wam-bam-258119"
+PROJECT_ID = "big-dreams-please"
 DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-latest"
 
 env = os.environ.copy()
@@ -62,7 +62,9 @@ def set_google_app_credentials(deployment_setup, dag_name):
             f"Set custom environment variable GOOGLE_APPLICATION_CREDENTIALS for DAG: {dag_name}, deployment setup: {deployment_setup}"
         )
     else:  # default to cloud composer defaults
-        print("Using existing default environment variable GOOGLE_APPLICATION_CREDENTIALS")
+        print(
+            "Using existing default environment variable GOOGLE_APPLICATION_CREDENTIALS"
+        )
 
 
 kube_pod_defaults = set_kube_pod_defaults(DEPLOYMENT_SETUP)

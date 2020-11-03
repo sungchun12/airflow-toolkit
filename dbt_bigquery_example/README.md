@@ -66,6 +66,7 @@ export DBT_PROFILES_DIR=$(pwd)
 
 # setup a Google Cloud Project ID
 export PROJECT_ID="your-project-id"
+export PROJECT_ID="big-dreams-please"
 
 # connect to GCP
 gcloud auth application-default login --scopes=https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/drive.readonly

@@ -128,7 +128,8 @@ gcloud services enable \
     storage.googleapis.com \
     container.googleapis.com \
     containerregistry.googleapis.com \
-    composer.googleapis.com
+    composer.googleapis.com \
+    secretmanager.googleapis.com
 
 # Store contents of private service account key in Secrets Manager to be used by airflow later within the `add_gcp_connections.py` DAG
 # Create a secrets manager secret from the key
@@ -298,7 +299,7 @@ extraVolumes: # this will create the volume from the directory
 # leave this terminal open to sustain airflow webserver
 # Set of environment variables
 export ENV="dev"
-export PROJECT_ID="wam-bam-258119"
+export PROJECT_ID="big-dreams-please"
 export DOCKER_DBT_IMG="gcr.io/$PROJECT_ID/dbt_docker:$ENV-latest"
 
 source deploy_local_desktop_airflow.sh
