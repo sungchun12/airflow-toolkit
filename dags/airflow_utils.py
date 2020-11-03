@@ -96,4 +96,4 @@ dbt_setup_cmds = f"""
     export PROJECT_ID={PROJECT_ID} &&
     export DBT_PROFILES_DIR=$(pwd) &&
     export DBT_GOOGLE_BIGQUERY_KEYFILE=/dbt/account.json &&
-    cat /dbt/account.json"""
+    ls /dbt/"""
