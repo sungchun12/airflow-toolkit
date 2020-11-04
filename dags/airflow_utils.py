@@ -76,6 +76,7 @@ pod_env_vars = {"PROJECT_ID": PROJECT_ID}
 # this will work with the local desktop deployment in its current state
 # this assumes the ssh private key for the git repo will exist within the working directory of the docker container
 # git_clone_cmds = f"""
+#     /entrypoint.sh &&
 #     export GIT_SSH_COMMAND='ssh -i .ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' &&
 #     git clone -b {GIT_BRANCH} {GIT_REPO}"""
 
