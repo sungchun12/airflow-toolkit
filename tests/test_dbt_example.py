@@ -61,7 +61,7 @@ def test_contains_tasks(setup_method):
     dag = setup_method.get_dag(dag_id)
     task_ids = list(map(lambda task: task.task_id, dag.tasks))
     assert any("dbt" in s for s in task_ids) == True
-    assert task_ids == ["dbt-debug", "dbt-run", "dbt-test"]
+    assert task_ids == ["dbt-debug", "dbt-seed", "dbt-run", "dbt-test"]
 
 
 def test_task_dependencies(setup_method):
@@ -75,12 +75,21 @@ def test_task_dependencies(setup_method):
     downstream_task_ids = list(
         map(lambda task: task.task_id, dbt_debug_task.downstream_list)
     )
+    assert downstream_task_ids == ["dbt-seed"]
+
+    # dbt seed upstream and downstream task dependencies
+    dbt_run_task = getattr(test_dag, "dbt_seed")
+    upstream_task_ids = list(map(lambda task: task.task_id, dbt_run_task.upstream_list))
+    assert upstream_task_ids == ["dbt-debug"]
+    downstream_task_ids = list(
+        map(lambda task: task.task_id, dbt_run_task.downstream_list)
+    )
     assert downstream_task_ids == ["dbt-run"]
 
     # dbt run upstream and downstream task dependencies
     dbt_run_task = getattr(test_dag, "dbt_run")
     upstream_task_ids = list(map(lambda task: task.task_id, dbt_run_task.upstream_list))
-    assert upstream_task_ids == ["dbt-debug"]
+    assert upstream_task_ids == ["dbt-seed"]
     downstream_task_ids = list(
         map(lambda task: task.task_id, dbt_run_task.downstream_list)
     )
@@ -111,7 +120,7 @@ def test_task_count_test_dag(setup_method):
     dag = setup_method.get_dag(dag_id)
     dag_task_count = len(dag.tasks)
 
-    total_expected_task_count = 3
+    total_expected_task_count = 4
 
     assert dag_task_count == total_expected_task_count
 
