@@ -5,10 +5,12 @@ from google.cloud import secretmanager
 
 # TODO(developer): update for your specific settings
 # GIT_REPO = "git@github.com:sungchun12/airflow-toolkit.git" #placeholder ssh git repo
-GIT_REPO = "github_sungchun12_airflow-toolkit"
+GIT_REPO = "git@github.com:sungchun12/airflow-toolkit.git"
+# GIT_REPO = "github_sungchun12_airflow-toolkit"
 GIT_BRANCH = "feature-update-tutorial"
 PROJECT_ID = "big-dreams-please"
 DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-latest"
+FOLDER_NAME = GIT_REPO.split("/")[1].split(".")[0]
 
 env = os.environ.copy()
 DEPLOYMENT_SETUP = env["DEPLOYMENT_SETUP"]
@@ -75,22 +77,24 @@ pod_env_vars = {"PROJECT_ID": PROJECT_ID}
 # this will NOT work with the default terraform deployment unless you disable private IP as a simple workaround
 # this will work with the local desktop deployment in its current state
 # this assumes the ssh private key for the git repo will exist within the working directory of the docker container
-# git_clone_cmds = f"""
-#     export GIT_SSH_COMMAND='ssh -i .ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' &&
-#     git clone -b {GIT_BRANCH} {GIT_REPO}"""
+git_clone_cmds = f"""
+    /entrypoint.sh &&
+    export GIT_SSH_COMMAND='ssh -i .ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' &&
+    git clone -b {GIT_BRANCH} {GIT_REPO}"""
 
 # entrypoint is called specifically in these commands for smoother dynamic permissions when working with the account.json file
 # utilizes cloud source mirror repo to prevent the private IP cloud composer cluster from reaching out to the public internet for the git repo
 # this also prevents an extra need to create a Cloud NAT Gateway
-git_clone_cmds = f"""
-    /entrypoint.sh &&
-    gcloud auth activate-service-account --key-file=account.json &&
-    gcloud source repos clone {GIT_REPO} --project={PROJECT_ID}"""
+# git_clone_cmds = f"""
+#     /entrypoint.sh &&
+#     gcloud auth activate-service-account --key-file=account.json &&
+#     gcloud source repos clone {GIT_REPO} --project={PROJECT_ID}"""
 
 dbt_setup_cmds = f"""
     {git_clone_cmds} &&
-    cd {GIT_REPO}/dbt_bigquery_example &&
+    cd {FOLDER_NAME}/dbt_bigquery_example &&
     git checkout {GIT_BRANCH} &&
     export PROJECT_ID={PROJECT_ID} &&
     export DBT_PROFILES_DIR=$(pwd) &&
-    export DBT_GOOGLE_BIGQUERY_KEYFILE=/dbt/account.json"""
+    export DBT_GOOGLE_BIGQUERY_KEYFILE=/dbt/account.json &&
+    ls /dbt/"""
