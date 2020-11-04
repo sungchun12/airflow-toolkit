@@ -6,13 +6,12 @@ from google.cloud import secretmanager
 # TODO(developer): update for your specific settings
 # GIT_REPO = "git@github.com:sungchun12/airflow-toolkit.git" #placeholder ssh git repo
 GIT_REPO = "github_sungchun12_airflow-toolkit"
-GIT_BRANCH = "feature-update-tutorial"
 PROJECT_ID = "big-dreams-please"
 DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-latest"
 
 env = os.environ.copy()
 DEPLOYMENT_SETUP = env["DEPLOYMENT_SETUP"]
-
+GIT_BRANCH = "master" # TODO: make this an env var: env["GIT_BRANCH"]
 
 def get_secret(project_name, secret_name):
     """
