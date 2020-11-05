@@ -35,6 +35,30 @@ variable "account_id_iap_ssh" {
   default     = "service-account-iap-ssh"
 }
 
+variable "compute_role_id" {
+  description = "Custom role, role id for identity aware proxy ssh enablement to set compute metadata"
+  type        = string
+  default     = "set_compute_metadata"
+}
+
+variable "compute_role_title" {
+  description = "Title for custom role for identity aware proxy ssh enablement to set compute metadata"
+  type        = string
+  default     = "set_compute_metadata"
+}
+
+variable "compute_role_desc" {
+  description = "Description for role purpose"
+  type        = string
+  default     = "This enables identity aware proxy ssh enablement by allowing the iap ssh service account to set compute metadata"
+}
+
+variable "custom_compute_permissions" {
+  description = "Minimum permissions needed for this custom role for the iap ssh account to tunnel into the VM"
+  type        = list(string)
+  default     = ["compute.instances.setMetadata"]
+}
+
 variable "display_name_iap_ssh" {
   description = "Display name for the iap ssh service account"
   type        = string

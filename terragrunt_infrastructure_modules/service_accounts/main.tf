@@ -30,6 +30,16 @@ resource "google_project_iam_binding" "bastion-host-entry" {
 
 ##### setup identity access proxy service account to be attached to be used by end user to ssh into compute engine VM #####
 #TODO: build conditions for all the iam policy bindings to be specific to this custom setup
+
+# create custom role to set compute metadata to enable IAP ssh tunneling into the bastion host VM
+resource "google_project_iam_custom_role" "set-compute-metadata" {
+  project     = var.project
+  role_id     = var.compute_role_id
+  title       = var.compute_role_title
+  description = var.compute_role_desc
+  permissions = var.custom_compute_permissions
+}
+
 # download private key after terraform creates
 resource "google_service_account" "service-account-iap-ssh" {
   project      = var.project
@@ -42,7 +52,7 @@ resource "google_service_account" "service-account-iap-ssh" {
 locals {
   ssh_service_account_roles = concat(var.ssh_service_account_roles_to_add, [
     "roles/iap.tunnelResourceAccessor",
-    "roles/compute.viewer"
+    "roles/compute.viewer",
   ])
 }
 
@@ -50,6 +60,15 @@ resource "google_project_iam_binding" "ssh-iap-compute-policy" {
   project  = var.project
   for_each = toset(local.ssh_service_account_roles)
   role     = each.value
+
+  members = [
+    "serviceAccount:${google_service_account.service-account-iap-ssh.email}",
+  ]
+}
+
+resource "google_project_iam_binding" "ssh-iap-set-compute-metadata" {
+  project = var.project
+  role    = google_project_iam_custom_role.set-compute-metadata.id
 
   members = [
     "serviceAccount:${google_service_account.service-account-iap-ssh.email}",
