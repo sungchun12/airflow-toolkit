@@ -27,10 +27,10 @@ remote_state {
     if_exists = "overwrite"
   }
   config = {
-    project     = "wam-bam-258119"
+    project     = "big-dreams-please"
     location    = "US"
     credentials = "service_account.json"
-    bucket      = "secure-bucket-tfstate-composer"
+    bucket      = "demo-secure-bucket-tfstate-composer"
     prefix      = "dev"
   }
 }
