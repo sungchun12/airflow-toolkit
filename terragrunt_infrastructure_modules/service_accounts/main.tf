@@ -75,6 +75,15 @@ resource "google_project_iam_binding" "ssh-iap-set-compute-metadata" {
   ]
 }
 
+resource "google_service_account_iam_binding" "bastion-host-service-account-user" {
+  service_account_id = google_service_account.service-account-bastion-host.name
+  role               = "roles/iam.serviceAccountUser"
+
+  members = [
+    "serviceAccount:${google_service_account.service-account-iap-ssh.email}",
+  ]
+}
+
 ##### setup service account to ensure composer environment is setup correctly #####
 resource "google_service_account" "service-account-composer" {
   project      = var.project
