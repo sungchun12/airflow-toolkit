@@ -8,7 +8,7 @@ on:
 
 env:
   #TODO(developer): update PROJECT_ID, WORKING_DIR
-  PROJECT_ID: "wam-bam-258119"
+  PROJECT_ID: "big-demo-dreams"
   WORKING_DIR: "./terragrunt_infrastructure_live/non-prod/us-central1/dev"
 
 jobs:
