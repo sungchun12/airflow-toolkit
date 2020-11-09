@@ -23,7 +23,7 @@ from airflow_utils import DEPLOYMENT_SETUP, get_secret, set_google_app_credentia
 # this can be removed for the cloud composer version of the DAG
 # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/account.json"
 dag_name = "add_gcp_connections"
-set_google_app_credentials(DEPLOYMENT_SETUP,dag_name)
+set_google_app_credentials(DEPLOYMENT_SETUP, dag_name)
 
 default_args = {
     "owner": "airflow",
@@ -38,7 +38,7 @@ default_args = {
 
 # TODO(developer): update for your specific naming conventions
 CONN_PARAMS_DICT = {
-    "gcp_project": "wam-bam-258119",
+    "gcp_project": "big-dreams-please",
     "gcp_conn_id": "my_gcp_connection",
     "gcr_conn_id": "gcr_docker_connection",
     "secret_name": "airflow-conn-secret",
@@ -65,7 +65,9 @@ def add_gcp_connection(ds, **kwargs):
     new_conn.set_extra(conn_extra_json)
 
     session = settings.Session()
-    if not (session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()):
+    if not (
+        session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()
+    ):
         session.add(new_conn)
         session.commit()
         msg = "\n\tA connection with `conn_id`={conn_id} is newly created\n"
@@ -96,7 +98,9 @@ def add_docker_connection(ds, **kwargs):
     new_conn.set_password(data)
 
     session = settings.Session()
-    if not (session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()):
+    if not (
+        session.query(Connection).filter(Connection.conn_id == new_conn.conn_id).first()
+    ):
         session.add(new_conn)
         session.commit()
         msg = "\n\tA connection with `conn_id`={conn_id} is newly created\n"

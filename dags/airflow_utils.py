@@ -6,13 +6,12 @@ from google.cloud import secretmanager
 # TODO(developer): update for your specific settings
 # GIT_REPO = "git@github.com:sungchun12/airflow-toolkit.git" #placeholder ssh git repo
 GIT_REPO = "github_sungchun12_airflow-toolkit"
-PROJECT_ID = "wam-bam-258119"
+PROJECT_ID = "big-dreams-please"
 DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-latest"
 
 env = os.environ.copy()
 DEPLOYMENT_SETUP = env["DEPLOYMENT_SETUP"]
-GIT_BRANCH = "master"
-
+GIT_BRANCH = "master" # TODO: make this an env var: env["GIT_BRANCH"]
 
 def get_secret(project_name, secret_name):
     """
@@ -62,7 +61,9 @@ def set_google_app_credentials(deployment_setup, dag_name):
             f"Set custom environment variable GOOGLE_APPLICATION_CREDENTIALS for DAG: {dag_name}, deployment setup: {deployment_setup}"
         )
     else:  # default to cloud composer defaults
-        print("Using existing default environment variable GOOGLE_APPLICATION_CREDENTIALS")
+        print(
+            "Using existing default environment variable GOOGLE_APPLICATION_CREDENTIALS"
+        )
 
 
 kube_pod_defaults = set_kube_pod_defaults(DEPLOYMENT_SETUP)
@@ -74,6 +75,7 @@ pod_env_vars = {"PROJECT_ID": PROJECT_ID}
 # this will work with the local desktop deployment in its current state
 # this assumes the ssh private key for the git repo will exist within the working directory of the docker container
 # git_clone_cmds = f"""
+#     /entrypoint.sh &&
 #     export GIT_SSH_COMMAND='ssh -i .ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' &&
 #     git clone -b {GIT_BRANCH} {GIT_REPO}"""
 
@@ -88,6 +90,7 @@ git_clone_cmds = f"""
 dbt_setup_cmds = f"""
     {git_clone_cmds} &&
     cd {GIT_REPO}/dbt_bigquery_example &&
+    git checkout {GIT_BRANCH} &&
     export PROJECT_ID={PROJECT_ID} &&
     export DBT_PROFILES_DIR=$(pwd) &&
     export DBT_GOOGLE_BIGQUERY_KEYFILE=/dbt/account.json"""

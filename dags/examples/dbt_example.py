@@ -22,6 +22,11 @@ dbt_debug_cmd = f"""
     dbt debug --target service_account_runs
 """
 
+dbt_seed_cmd = f"""
+    {dbt_setup_cmds} &&
+    dbt seed --full-refresh --show --target service_account_runs
+"""
+
 dbt_run_cmd = f"""
     {dbt_setup_cmds} &&
     dbt run --target service_account_runs
@@ -40,6 +45,17 @@ with DAG("dbt_example", default_args=default_args, schedule_interval="@once") as
         task_id="dbt-debug",
         name="dbt-debug",
         arguments=[dbt_debug_cmd],
+        secrets=[DBT_SERVICE_ACCOUNT, GIT_SECRET_ID_RSA_PRIVATE],
+        # Storing sensitive credentials in env_vars will be exposed in plain text
+        env_vars=pod_env_vars,
+    )
+
+    dbt_seed = KubernetesPodOperator(
+        **kube_pod_defaults,
+        image=DBT_IMAGE,
+        task_id="dbt-seed",
+        name="dbt-seed",
+        arguments=[dbt_seed_cmd],
         secrets=[DBT_SERVICE_ACCOUNT, GIT_SECRET_ID_RSA_PRIVATE],
         # Storing sensitive credentials in env_vars will be exposed in plain text
         env_vars=pod_env_vars,
@@ -67,4 +83,4 @@ with DAG("dbt_example", default_args=default_args, schedule_interval="@once") as
         env_vars=pod_env_vars,
     )
 
-    dbt_debug >> dbt_run >> dbt_test
+    dbt_debug >> dbt_seed >> dbt_run >> dbt_test

@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: dbt_bq_example
-    database: wam-bam-258119
+    database: "{{ env_var('PROJECT_ID', 'wam-bam-258119') }}" # parameterize project for dbt runs based on environment variable with default project
     schema: dbt_bq_example
 
     freshness:
