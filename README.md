@@ -817,6 +817,8 @@ terraform destroy
 - After the terragrunt/terraform deployment is successful, run the below commands in your local desktop terminal
 - Add in `Compute Instance Admin(v1) and Service Account User` roles to the iap ssh service account(adjust the terraform code less) OR create a custom role with `compute.instances.setMetadata`(adjust the terraform code more)
 
+> If you are the owner of the project, you can skip the identity aware proxy ssh step and simply ssh through the console itself
+
 ```bash
 #!/bin/bash
 
