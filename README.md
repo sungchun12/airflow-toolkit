@@ -102,7 +102,7 @@ curl https://sdk.cloud.google.com | bash
 
 - [Create a Service Account](https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating)
 
-- Add the `Editor` and `Secret Manager Admin` role
+- Add the `Editor`, `Secret Manager Admin`, `Role Administrator`, and `Security Admin` roles
 
   > Note: this provides wide permissions for the purposes of this demo, this will need to be updated based on your specific situation
 
@@ -600,7 +600,9 @@ gcloud config set project $PROJECT_ID #TODO: add this step to the CICD pipeline 
 # this has mock outputs to emulate module dependencies with a prefix "mock-"
 # OR you can run a more specific plan
 # terragrunt plan-all -out=terragrunt_plan
-terragrunt plan-all
+# --terragrunt-non-interactive flag if this is run for the first time to create the state gcs bucket without a prompt
+# https://github.com/gruntwork-io/terragrunt/issues/486
+terragrunt plan-all --terragrunt-non-interactive
 
 # this has mock outputs to emulate module dependencies
 terragrunt validate-all
@@ -705,7 +707,7 @@ gcloud secrets list
 gcloud secrets versions access latest --secret="terraform-secret"
 ```
 
-- replace important terragrunt configs for your specific setup
+- replace important terragrunt/terraform configs for your specific setup
 
 ```hcl
 # file location
@@ -718,12 +720,29 @@ remote_state {
     if_exists = "overwrite"
   }
   config = {
-    project     = "wam-bam-258119"
+    project     = "wam-bam-258119" # replace with your GCP project id
     location    = "US"
     credentials = "service_account.json"
     bucket      = "secure-bucket-tfstate-composer" # replace with something unique
     prefix      = "dev"
   }
+}
+```
+
+```hcl
+# file location
+# /airflow-toolkit/terraform_simple_setup/variables.tf
+
+variable "project" {
+  description = "name of your GCP project"
+  type        = string
+  default     = "big-dreams-please" # replace with your GCP project id
+}
+
+variable "service_account_email" {
+  description = "Service account used for VMs"
+  type        = string
+  default     = "demo-service-account@big-dreams-please.iam.gserviceaccount.com" # replace with your service account email
 }
 ```
 
@@ -796,11 +815,17 @@ terraform destroy
 > `gcloud composer` commands will NOT work on your local desktop
 
 - After the terragrunt/terraform deployment is successful, run the below commands in your local desktop terminal
+- Add in `Compute Instance Admin(v1) and Service Account User` roles to the iap ssh service account(adjust the terraform code less) OR create a custom role with `compute.instances.setMetadata`(adjust the terraform code more)
 
 ```bash
 #!/bin/bash
 
 # ssh via identity aware proxy into the bastion host(which will then run commands against cloud composer)
+# update the env vars before running ssh tunnel
+ACCESS_KEY_FILE="account.json"
+PROJECT_ID="big-dreams-please" # your GCP project ID
+SERVICE_ACCOUNT_EMAIL="iap-ssh-sa-dev@$PROJECT_ID.iam.gserviceaccount.com"
+KEY_FILE="iap-ssh-access-sa.json"
 source utils/cloud_composer/iap_ssh_tunnel.sh
 
 # install basic software in the bastion host
@@ -809,7 +834,7 @@ sudo apt-get install kubectl git
 # Set Composer project, location, and zone
 # The hard-code values are based on defaults set by terraform module variables
 # Minimizes redundant flags in downstream commands
-gcloud config set project wam-bam-258119
+gcloud config set project big-dreams-please # your GCP project ID
 gcloud config set composer/location us-central1
 gcloud config set compute/zone us-central1-b
 
