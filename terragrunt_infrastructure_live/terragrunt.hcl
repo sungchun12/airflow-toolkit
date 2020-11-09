@@ -63,7 +63,7 @@ remote_state {
     project     = "${local.project}"
     location    = "${local.region}"
     credentials = "${local.credentials_file}"
-    bucket      = "demo-secure-bucket-tfstate-airflow-infra-${local.region}"
+    bucket      = "dreams-secure-bucket-tfstate-airflow-infra-${local.region}"
     prefix      = "${path_relative_to_include()}"
   }
 }
