@@ -2,7 +2,10 @@
 name: Checkov-Terraform Security Checks
 on:
   push:
-    branches: [master, feature-checkov]
+    branches: [master]
+  pull_request:
+    branches: [master]
+    
 jobs:
   build:
     name: Checkov Setup and Run
