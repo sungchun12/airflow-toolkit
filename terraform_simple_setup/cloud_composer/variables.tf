@@ -117,7 +117,8 @@ variable "env_variables" {
   description = "Environment variables within the composer environment"
   type        = map(string)
   default = {
-    environment = "dev"
+    environment      = "dev"
+    DEPLOYMENT_SETUP = "cloud_composer"
   }
 }
 
