@@ -299,7 +299,7 @@ extraVolumes: # this will create the volume from the directory
 # leave this terminal open to sustain airflow webserver
 # Set of environment variables
 export ENV="dev"
-export PROJECT_ID="big-dreams-please"
+export PROJECT_ID="airflow-demo-build"
 export DOCKER_DBT_IMG="gcr.io/$PROJECT_ID/dbt_docker:$ENV-latest"
 
 source deploy_local_desktop_airflow.sh
@@ -950,8 +950,8 @@ gsutil -m rsync -r $PROJECT_DIR/dags $COMPOSER_BUCKET/dags
 ## Resources
 
 - [Helm Quickstart](https://helm.sh/docs/intro/quickstart/)
-- [Helm Chart Official Release](https://hub.helm.sh/charts/stable/airflow)
-- [Helm Chart Source Code](https://github.com/helm/charts/tree/master/stable/airflow)
+- [Helm Chart Official Release](https://artifacthub.io/packages/helm/airflow-helm/airflow)
+- [Helm Chart Source Code](https://github.com/airflow-helm/charts/tree/main/charts/airflow)
 - [SQLite issue](https://github.com/helm/charts/issues/22477)
 - [kubectl commands](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands)
 - [What is a pod?](https://kubernetes.io/docs/concepts/workloads/pods/pod/)
