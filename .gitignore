@@ -11,6 +11,7 @@ __pycache__/
 account-lumpy-space-prince.json
 ssh_dataproc_custom_profile.json
 iap-ssh-access-sa.json
+.terraform.lock.hcl
 
 #virtual environments
 py37_venv/
