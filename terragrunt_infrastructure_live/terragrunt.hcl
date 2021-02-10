@@ -38,7 +38,6 @@ provider "google" {
   project     = "${local.project}"
   region      = "${local.region}"
   zone        = "${local.zone}"
-  version     = "~> 3.34.0"
 }
 
 provider "google-beta" {
@@ -46,7 +45,6 @@ provider "google-beta" {
   project     = "${local.project}"
   region      = "${local.region}"
   zone        = "${local.zone}"
-  version     = "~> 3.34.0"
 }
 EOF
 }
@@ -63,7 +61,7 @@ remote_state {
     project     = "${local.project}"
     location    = "${local.region}"
     credentials = "${local.credentials_file}"
-    bucket      = "dreams-secure-bucket-tfstate-airflow-infra-${local.region}"
+    bucket      = "show-me-what-you-got-airflow-${local.region}"
     prefix      = "${path_relative_to_include()}"
   }
 }
@@ -76,11 +74,11 @@ terraform {
   required_providers {
     google = {
       source = "hashicorp/google"
-      version = "<4.0,>= 2.12"
+  version     = "~> 3.34.0"
     }
     google-beta = {
       source = "hashicorp/google-beta"
-      version = "<4.0,>= 2.12"
+  version     = "~> 3.34.0"
     }
   }
   required_version = ">= 0.13"
