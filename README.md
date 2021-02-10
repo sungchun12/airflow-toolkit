@@ -599,19 +599,19 @@ gcloud config set project $PROJECT_ID #TODO: add this step to the CICD pipeline 
 
 # this has mock outputs to emulate module dependencies with a prefix "mock-"
 # OR you can run a more specific plan
-# terragrunt plan-all -out=terragrunt_plan
+# terragrunt run-all plan -out=terragrunt_plan
 # --terragrunt-non-interactive flag if this is run for the first time to create the state gcs bucket without a prompt
 # https://github.com/gruntwork-io/terragrunt/issues/486
 terragrunt run-all plan --terragrunt-non-interactive
 
 # this has mock outputs to emulate module dependencies
-terragrunt validate-all
+terragrunt run-all validate
 
 # follow terminal prompt after entering below command
 # do NOT interrupt this process until finished or it will corrupt terraform state
 # OR you can apply a more specific plan
-# terragrunt apply-all terragrunt_plan
-terragrunt apply-all
+# terragrunt run-all apply terragrunt_plan
+terragrunt run-all apply
 
 ```
 

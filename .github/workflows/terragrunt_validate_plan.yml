@@ -54,7 +54,7 @@ jobs:
         run: |
           pwd &&
           cd $WORKING_DIR &&
-          terragrunt validate-all
+          terragrunt run-all validate
 
       - name: Cleanup Terragrunt Directories and Files
         run: ./terragrunt_infrastructure_live/terragrunt_cleanup.sh
