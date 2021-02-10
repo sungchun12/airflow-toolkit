@@ -602,7 +602,7 @@ gcloud config set project $PROJECT_ID #TODO: add this step to the CICD pipeline 
 # terragrunt plan-all -out=terragrunt_plan
 # --terragrunt-non-interactive flag if this is run for the first time to create the state gcs bucket without a prompt
 # https://github.com/gruntwork-io/terragrunt/issues/486
-terragrunt plan-all --terragrunt-non-interactive
+terragrunt run-all plan --terragrunt-non-interactive
 
 # this has mock outputs to emulate module dependencies
 terragrunt validate-all
