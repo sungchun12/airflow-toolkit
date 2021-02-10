@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow.operators.dummy_operator import DummyOperator
 
-from airflow_utils import pod_env_vars
+from airflow_utils import pod_env_vars, DBT_IMAGE
 
 
 default_args = {
@@ -47,9 +47,6 @@ passing_bash = KubernetesPodOperator(
     get_logs=True,
     dag=dag,
 )
-
-PROJECT_ID = "wam-bam-258119"
-DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-sungwon.chung-latest"
 
 private_gcr_passing = KubernetesPodOperator(
     namespace="default",
