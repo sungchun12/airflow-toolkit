@@ -22,5 +22,4 @@ gcloud auth activate-service-account --key-file=$KEY_FILE
 
 # ssh tunnel into the bastion host
 BASTION_HOST="bastion-host-to-composer"
-ZONE="us-central1-b"
 gcloud compute ssh $BASTION_HOST --tunnel-through-iap --zone $ZONE

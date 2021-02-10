@@ -20,7 +20,8 @@ echo "***********************"
 echo "Download stable helm repo"
 echo "***********************"
 # add helm chart repo
-helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+helm repo add "stable" "https://charts.helm.sh/stable" --force-update
+helm repo add airflow-stable https://airflow-helm.github.io/charts
 
 # get latest list of changes
 helm repo update
@@ -66,8 +67,10 @@ echo "Setup and Install Airflow Kubernetes Cluster with Helm"
 echo "***********************"
 # install airflow helm chart
 # https://helm.sh/docs/helm/helm_install/
-helm install airflow stable/airflow \
---version 7.3.0 \
+helm install \
+airflow-local-desktop \
+airflow-stable/airflow \
+--version 7.16.0 \
 --namespace "airflow" \
 --values ./custom-setup.yaml
 

@@ -27,10 +27,10 @@ remote_state {
     if_exists = "overwrite"
   }
   config = {
-    project     = "big-demo-dreams"
+    project     = "airflow-demo-build"
     location    = "US"
     credentials = "service_account.json"
-    bucket      = "simple-dreams-secure-bucket-tfstate-composer"
+    bucket      = "airflow-demo-build-secure-bucket-tfstate-composer"
     prefix      = "dev"
   }
 }
@@ -50,7 +50,6 @@ provider "google" {
   project     = var.project
   region      = var.location
   zone        = var.zone
-  version     = "~> 3.34.0"
 }
 
 provider "google-beta" {
@@ -58,7 +57,6 @@ provider "google-beta" {
   project     = var.project
   region      = var.location
   zone        = var.zone
-  version     = "~> 3.34.0"
 }
 EOF
 }
@@ -71,11 +69,11 @@ terraform {
   required_providers {
     google = {
       source = "hashicorp/google"
-      version = "<4.0,>= 2.12"
+      version = "~> 3.34.0"
     }
     google-beta = {
       source = "hashicorp/google-beta"
-      version = "<4.0,>= 2.12"
+      version = "~> 3.34.0"
     }
   }
   required_version = ">= 0.13"

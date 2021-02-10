@@ -8,8 +8,9 @@ on:
 
 env:
   #TODO(developer): update PROJECT_ID, WORKING_DIR
-  PROJECT_ID: "big-demo-dreams"
+  PROJECT_ID: "airflow-demo-build"
   WORKING_DIR: "./terragrunt_infrastructure_live/non-prod/us-central1/dev"
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 jobs:
   setup-validate-plan:
@@ -47,7 +48,7 @@ jobs:
         run: |
           pwd &&
           cd $WORKING_DIR &&
-          terragrunt plan-all
+          terragrunt run-all plan
 
       - name: Terragrunt Validate Syntax
         run: |

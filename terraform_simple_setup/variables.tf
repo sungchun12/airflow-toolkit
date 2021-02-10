@@ -12,7 +12,7 @@ variable "credentials" {
 variable "project" {
   description = "name of your GCP project"
   type        = string
-  default     = "big-demo-dreams"
+  default     = "airflow-demo-build"
 }
 
 variable "location" {
@@ -30,7 +30,7 @@ variable "zone" {
 variable "service_account_email" {
   description = "Service account used for VMs"
   type        = string
-  default     = "demo-service-account@big-demo-dreams.iam.gserviceaccount.com"
+  default     = "airflow-test@airflow-demo-build.iam.gserviceaccount.com"
 }
 
 variable "version_label" {
