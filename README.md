@@ -478,7 +478,7 @@ sh.helm.release.v1.airflow.v1   helm.sh/release.v1                    1      50m
 
 ```bash
 # install kubernetes dashboard
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-rc3/aio/deploy/recommended.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
 
 # start the web server
 kubectl proxy
