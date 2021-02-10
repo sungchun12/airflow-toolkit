@@ -825,8 +825,10 @@ terraform destroy
 # ssh via identity aware proxy into the bastion host(which will then run commands against cloud composer)
 # update the env vars before running ssh tunnel
 ACCESS_KEY_FILE="account.json"
-PROJECT_ID="big-dreams-please" # your GCP project ID
-SERVICE_ACCOUNT_EMAIL="iap-ssh-sa-dev@$PROJECT_ID.iam.gserviceaccount.com"
+PROJECT_ID="airflow-demo-build" # your GCP project ID
+ZONE="us-central1-a" # your GCP compute engine ZONE defined in terraform variables
+SERVICE_ACCOUNT_EMAIL="service-account-iap-ssh@$PROJECT_ID.iam.gserviceaccount.com" # Toolkit 3 Default
+# SERVICE_ACCOUNT_EMAIL="iap-ssh-sa-dev@$PROJECT_ID.iam.gserviceaccount.com" # Toolkit 2 Default
 KEY_FILE="iap-ssh-access-sa.json"
 source utils/cloud_composer/iap_ssh_tunnel.sh
 
@@ -836,7 +838,7 @@ sudo apt-get install kubectl git
 # Set Composer project, location, and zone
 # The hard-code values are based on defaults set by terraform module variables
 # Minimizes redundant flags in downstream commands
-gcloud config set project big-dreams-please # your GCP project ID
+gcloud config set project airflow-demo-build # your GCP project ID
 gcloud config set composer/location us-central1
 gcloud config set compute/zone us-central1-b
 
@@ -886,8 +888,8 @@ gcloud auth activate-service-account --key-file account.json
 
 # add secrets manager IAM policy binding to composer service account
 # The hard-code values are based on defaults set by terraform module variables
-PROJECT_ID="wam-bam-258119"
-MEMBER_SERVICE_ACCOUNT_EMAIL="serviceAccount:composer-sa-dev@wam-bam-258119.iam.gserviceaccount.com" #TODO: make this dynamic
+PROJECT_ID="airflow-demo-build"
+MEMBER_SERVICE_ACCOUNT_EMAIL="serviceAccount:composer-dev-account@$PROJECT_ID.iam.gserviceaccount.com" #TODO: make this dynamic
 SECRET_ID="airflow-conn-secret"
 
 gcloud secrets add-iam-policy-binding $SECRET_ID \
