@@ -5,7 +5,7 @@
 sudo apt-get install kubectl git
 
 gcloud composer environments run dev-composer \
-    --project wam-bam-258119 \
+    --project my-data-pipeline \
     --location us-central1 \
     list_dags
 
@@ -13,9 +13,9 @@ gcloud composer environments describe dev-composer \
     --location us-central1 \
     --format="value(config.gkeCluster)"
 
-gcloud container clusters get-credentials projects/wam-bam-258119/zones/us-central1-b/clusters/us-central1-dev-composer-de094856-gke \
+gcloud container clusters get-credentials projects/my-data-pipeline/zones/us-central1-b/clusters/us-central1-dev-composer-de094856-gke \
     --zone us-central1-b \
-    --project wam-bam-258119
+    --project my-data-pipeline
 
 # copy and paste contents of service account json file from local machine into the bastion host
 cat <<EOF > service_account.json
