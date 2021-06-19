@@ -1,5 +1,5 @@
 # this is purely to run dbt commands
-FROM python:3.7
+FROM python:3.8
 
 # Update and install system packages
 RUN apt-get update -y && \
