@@ -4,7 +4,6 @@ from airflow import configuration as conf
 from google.cloud import secretmanager
 
 # TODO(developer): update for your specific settings
-# GIT_REPO = "git@github.com:sungchun12/airflow-toolkit.git" #placeholder ssh git repo
 GIT_REPO = "github_the-prairie_airflow-toolkit"
 PROJECT_ID = "my-data-pipeline"
 DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-latest"
