@@ -6,17 +6,25 @@ import re
 import requests
 
 # capture environment variables from the bitbucket-pipelines configuration yml
+# TODO: these variables should be hard-coded variables here, passed through individual DAGs? I'm leaning towards hard coded given 80% of the time they will be static
+# TODO: Create a dictionary with defaults OR data class
 ACCOUNT_ID = os.getenv("DBT_CLOUD_ACCOUNT_ID")
-PROJECT_ID = os.getenv("DBT_CLOUD_PROJECT_ID")
-JOB_ID = os.getenv("DBT_CLOUD_JOB_ID")
-API_KEY = os.getenv("DBT_CLOUD_API_TOKEN")
-BITBUCKET_BRANCH = os.getenv(
-    "BITBUCKET_BRANCH"
-)  # built into the bitbucket pull request environment during runtime
+PROJECT_ID = os.getenv(
+    "DBT_CLOUD_PROJECT_ID"
+)  # TODO: this should be in individual DAGs dynamically
+JOB_ID = os.getenv(
+    "DBT_CLOUD_JOB_ID"
+)  # TODO: This should be in individual DAGs dynamically
+API_KEY = os.getenv(
+    "DBT_CLOUD_API_TOKEN"
+)  # TODO: airflow variable vs. airflow secret vs. kubernetes secret?
+BITBUCKET_BRANCH = os.getenv("BITBUCKET_BRANCH")  # TODO: hard code this?
 # snowflake schema safe name by replacing all non-word or non-number characters with an underscore
 BITBUCKET_BRANCH_SAFE_NAME = re.sub(r"[^\w\s]", "_", BITBUCKET_BRANCH)
 
+
 # define a class of different dbt Cloud API status responses in integer format
+# TODO: pass in this class to the functions below OR create this directly in the class and cut out this extra layer
 class DbtJobRunStatus(enum.IntEnum):
     QUEUED = 1
     STARTING = 2
@@ -26,15 +34,16 @@ class DbtJobRunStatus(enum.IntEnum):
     CANCELLED = 30
 
 
+# TODO: create an overall class for extensibility to data share my dbt Cloud vars?
 # trigger the dbt Cloud pull request test job
 def _trigger_job() -> int:
     res = requests.post(
         url=f"https://cloud.getdbt.com/api/v2/accounts/{ACCOUNT_ID}/jobs/{JOB_ID}/run/",
         headers={"Authorization": f"Token {API_KEY}"},
         data={
-            "cause": f"BitBucket Pull Request",
-            "schema_override": f"dbt_cloud_pr_{BITBUCKET_BRANCH_SAFE_NAME}",
-            "git_branch": f"{BITBUCKET_BRANCH}",
+            "cause": f"BitBucket Pull Request",  # TODO: name of airflow DAG
+            "schema_override": f"dbt_cloud_pr_{BITBUCKET_BRANCH_SAFE_NAME}",  # TODO: remove this
+            "git_branch": f"{BITBUCKET_BRANCH}",  # TODO: Keep this?
         },
     )
 
@@ -79,7 +88,3 @@ def run():
             break
         elif status == DbtJobRunStatus.ERROR or status == DbtJobRunStatus.CANCELLED:
             raise Exception(f"Failure! Visit URL: {visit_url}")
-
-
-if __name__ == "__main__":
-    run()
