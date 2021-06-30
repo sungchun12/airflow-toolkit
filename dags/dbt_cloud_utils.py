@@ -8,6 +8,9 @@ import requests
 # capture environment variables from the bitbucket-pipelines configuration yml
 # TODO: these variables should be hard-coded variables here, passed through individual DAGs? I'm leaning towards hard coded given 80% of the time they will be static
 # TODO: Create a dictionary with defaults OR data class
+
+# https://cloud.getdbt.com/#/accounts/4238/projects/12220/jobs/12389/
+dbt_cloud_defaults = {"ACCOUNT_ID": 4238, "PROJECT_ID": 12220, "JOB_ID": 12389}
 ACCOUNT_ID = os.getenv("DBT_CLOUD_ACCOUNT_ID")
 PROJECT_ID = os.getenv(
     "DBT_CLOUD_PROJECT_ID"
