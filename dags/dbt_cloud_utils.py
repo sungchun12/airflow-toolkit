@@ -35,6 +35,7 @@ class DbtJobRunStatus(enum.IntEnum):
 
 
 # TODO: create an overall class for extensibility to data share my dbt Cloud vars?
+# TODO: add a way to do command step overrides for the dbt Cloud job? No, let's keep it simple so as to bias towards changes in dbt Cloud
 # trigger the dbt Cloud pull request test job
 def _trigger_job() -> int:
     res = requests.post(
