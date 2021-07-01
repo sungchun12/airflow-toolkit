@@ -28,8 +28,9 @@ API_KEY = os.getenv(
 )  # TODO: airflow variable vs. airflow secret vs. kubernetes secret?
 
 
-# define a class of different dbt Cloud API status responses in integer format
 class DbtJobRunStatus(enum.IntEnum):
+    """define a class of different dbt Cloud API status responses in integer format"""
+
     QUEUED = 1
     STARTING = 2
     RUNNING = 3
