@@ -4,26 +4,32 @@ import time
 import re
 
 import requests
+from dataclasses import dataclass
+
 
 # capture environment variables from the bitbucket-pipelines configuration yml
 # TODO: these variables should be hard-coded variables here, passed through individual DAGs? I'm leaning towards hard coded given 80% of the time they will be static
 # TODO: Create a dictionary with defaults OR data class
 
 # https://cloud.getdbt.com/#/accounts/4238/projects/12220/jobs/12389/
-dbt_cloud_defaults = {"ACCOUNT_ID": 4238, "PROJECT_ID": 12220, "JOB_ID": 12389}
-ACCOUNT_ID = os.getenv("DBT_CLOUD_ACCOUNT_ID")
-PROJECT_ID = os.getenv(
-    "DBT_CLOUD_PROJECT_ID"
-)  # TODO: this should be in individual DAGs dynamically
-JOB_ID = os.getenv(
-    "DBT_CLOUD_JOB_ID"
-)  # TODO: This should be in individual DAGs dynamically
+@dataclass
+class dbt_cloud_job_vars:
+    # slots create faster access to class attributes and can't add new attributes
+    __slots__ = "account_id", "project_id", "job_id"
+    # add type hints
+    account_id: int
+    project_id: int
+    job_id: int
+
+
+# example dbt Cloud job config
+dbt_cloud_job_config = dbt_cloud_job_vars(
+    account_id=4238, project_id=12220, job_id=12389
+)
+
 API_KEY = os.getenv(
     "DBT_CLOUD_API_TOKEN"
 )  # TODO: airflow variable vs. airflow secret vs. kubernetes secret?
-BITBUCKET_BRANCH = os.getenv("BITBUCKET_BRANCH")  # TODO: hard code this?
-# snowflake schema safe name by replacing all non-word or non-number characters with an underscore
-BITBUCKET_BRANCH_SAFE_NAME = re.sub(r"[^\w\s]", "_", BITBUCKET_BRANCH)
 
 
 # define a class of different dbt Cloud API status responses in integer format
