@@ -84,7 +84,7 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
 
             status = self._get_job_run_status(job_run_id)
 
-            print(f"status = {status}")
+            print(f"status = {status}")  # TODO: add status name
 
             if status == dbt_job_run_status.SUCCESS:
                 print(f"Success! Visit URL: {visit_url}")
