@@ -5,7 +5,7 @@ from airflow import DAG
 from datetime import datetime
 from airflow.operators.python_operator import PythonOperator
 from airflow_utils import DEPLOYMENT_SETUP, get_secret, set_google_app_credentials
-from dbt_cloud_utils import dbt_cloud_job_vars, dbt_cloud_job_runner
+from dbt_cloud_utils import dbt_cloud_job_runner
 
 
 # example dbt Cloud job config
