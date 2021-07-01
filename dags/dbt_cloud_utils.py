@@ -28,6 +28,7 @@ BITBUCKET_BRANCH_SAFE_NAME = re.sub(r"[^\w\s]", "_", BITBUCKET_BRANCH)
 
 # define a class of different dbt Cloud API status responses in integer format
 # TODO: pass in this class to the functions below OR create this directly in the class and cut out this extra layer
+# TODO: log all the parameters passed to the instantiated class and compare to listing the job parameters from the actual dbt Cloud job and assert they match
 class DbtJobRunStatus(enum.IntEnum):
     QUEUED = 1
     STARTING = 2
