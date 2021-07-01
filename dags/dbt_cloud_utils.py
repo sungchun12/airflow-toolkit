@@ -42,9 +42,11 @@ class dbt_job_run_status:
 class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
     # trigger the dbt Cloud pull request test job
     def _trigger_job(self) -> int:
+        url = f"https://cloud.getdbt.com/api/v2/accounts/{self.account_id}/jobs/{self.job_id}/run/"
+        headers = {"Authorization": f"Token {API_KEY}"}  # TODO: replace with secret
         res = requests.post(
-            url=f"https://cloud.getdbt.com/api/v2/accounts/{dbt_cloud_job_vars.account_id}/jobs/{dbt_cloud_job_vars.job_id}/run/",
-            headers={"Authorization": f"Token {API_KEY}"},  # TODO: replace with secret
+            url=url,
+            headers=headers,
             data={
                 "cause": f"{__file__}",  # name of the python file invoking this
             },
@@ -62,7 +64,7 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
     # to be used in a while loop to check on job status
     def _get_job_run_status(self, job_run_id):
         res = requests.get(
-            url=f"https://cloud.getdbt.com/api/v2/accounts/{dbt_cloud_job_vars.account_id}/runs/{job_run_id}/",
+            url=f"https://cloud.getdbt.com/api/v2/accounts/{self.account_id}/runs/{job_run_id}/",
             headers={"Authorization": f"Token {API_KEY}"},
         )
 
@@ -75,7 +77,7 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
         job_run_id = self._trigger_job()
 
         print(f"job_run_id = {job_run_id}")
-        visit_url = f"https://cloud.getdbt.com/#/accounts/{dbt_cloud_job_vars.account_id}/projects/{dbt_cloud_job_vars.project_id}/runs/{job_run_id}/"
+        visit_url = f"https://cloud.getdbt.com/#/accounts/{self.account_id}/projects/{self.project_id}/runs/{job_run_id}/"
 
         while True:
             time.sleep(1)
