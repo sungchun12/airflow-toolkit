@@ -7,10 +7,6 @@ import requests
 from dataclasses import dataclass
 
 
-# capture environment variables from the bitbucket-pipelines configuration yml
-# TODO: these variables should be hard-coded variables here, passed through individual DAGs? I'm leaning towards hard coded given 80% of the time they will be static
-# TODO: Create a dictionary with defaults OR data class
-
 # https://cloud.getdbt.com/#/accounts/4238/projects/12220/jobs/12389/
 @dataclass
 class dbt_cloud_job_vars:
@@ -33,8 +29,6 @@ API_KEY = os.getenv(
 
 
 # define a class of different dbt Cloud API status responses in integer format
-# TODO: pass in this class to the functions below OR create this directly in the class and cut out this extra layer
-# TODO: log all the parameters passed to the instantiated class and compare to listing the job parameters from the actual dbt Cloud job and assert they match
 class DbtJobRunStatus(enum.IntEnum):
     QUEUED = 1
     STARTING = 2
@@ -44,6 +38,8 @@ class DbtJobRunStatus(enum.IntEnum):
     CANCELLED = 30
 
 
+# TODO: pass in this class to the functions below OR create this directly in the class and cut out this extra layer
+# TODO: log all the parameters passed to the instantiated class and compare to listing the job parameters from the actual dbt Cloud job and assert they match
 # TODO: create an overall class for extensibility to data share my dbt Cloud vars?
 # TODO: add a way to do command step overrides for the dbt Cloud job? No, let's keep it simple so as to bias towards changes in dbt Cloud
 # trigger the dbt Cloud pull request test job
