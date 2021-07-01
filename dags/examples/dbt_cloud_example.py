@@ -11,7 +11,7 @@ from dbt_cloud_utils import dbt_cloud_job_runner
 # example dbt Cloud job config
 dbt_cloud_job_runner_config = dbt_cloud_job_runner(
     account_id=4238, project_id=12220, job_id=12389
-)
+)  # TODO: add DAG name as variable?
 
 
 default_args = {
