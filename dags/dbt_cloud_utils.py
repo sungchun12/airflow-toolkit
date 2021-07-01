@@ -1,7 +1,5 @@
-import enum
 import os
 import time
-import re
 
 import requests
 from dataclasses import dataclass
@@ -18,25 +16,21 @@ class dbt_cloud_job_vars:
     job_id: int
 
 
-# example dbt Cloud job config
-dbt_cloud_job_config = dbt_cloud_job_vars(
-    account_id=4238, project_id=12220, job_id=12389
-)
-
 API_KEY = os.getenv(
     "DBT_CLOUD_API_TOKEN"
 )  # TODO: airflow variable vs. airflow secret vs. kubernetes secret?
 
 
-class dbt_job_run_status(enum.IntEnum):
+@dataclass
+class dbt_job_run_status:
     """define a class of different dbt Cloud API status responses in integer format"""
 
-    QUEUED = 1
-    STARTING = 2
-    RUNNING = 3
-    SUCCESS = 10
-    ERROR = 20
-    CANCELLED = 30
+    QUEUED: int = 1
+    STARTING: int = 2
+    RUNNING: int = 3
+    SUCCESS: int = 10
+    ERROR: int = 20
+    CANCELLED: int = 30
 
 
 # TODO: pass in this class to the functions below OR create this directly in the class and cut out this extra layer
@@ -45,12 +39,12 @@ class dbt_job_run_status(enum.IntEnum):
 # TODO: add a way to do command step overrides for the dbt Cloud job? No, let's keep it simple so as to bias towards changes in dbt Cloud
 
 
-class dbt_cloud_job_runner:
+class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
     # trigger the dbt Cloud pull request test job
     def _trigger_job(self) -> int:
         res = requests.post(
-            url=f"https://cloud.getdbt.com/api/v2/accounts/{ACCOUNT_ID}/jobs/{JOB_ID}/run/",
-            headers={"Authorization": f"Token {API_KEY}"},
+            url=f"https://cloud.getdbt.com/api/v2/accounts/{dbt_cloud_job_vars.account_id}/jobs/{dbt_cloud_job_vars.job_id}/run/",
+            headers={"Authorization": f"Token {API_KEY}"},  # TODO: replace with secret
             data={
                 "cause": f"{__file__}",  # name of the python file invoking this
             },
@@ -68,7 +62,7 @@ class dbt_cloud_job_runner:
     # to be used in a while loop to check on job status
     def _get_job_run_status(self, job_run_id):
         res = requests.get(
-            url=f"https://cloud.getdbt.com/api/v2/accounts/{ACCOUNT_ID}/runs/{job_run_id}/",
+            url=f"https://cloud.getdbt.com/api/v2/accounts/{dbt_cloud_job_vars.account_id}/runs/{job_run_id}/",
             headers={"Authorization": f"Token {API_KEY}"},
         )
 
@@ -77,14 +71,14 @@ class dbt_cloud_job_runner:
         return response_payload["data"]["status"]
 
     # main function operator to trigger the job and a while loop to wait for success or error
-    def run(self):
+    def run_job(self):
         job_run_id = self._trigger_job()
 
         print(f"job_run_id = {job_run_id}")
-        visit_url = f"https://cloud.getdbt.com/#/accounts/{ACCOUNT_ID}/projects/{PROJECT_ID}/runs/{job_run_id}/"
+        visit_url = f"https://cloud.getdbt.com/#/accounts/{dbt_cloud_job_vars.account_id}/projects/{dbt_cloud_job_vars.project_id}/runs/{job_run_id}/"
 
         while True:
-            time.sleep(5)
+            time.sleep(1)
 
             status = self._get_job_run_status(job_run_id)
 
