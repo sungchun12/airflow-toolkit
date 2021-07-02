@@ -1,10 +1,6 @@
-# TODO: I want to import 2 things from the dbt_cloud_utils(class utility, default dbt Cloud variables)
-# Use the kubernetes pod operator or python virtualenv operator?
-# I should have one task
 from airflow import DAG
 from datetime import datetime
 from airflow.operators.python_operator import PythonOperator
-from airflow_utils import DEPLOYMENT_SETUP, get_secret, set_google_app_credentials
 from dbt_cloud_utils import dbt_cloud_job_runner
 
 
