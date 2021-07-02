@@ -1,4 +1,3 @@
-import os
 import time
 
 import requests
@@ -69,6 +68,10 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
             raise
 
         response_payload = res.json()
+        # Verify the dbt Cloud job matches the arguments passed
+        assert self.account_id == response_payload["data"]["account_id"]
+        assert self.project_id == response_payload["data"]["project_id"]
+        assert self.job_id == response_payload["data"]["job_definition_id"]
         return response_payload["data"]["id"]
 
     # to be used in a while loop to check on job status
