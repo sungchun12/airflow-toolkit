@@ -9,11 +9,12 @@ from dataclasses import dataclass
 @dataclass
 class dbt_cloud_job_vars:
     # slots create faster access to class attributes and can't add new attributes
-    __slots__ = "account_id", "project_id", "job_id"
+    __slots__ = "account_id", "project_id", "job_id", "cause"
     # add type hints
     account_id: int
     project_id: int
     job_id: int
+    cause: str
 
 
 API_KEY = os.getenv(
@@ -48,7 +49,7 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
             url=url,
             headers=headers,
             data={
-                "cause": f"{__file__}",  # name of the python file invoking this
+                "cause": f"{self.cause}",  # name of the python file invoking this
             },
         )
 
@@ -62,7 +63,7 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
         return response_payload["data"]["id"]
 
     # to be used in a while loop to check on job status
-    def _get_job_run_status(self, job_run_id):
+    def _get_job_run_status(self, job_run_id) -> int:
         res = requests.get(
             url=f"https://cloud.getdbt.com/api/v2/accounts/{self.account_id}/runs/{job_run_id}/",
             headers={"Authorization": f"Token {API_KEY}"},
@@ -70,14 +71,16 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
 
         res.raise_for_status()
         response_payload = res.json()
+        print(response_payload)
         return response_payload["data"]["status"]
 
     # main function operator to trigger the job and a while loop to wait for success or error
-    def run_job(self):
+    def run_job(self) -> None:
         job_run_id = self._trigger_job()
 
         print(f"job_run_id = {job_run_id}")
         visit_url = f"https://cloud.getdbt.com/#/accounts/{self.account_id}/projects/{self.project_id}/runs/{job_run_id}/"
+        print(f"Check the dbt Cloud job status! Visit URL:{visit_url}")
 
         while True:
             time.sleep(1)

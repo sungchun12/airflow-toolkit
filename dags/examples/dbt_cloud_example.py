@@ -8,10 +8,11 @@ from airflow_utils import DEPLOYMENT_SETUP, get_secret, set_google_app_credentia
 from dbt_cloud_utils import dbt_cloud_job_runner
 
 
+dag_file_name = __file__
 # example dbt Cloud job config
 dbt_cloud_job_runner_config = dbt_cloud_job_runner(
-    account_id=4238, project_id=12220, job_id=12389
-)  # TODO: add DAG name as variable?
+    account_id=4238, project_id=12220, job_id=12389, cause=dag_file_name
+)
 
 
 default_args = {
