@@ -3,6 +3,7 @@ import time
 
 import requests
 from dataclasses import dataclass
+from airflow.models import Variable
 
 
 # https://cloud.getdbt.com/#/accounts/4238/projects/12220/jobs/12389/
@@ -15,11 +16,17 @@ class dbt_cloud_job_vars:
     project_id: int
     job_id: int
     cause: str
+    dbt_cloud_api_key: str = Variable.get("dbt_cloud_api_key")
 
 
-API_KEY = os.getenv(
-    "DBT_CLOUD_API_TOKEN"
-)  # TODO: airflow variable vs. airflow secret vs. kubernetes secret?
+# API_KEY = os.getenv(
+#     "DBT_CLOUD_API_TOKEN"
+# )  # TODO: airflow variable vs. airflow secret vs. kubernetes secret?
+# kubernetes secret will only work in the context of kubernetes pod operator
+# I want to use google cloud secrets manager but that forces the developer to be GCP specifically
+# I'll try out the airflow environment variable as it will encrypt and cover it up locally
+# I recommend using a secrets backend like the Google Cloud one mentioned above for extra security and logging
+# Set this manually
 
 
 @dataclass
@@ -44,7 +51,9 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
     # trigger the dbt Cloud pull request test job
     def _trigger_job(self) -> int:
         url = f"https://cloud.getdbt.com/api/v2/accounts/{self.account_id}/jobs/{self.job_id}/run/"
-        headers = {"Authorization": f"Token {API_KEY}"}  # TODO: replace with secret
+        headers = {
+            "Authorization": f"Token {self.dbt_cloud_api_key}"
+        }  # TODO: replace with secret
         res = requests.post(
             url=url,
             headers=headers,
@@ -56,7 +65,7 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
         try:
             res.raise_for_status()
         except:
-            print(f"API token (last four): ...{API_KEY[-4:]}")
+            print(f"API token (last four): ...{self.dbt_cloud_api_key[-4:]}")
             raise
 
         response_payload = res.json()
@@ -66,12 +75,11 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
     def _get_job_run_status(self, job_run_id) -> int:
         res = requests.get(
             url=f"https://cloud.getdbt.com/api/v2/accounts/{self.account_id}/runs/{job_run_id}/",
-            headers={"Authorization": f"Token {API_KEY}"},
+            headers={"Authorization": f"Token {self.dbt_cloud_api_key}"},
         )
 
         res.raise_for_status()
         response_payload = res.json()
-        print(response_payload)
         return response_payload["data"]["status"]
 
     # main function operator to trigger the job and a while loop to wait for success or error
