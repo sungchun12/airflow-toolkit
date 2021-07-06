@@ -50,7 +50,7 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
 
         Returns
         ----------
-            job_run_id(int): specific job run id invoked
+            job_run_id(int): specific dbt Cloud job run id invoked
         """
         url = f"https://cloud.getdbt.com/api/v2/accounts/{self.account_id}/jobs/{self.job_id}/run/"
         headers = {"Authorization": f"Token {self.dbt_cloud_api_key}"}
@@ -73,6 +73,7 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
         assert self.account_id == response_payload["data"]["account_id"]
         assert self.project_id == response_payload["data"]["project_id"]
         assert self.job_id == response_payload["data"]["job_definition_id"]
+
         job_run_id = response_payload["data"]["id"]
         return job_run_id
 
@@ -88,12 +89,11 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
 
         Returns
         ----------
-            job_run_status(int): status of the job run
+            job_run_status(int): status of the dbt Cloud job run
         """
-        res = requests.get(
-            url=f"https://cloud.getdbt.com/api/v2/accounts/{self.account_id}/runs/{job_run_id}/",
-            headers={"Authorization": f"Token {self.dbt_cloud_api_key}"},
-        )
+        url = f"https://cloud.getdbt.com/api/v2/accounts/{self.account_id}/runs/{job_run_id}/"
+        headers = {"Authorization": f"Token {self.dbt_cloud_api_key}"}
+        res = requests.get(url=url, headers=headers)
 
         res.raise_for_status()
         response_payload = res.json()
@@ -104,23 +104,23 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
     def run_job(self) -> None:
         """Main handler method to run the dbt Cloud job and track the job run status"""
         job_run_id = self._trigger_job()
-
         print(f"job_run_id = {job_run_id}")
+
         visit_url = f"https://cloud.getdbt.com/#/accounts/{self.account_id}/projects/{self.project_id}/runs/{job_run_id}/"
         print(f"Check the dbt Cloud job status! Visit URL:{visit_url}")
 
         while True:
-            time.sleep(1)
+            time.sleep(1)  # make an api call every 1 second
 
-            status = self._get_job_run_status(job_run_id)
+            job_run_status = self._get_job_run_status(job_run_id)
 
-            print(f"status = {status}")  # TODO: add status name
+            print(f"job_run_status = {job_run_status}")
 
-            if status == dbt_job_run_status.SUCCESS:
+            if job_run_status == dbt_job_run_status.SUCCESS:
                 print(f"Success! Visit URL: {visit_url}")
                 break
             elif (
-                status == dbt_job_run_status.ERROR
-                or status == dbt_job_run_status.CANCELLED
+                job_run_status == dbt_job_run_status.ERROR
+                or job_run_status == dbt_job_run_status.CANCELLED
             ):
                 raise Exception(f"Failure! Visit URL: {visit_url}")
