@@ -1,5 +1,6 @@
 from airflow import DAG
 from datetime import datetime
+from airflow.operators.dummy import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 from dbt_cloud_utils import dbt_cloud_job_runner
 
@@ -26,12 +27,15 @@ default_args = {
 with DAG(
     "dbt_cloud_example", default_args=default_args, schedule_interval="@once"
 ) as dag:
+    # have a separate extract and load process(think: FivetranOperator and/or custom gcs load to bigquery tasks)
+    extract = DummyOperator(task_id="extract")
+    load = DummyOperator(task_id="load")
 
-    # Single task to execute dbt Cloud job
-    t1 = PythonOperator(
+    # Single task to execute dbt Cloud job and track status over time
+    transform = PythonOperator(
         task_id="run-dbt-cloud-job",
         python_callable=dbt_cloud_job_runner_config.run_job,
         provide_context=True,
     )
 
-    t1
+    extract >> load >> transform
