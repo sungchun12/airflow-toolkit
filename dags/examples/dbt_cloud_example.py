@@ -6,6 +6,10 @@ from dbt_cloud_utils import dbt_cloud_job_runner
 
 
 dag_file_name = __file__
+
+# TODO: MANUALLY create a dbt Cloud job: https://docs.getdbt.com/docs/dbt-cloud/cloud-quickstart#create-a-new-job
+# Example dbt Cloud job URL
+# https://cloud.getdbt.com/#/accounts/4238/projects/12220/jobs/12389/
 # example dbt Cloud job config
 dbt_cloud_job_runner_config = dbt_cloud_job_runner(
     account_id=4238, project_id=12220, job_id=12389, cause=dag_file_name
