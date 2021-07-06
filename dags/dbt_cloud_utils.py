@@ -4,7 +4,8 @@ import requests
 from dataclasses import dataclass
 from airflow.models import Variable
 
-
+# TODO: MANUALLY create a dbt Cloud job: https://docs.getdbt.com/docs/dbt-cloud/cloud-quickstart#create-a-new-job
+# Example dbt Cloud job URL
 # https://cloud.getdbt.com/#/accounts/4238/projects/12220/jobs/12389/
 @dataclass(frozen=True)  # make attributes immutable
 class dbt_cloud_job_vars:
@@ -33,12 +34,26 @@ class dbt_job_run_status:
 
 
 class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
-    # trigger the dbt Cloud pull request test job
+    """Utility to run dbt Cloud jobs
+
+    Parameters
+    ----------
+        dbt_cloud_job_vars(dataclass): dbt Cloud job configuration to run
+        dbt_job_run_status(dataclass): dbt Cloud job run statuses to track over time
+
+    """
+
     def _trigger_job(self) -> int:
+        """Trigger the dbt Cloud job asynchronously.
+
+        Verifies dbt_cloud_job_vars match response payload from dbt Cloud api.
+
+        Returns
+        ----------
+            job_run_id(int): specific job run id invoked
+        """
         url = f"https://cloud.getdbt.com/api/v2/accounts/{self.account_id}/jobs/{self.job_id}/run/"
-        headers = {
-            "Authorization": f"Token {self.dbt_cloud_api_key}"
-        }  # TODO: replace with secret
+        headers = {"Authorization": f"Token {self.dbt_cloud_api_key}"}
         res = requests.post(
             url=url,
             headers=headers,
@@ -58,10 +73,23 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
         assert self.account_id == response_payload["data"]["account_id"]
         assert self.project_id == response_payload["data"]["project_id"]
         assert self.job_id == response_payload["data"]["job_definition_id"]
-        return response_payload["data"]["id"]
+        job_run_id = response_payload["data"]["id"]
+        return job_run_id
 
     # to be used in a while loop to check on job status
     def _get_job_run_status(self, job_run_id) -> int:
+        """Trigger the dbt Cloud job asynchronously.
+
+        Verifies dbt_cloud_job_vars match response payload from dbt Cloud api.
+
+        Parameters
+        ----------
+            job_run_id(int): specific job run id invoked
+
+        Returns
+        ----------
+            job_run_status(int): status of the job run
+        """
         res = requests.get(
             url=f"https://cloud.getdbt.com/api/v2/accounts/{self.account_id}/runs/{job_run_id}/",
             headers={"Authorization": f"Token {self.dbt_cloud_api_key}"},
@@ -69,10 +97,12 @@ class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
 
         res.raise_for_status()
         response_payload = res.json()
-        return response_payload["data"]["status"]
+        job_run_status = response_payload["data"]["status"]
+        return job_run_status
 
     # main function operator to trigger the job and a while loop to wait for success or error
     def run_job(self) -> None:
+        """Main handler method to run the dbt Cloud job and track the job run status"""
         job_run_id = self._trigger_job()
 
         print(f"job_run_id = {job_run_id}")
