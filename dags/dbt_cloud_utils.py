@@ -18,7 +18,7 @@ class dbt_cloud_job_vars:
     cause: str
     dbt_cloud_api_key: str = Variable.get(
         "dbt_cloud_api_key"
-    )  # manually set this in the airflow UI
+    )  # TODO: manually set this in the airflow variables UI
 
 
 @dataclass(frozen=True)
@@ -34,13 +34,17 @@ class dbt_job_run_status:
 
 
 class dbt_cloud_job_runner(dbt_cloud_job_vars, dbt_job_run_status):
-    """Utility to run dbt Cloud jobs
+    """Utility to run dbt Cloud jobs.
+
+    Inherits dbt_cloud_job_vars(dataclass) and dbt_job_run_status(dataclass)
 
     Parameters
     ----------
-        dbt_cloud_job_vars(dataclass): dbt Cloud job configuration to run
-        dbt_job_run_status(dataclass): dbt Cloud job run statuses to track over time
-
+        account_id(int): dbt Cloud account id
+        project_id(int): dbt Cloud project id
+        job_id(int): dbt Cloud job id
+        cause(str): dbt Cloud cause(ex: name of DAG)
+        dbt_cloud_api_key(str)(OPTIONAL): dbt Cloud api key to authorize programmatically interacting with dbt Cloud
     """
 
     def _trigger_job(self) -> int:
