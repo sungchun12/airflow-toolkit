@@ -74,12 +74,12 @@ bash_task_xcom_result = BashOperator(
     dag=dag,
 )
 
-# xcom pull does not work for KubernetesPodOperator so far
+# xcom pull follows a different syntax compared to the BashOperator
 pod_task_xcom_result = KubernetesPodOperator(
     namespace="default",
     image="ubuntu:16.04",
-    cmds=["/bin/bash", "-cx"],
-    arguments="echo \"{{ task_instance.xcom_pull('passing-bash-task')[0] }}\"",
+    cmds=["/bin/bash", "-c"],
+    arguments=["echo \"{{ task_instance.xcom_pull(task_ids='passing-bash-task', key='return_value')[0] }}\""],
     labels={"foo": "bar"},
     name="pod_task_xcom_result",
     task_id="pod_task_xcom_result",
