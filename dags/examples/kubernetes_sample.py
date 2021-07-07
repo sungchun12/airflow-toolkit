@@ -1,5 +1,6 @@
 from airflow import DAG
-from datetime import datetime, timedelta
+from datetime import datetime
+from airflow.operators.bash_operator import BashOperator
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow.operators.dummy_operator import DummyOperator
 
@@ -17,7 +18,11 @@ default_args = {
     # "retry_delay": timedelta(minutes=5),
 }
 
-dag = DAG("kubernetes_sample", default_args=default_args, schedule_interval="@once",)
+dag = DAG(
+    "kubernetes_sample",
+    default_args=default_args,
+    schedule_interval="@once",
+)
 
 
 start = DummyOperator(task_id="run_this_first", dag=dag)
@@ -40,11 +45,12 @@ passing_bash = KubernetesPodOperator(
     namespace="default",
     image="ubuntu:16.04",
     cmds=["/bin/bash", "-cx"],
-    arguments=["echo hello world"],
+    arguments=["mkdir -p /airflow/xcom/;echo '[1,2,3,4]' > /airflow/xcom/return.json"],
     labels={"foo": "bar"},
-    name="fail",
+    name="passing-bash-task",
     task_id="passing-bash-task",
     get_logs=True,
+    do_xcom_push=True,
     dag=dag,
 )
 
@@ -62,4 +68,26 @@ private_gcr_passing = KubernetesPodOperator(
     dag=dag,
 )
 
+bash_task_xcom_result = BashOperator(
+    bash_command="echo \"{{ task_instance.xcom_pull('passing-bash-task')[0] }}\"",
+    task_id="bash_task_xcom_result",
+    dag=dag,
+)
+
+# xcom pull does not work for KubernetesPodOperator so far
+pod_task_xcom_result = KubernetesPodOperator(
+    namespace="default",
+    image="ubuntu:16.04",
+    cmds=["/bin/bash", "-cx"],
+    arguments="echo \"{{ task_instance.xcom_pull('passing-bash-task')[0] }}\"",
+    labels={"foo": "bar"},
+    name="pod_task_xcom_result",
+    task_id="pod_task_xcom_result",
+    get_logs=True,
+    dag=dag,
+)
+
+
 start >> [passing_python, passing_bash, private_gcr_passing]
+
+passing_bash >> [bash_task_xcom_result, pod_task_xcom_result]
