@@ -299,7 +299,7 @@ extraVolumes: # this will create the volume from the directory
 # leave this terminal open to sustain airflow webserver
 # Set of environment variables
 export ENV="dev"
-export PROJECT_ID="airflow-demo-build"
+export PROJECT_ID="dbt-demos-sung"
 export DOCKER_DBT_IMG="gcr.io/$PROJECT_ID/dbt_docker:$ENV-latest"
 
 source deploy_local_desktop_airflow.sh
@@ -330,7 +330,7 @@ kubectl port-forward --namespace airflow $POD_NAME 8080:8080
 
 ```bash
 # start a remote shell in the airflow worker for ad hoc operations or to run pytests
-kubectl exec -it airflow-worker-0 -- /bin/bash
+kubectl exec -it airflow-local-desktop-worker-0 -- /bin/bash
 ```
 
 - Airflow worker remote shell examples

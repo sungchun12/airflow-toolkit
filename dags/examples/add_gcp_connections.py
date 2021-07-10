@@ -38,7 +38,7 @@ default_args = {
 
 # TODO(developer): update for your specific naming conventions
 CONN_PARAMS_DICT = {
-    "gcp_project": "airflow-demo-build",
+    "gcp_project": "dbt-demos-sung",
     "gcp_conn_id": "my_gcp_connection",
     "gcr_conn_id": "gcr_docker_connection",
     "secret_name": "airflow-conn-secret",

@@ -68,11 +68,11 @@ echo "***********************"
 # install airflow helm chart
 # https://helm.sh/docs/helm/helm_install/
 helm install \
-airflow-local-desktop \
-airflow-stable/airflow \
---version 7.16.0 \
---namespace "airflow" \
---values ./custom-setup.yaml
+  airflow-local-desktop \
+  airflow-stable/airflow \
+  --version 8.3.1 \
+  --namespace "airflow" \
+  --values ./custom-setup.yaml
 
 echo "***********************"
 echo "Wait for the Kubernetes Cluster to settle"
