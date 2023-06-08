@@ -5,17 +5,18 @@ from google.cloud import secretmanager
 
 # TODO(developer): update for your specific settings
 # GIT_REPO = "git@github.com:sungchun12/airflow-toolkit.git" #placeholder ssh git repo
-GIT_REPO = "github_sungchun12_airflow-toolkit"
-PROJECT_ID = "airflow-demo-build"
+GIT_REPO = "https://github.com/sungchun12/airflow-toolkit.git"
+PROJECT_ID = "dbt-demos-sung"
 DBT_IMAGE = f"gcr.io/{PROJECT_ID}/dbt_docker:dev-latest"
 
 env = os.environ.copy()
 DEPLOYMENT_SETUP = env["DEPLOYMENT_SETUP"]
-GIT_BRANCH = "master" # TODO: make this an env var: env["GIT_BRANCH"]
+GIT_BRANCH = "master"  # TOsDO: make this an env var: env["GIT_BRANCH"]
+
 
 def get_secret(project_name, secret_name):
     """
-        Returns the value of a secret in Secret Manager for use in DAGs
+    Returns the value of a secret in Secret Manager for use in DAGs
     """
     secrets = secretmanager.SecretManagerServiceClient()
     secret_value = (
@@ -85,11 +86,13 @@ pod_env_vars = {"PROJECT_ID": PROJECT_ID}
 git_clone_cmds = f"""
     /entrypoint.sh &&
     gcloud auth activate-service-account --key-file=account.json &&
-    gcloud source repos clone {GIT_REPO} --project={PROJECT_ID}"""
+    git clone {GIT_REPO} """
 
 dbt_setup_cmds = f"""
     {git_clone_cmds} &&
-    cd {GIT_REPO}/dbt_bigquery_example &&
+    pwd &&
+    ls &&
+    cd airflow-toolkit/dbt_bigquery_example &&
     git checkout {GIT_BRANCH} &&
     export PROJECT_ID={PROJECT_ID} &&
     export DBT_PROFILES_DIR=$(pwd) &&
